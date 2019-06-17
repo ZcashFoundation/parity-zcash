@@ -1,7 +1,7 @@
-name: pzec
+name: zebra
 version: "0.1.0"
-author: Parity Technologies <info@parity.io>
-about: Parity Zcash client
+author: Zcash Foundation
+about: A consensus-compatible Zcash node client written in Rust.
 args:
     - testnet:
         long: testnet
