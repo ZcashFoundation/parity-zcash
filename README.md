@@ -30,7 +30,7 @@
 
 Installing `zebra` from source requires `rustc` and `cargo`.
 
-Minimal supported version is `rustc 1.23.0 (766bd11c8 2018-01-01)`
+Minimal supported version is `rustc 1.35.0 (fd19989 2019-05-23)`, and we generally target the stable channel. 
 
 #### Install rustc and cargo
 
