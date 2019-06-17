@@ -1,8 +1,6 @@
-# The Parity Zcash client.
+# The Zcash Foundation Zcash client.
 
-[![Build Status][travis-image]][travis-url] [![Snap Status](https://build.snapcraft.io/badge/paritytech/parity-bitcoin.svg)](https://build.snapcraft.io/user/paritytech/parity-bitcoin)
-
-Gitter [![Gitter https://gitter.im/paritytech/parity-zcash](https://badges.gitter.im/paritytech/parity-zcash.svg)](https://gitter.im/paritytech/parity-zcash)
+[![Build Status][travis-image]][travis-url]
 
 ## Blog: [Parity teams up with Zcash Foundation for Parity Zcash client](https://www.parity.io/parity-teams-up-with-zcash-foundation-for-parity-zcash-client/)
 
@@ -24,13 +22,13 @@ Gitter [![Gitter https://gitter.im/paritytech/parity-zcash](https://badges.gitte
 
 - [Internal Documentation](#internal-documentation)
 
-[travis-image]: https://api.travis-ci.org/paritytech/parity-zcash.svg?branch=master
-[travis-url]: https://travis-ci.org/paritytech/parity-zcash
-[doc-url]: https://paritytech.github.io/parity-zcash/pzec/index.html
+[travis-image]: https://api.travis-ci.org/ZcashFoundation/zebra.svg?branch=master
+[travis-url]: https://travis-ci.org/ZcashFoundation/zebra
+[doc-url]: https://zcashfoundation.github.io/zcashfoundation/zebra/index.html
 
 ## Installing from source
 
-Installing `pzec` from source requires `rustc` and `cargo`.
+Installing `zebra` from source requires `rustc` and `cargo`.
 
 Minimal supported version is `rustc 1.23.0 (766bd11c8 2018-01-01)`
 
@@ -63,31 +61,31 @@ sudo apt-get update
 sudo apt-get install build-essential
 ```
 
-#### Clone and build pzec
+#### Clone and build zebra
 
-Now let's clone `pzec` and enter it's directory:
+Now let's clone `zebra` and enter it's directory:
 
 ```
-git clone https://github.com/paritytech/parity-zcash
-cd parity-zcash
+git clone https://github.com/ZcashFoundation/zebra
+cd zebra
 
-# builds pzec in release mode
-cargo build -p pzec --release
+# builds zebra in release mode
+cargo build -p zebra --release
 ```
 
-`pzec` is now available at `./target/release/pzec`.
+`zebra` is now available at `./target/release/zebra`.
 
 ## Installing the snap
 
 In any of the [supported Linux distros](https://snapcraft.io/docs/core/install):
 
 ```
-sudo snap install parity-zcash --edge
+sudo snap install zebra --edge
 ```
 
 ## Running tests
 
-`pzec` has internal unit tests and it conforms to external integration tests.
+`zebra` has internal unit tests and it conforms to external integration tests.
 
 #### Running unit tests
 
@@ -99,24 +97,24 @@ cargo test --all
 
 ## Going online
 
-By default parity connects to Zcash seednodes. Full list is [here](./pzec/seednodes.rs).
+By default parity connects to Zcash seednodes. Full list is [here](./zebra/seednodes.rs).
 
 To start syncing the main network, just start the client without any arguments:
 
 ```
-./target/release/pzec
+./target/release/zebra
 ```
 
 To start syncing the testnet:
 
 ```
-./target/release/pzec --testnet
+./target/release/zebra --testnet
 ```
 
 To not print any syncing progress add `--quiet` flag:
 
 ```
-./target/release/pzec --quiet
+./target/release/zebra --quiet
 ```
 
 ## Importing zcashd database
@@ -127,18 +125,18 @@ It it is possible to import existing `zcashd` database:
 # where $ZCASH_DB is path to your zcashd database. By default:
 # on macOS: "/Users/user/Library/Application Support/Zcash"
 # on Linux: "~/.zcash"
-./target/release/pzec import "$ZCASH_DB/blocks"
+./target/release/zebra import "$ZCASH_DB/blocks"
 ```
 
 By default, import verifies the imported blocks. You can disable this, by adding the `--verification-level=none` option.
 
 ```
-./target/release/pzec --verification-level=none import "$ZCASH_DB/blocks"
+./target/release/zebra --verification-level=none import "$ZCASH_DB/blocks"
 ```
 
 ## Command line interface
 
-Full list of CLI options, which is available under `pzec --help`: see [here](CLI.md)
+Full list of CLI options, which is available under `zebra --help`: see [here](CLI.md)
 
 ## Logging
 
@@ -147,10 +145,10 @@ This is a section only for developers and power users.
 You can enable detailed client logging by setting the environment variable `RUST_LOG`, e.g.,
 
 ```
-RUST_LOG=verification=info ./target/release/pzec
+RUST_LOG=verification=info ./target/release/zebra
 ```
 
-`pzec` started with this environment variable will print all logs coming from `verification` module with verbosity `info` or higher. Available log levels are:
+`zebra` started with this environment variable will print all logs coming from `verification` module with verbosity `info` or higher. Available log levels are:
 
 - `error`
 - `warn`
@@ -161,15 +159,15 @@ RUST_LOG=verification=info ./target/release/pzec
 It's also possible to start logging from multiple modules in the same time:
 
 ```
-RUST_LOG=sync=trace,p2p=trace,verification=trace,db=trace ./target/release/pzec
+RUST_LOG=sync=trace,p2p=trace,verification=trace,db=trace ./target/release/zebra
 ```
 
 ## Internal documentation
 
-Once released, `pzec` documentation will be available [here][doc-url]. Meanwhile it's only possible to build it locally:
+Once released, `zebra` documentation will be available [here][doc-url]. Meanwhile it's only possible to build it locally:
 
 ```
-cd parity-zcash
+cd zebra
 ./tools/doc.sh
-open target/doc/pzec/index.html
+open target/doc/zebra/index.html
 ```

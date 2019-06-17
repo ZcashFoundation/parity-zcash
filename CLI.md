@@ -1,12 +1,12 @@
 # Command-line options
 
 ```
-pzec 0.1.0
-Parity Technologies <info@parity.io>
-Parity Zcash client
+zebra 0.1.0
+Zcash Foundation
+A consensus-compatible Zcash node client written in Rust.
 
 USAGE:
-    pzec [FLAGS] [OPTIONS] [SUBCOMMAND]
+    zebra [FLAGS] [OPTIONS] [SUBCOMMAND]
 
 FLAGS:
     -h, --help            Prints help information

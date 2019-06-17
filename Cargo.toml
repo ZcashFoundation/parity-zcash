@@ -1,9 +1,9 @@
 [package]
-name = "pzec"
+name = "zebra"
 version = "0.1.0"
 license = "GPL-3.0"
-authors = ["Parity Technologies <admin@parity.io>"]
-description = "Parity bitcoin client."
+authors = ["Zcash Foundation"]
+description = "A consensus-compatible Zcash node client written in Rust."
 
 [dependencies]
 app_dirs = { git = "https://github.com/paritytech/app-dirs-rs" }
@@ -39,8 +39,8 @@ panic = 'abort'
 debug = true
 
 [[bin]]
-path = "pzec/main.rs"
-name = "pzec"
+path = "zebra/main.rs"
+name = "zebra"
 
 [workspace]
 members = [

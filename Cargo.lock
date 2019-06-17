@@ -1173,32 +1173,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "pzec"
-version = "0.1.0"
-dependencies = [
- "app_dirs 1.2.1 (git+https://github.com/paritytech/app-dirs-rs)",
- "chain 0.1.0",
- "clap 2.32.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "db 0.1.0",
- "env_logger 0.5.13 (registry+https://github.com/rust-lang/crates.io-index)",
- "import 0.1.0",
- "keys 0.1.0",
- "libc 0.2.58 (registry+https://github.com/rust-lang/crates.io-index)",
- "log 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",
- "logs 0.1.0",
- "message 0.1.0",
- "miner 0.1.0",
- "network 0.1.0",
- "p2p 0.1.0",
- "primitives 0.1.0",
- "rpc 0.1.0",
- "script 0.1.0",
- "storage 0.1.0",
- "sync 0.1.0",
- "verification 0.1.0",
-]
-
-[[package]]
 name = "quick-error"
 version = "1.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2130,6 +2104,32 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 name = "yaml-rust"
 version = "0.3.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "zebra"
+version = "0.1.0"
+dependencies = [
+ "app_dirs 1.2.1 (git+https://github.com/paritytech/app-dirs-rs)",
+ "chain 0.1.0",
+ "clap 2.32.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "db 0.1.0",
+ "env_logger 0.5.13 (registry+https://github.com/rust-lang/crates.io-index)",
+ "import 0.1.0",
+ "keys 0.1.0",
+ "libc 0.2.58 (registry+https://github.com/rust-lang/crates.io-index)",
+ "log 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "logs 0.1.0",
+ "message 0.1.0",
+ "miner 0.1.0",
+ "network 0.1.0",
+ "p2p 0.1.0",
+ "primitives 0.1.0",
+ "rpc 0.1.0",
+ "script 0.1.0",
+ "storage 0.1.0",
+ "sync 0.1.0",
+ "verification 0.1.0",
+]
 
 [metadata]
 "checksum abstract-ns 0.3.4 (registry+https://github.com/rust-lang/crates.io-index)" = "2f451afbdf8ed8c8f8a98433055bb9a6b7a72aef4baff16227d2a43dd547f43b"

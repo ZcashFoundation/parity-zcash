@@ -12,10 +12,10 @@ echo "https://github.com/paritytech/parity-bitcoin/" >> deb/DEBIAN/docs
 echo "8" >> deb/DEBIAN/compat
 #create control file
 control=deb/DEBIAN/control
-echo "Package: pbtc" >> $control
+echo "Package: zebra" >> $control
 version=`grep -m 1 version Cargo.toml | awk '{print $3}' | tr -d '"' | tr -d "\n"`
 echo "Version: $version" >> $control
-echo "Source: pbtc" >> $control
+echo "Source: zebra" >> $control
 echo "Section: science" >> $control
 echo "Priority: extra" >> $control
 echo "Maintainer: Parity Technologies <devops@parity.io>" >> $control
