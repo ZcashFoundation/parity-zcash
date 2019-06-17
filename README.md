@@ -12,7 +12,7 @@
 
 - [Going online](#going-online)
 
-- [Importing bitcoind database](#importing-zcashd-database)
+- [Importing zcashd database](#importing-zcashd-database)
 
 - [Command line interface](#command-line-interface)
 
