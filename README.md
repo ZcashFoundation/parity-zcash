@@ -1,4 +1,4 @@
-# Zebra
+# Zebra: the Zcash Foundation client.
 
 [![Build Status][travis-image]][travis-url]
 
