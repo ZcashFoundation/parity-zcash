@@ -46,7 +46,7 @@ Windows binaries can be downloaded from [rust-lang website](https://forge.rust-l
 
 #### Install C and C++ compilers
 
-You will need the cc and gcc compilers to build some of the dependencies.
+You will need the clang and gcc compilers plus cmake to build some of the dependencies.
 
 On macOS <br />
 
@@ -58,7 +58,7 @@ xcode-select --install
 On Linux
 ```
 sudo apt-get update
-sudo apt-get install build-essential
+sudo apt-get install build-essential cmake clang
 ```
 
 #### Clone and build zebra
