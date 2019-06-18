@@ -9,7 +9,7 @@ blake2-rfc = { git = "https://github.com/gtank/blake2-rfc.git", rev = "7a5b5fc99
 blake2b_simd = { git = "https://github.com/oconnor663/blake2b_simd.git" }
 bn = { git = "https://github.com/paritytech/bn" }
 ed25519-dalek = "1.0.0-pre.1"
-lazy_static = "1.2.0"
+lazy_static = "1.3.0"
 pairing = "0.14.2"
 primitives = { path = "../primitives" }
 rust-crypto = { git = "https://github.com/nikvolf/rust-crypto", branch = "no-pad" }
