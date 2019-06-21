@@ -41,6 +41,12 @@ action "Push image to GCR" {
   args = ["docker push gcr.io/zebrad/master"]
 }
 
+action "Build Fuzzers" {
+  needs = ["Push image to GCR"]
+  uses = "docker://gcr.io/zebrad/master:latest"
+  runs = ["sh", "-c", "cd fuzz/ && cargo install --force afl honggfuzz && cargo hfuzz build && cargo afl build && exit 0"]
+}
+
 # action "Benchmark" {
 # needs = ["if branch = master:"]
 #   uses = "docker://gcr.io/zebrad/master:latest"
@@ -52,9 +58,3 @@ action "Push image to GCR" {
 #   uses = "docker://gcr.io/zebrad/master:latest"
 #   runs = "cargo doc"
 # }
-
-action "Build Fuzzers" {
-  needs = ["Push image to GCR"]
-  uses = "docker://gcr.io/zebrad/master:latest"
-  runs = ["sh", "-c", "cd fuzz/ && cargo install --force afl honggfuzz && cargo hfuzz build && cargo afl build"]
-}
