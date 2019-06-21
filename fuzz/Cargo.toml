@@ -1,0 +1,30 @@
+
+[package]
+name = "pzec-fuzz"
+version = "0.0.1"
+authors = ["Automatically generated"]
+publish = false
+
+[package.metadata]
+cargo-fuzz = true
+
+[features]
+afl_fuzz = ["afl"]
+honggfuzz_fuzz = ["honggfuzz"]
+
+
+[dependencies]
+honggfuzz = { version = "0.5", optional = true }
+afl = { version = "0.4", optional = true }
+bitcrypto = { path = "../crypto"}
+
+# [dependencies.libfuzzer-sys]
+# git = "https://github.com/rust-fuzz/libfuzzer-sys.git"
+
+# Prevent this from interfering with workspaces
+[workspace]
+members = ["."]
+
+[[bin]]
+name = "crypto"
+path = "fuzz_targets/crypto.rs"
