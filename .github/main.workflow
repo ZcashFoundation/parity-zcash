@@ -1,6 +1,6 @@
 workflow "On Push" {
+  resolves = ["Build Fuzzers"]
   on = "push"
-  resolves = ["Push image to GCR"]
 }
 
 action "Build and Test Image" {
@@ -52,6 +52,7 @@ action "Build Fuzzers" {
 #   uses = "docker://gcr.io/zebrad/master:latest"
 #   runs = "./tools/bench.sh"
 # }
+
 
 # action "Doc" {
 #   needs = ["if branch = master:"]
