@@ -16,8 +16,6 @@ COPY --from=gcr.io/zebrad/master:latest /zebra/target /zebra/target
 # Copy cached .cargo/ from master
 COPY --from=gcr.io/zebrad/master:latest /zebra/.cargo /zebra/.cargo
 
-RUN ls -la /zebra/.cargo/ && ls -la /zebra/target/
-
 # Copy local code to the container image.
 # Assumes that we are in the git repo.
 COPY . .

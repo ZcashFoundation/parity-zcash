@@ -85,55 +85,8 @@ pub struct ConsensusParams {
 }
 
 fn mainnet_pghr_verification_key() -> crypto::Pghr13VerifyingKey {
-	crypto::json::pghr13::decode(include_bytes!("../../res/sprout-verifying-key.json")).expect("verifying key json invalid").into()
-}
-
-fn testnet_pghr_verification_key() -> crypto::Pghr13VerifyingKey {
-	use crypto::curve::bn::{G1, G2, Group};
-
-	// TODO: Actually use group elements for testnet
-	crypto::Pghr13VerifyingKey {
-		a: G2::one(),
-		b: G1::one(),
-		c: G2::one(),
-		z: G2::one(),
-		gamma: G2::one(),
-		gamma_beta_1: G1::one(),
-		gamma_beta_2: G2::one(),
-		ic: Vec::new(),
-	}
-}
-
-fn regtest_pghr_verification_key() -> crypto::Pghr13VerifyingKey {
-	use crypto::curve::bn::{G1, G2, Group};
-
-	// TODO: Actually use group elements for regtests
-	crypto::Pghr13VerifyingKey {
-		a: G2::one(),
-		b: G1::one(),
-		c: G2::one(),
-		z: G2::one(),
-		gamma: G2::one(),
-		gamma_beta_1: G1::one(),
-		gamma_beta_2: G2::one(),
-		ic: Vec::new(),
-	}
-}
-
-fn unitest_pghr_verification_key() -> crypto::Pghr13VerifyingKey {
-	use crypto::curve::bn::{G1, G2, Group};
-
-	// TODO: Actually use group elements for unit tests
-	crypto::Pghr13VerifyingKey {
-		a: G2::one(),
-		b: G1::one(),
-		c: G2::one(),
-		z: G2::one(),
-		gamma: G2::one(),
-		gamma_beta_1: G1::one(),
-		gamma_beta_2: G2::one(),
-		ic: Vec::new(),
-	}
+	crypto::json::pghr13::decode(include_bytes!("../../res/sprout-verifying-key.json"))
+		.expect("verifying key json invalid").into()
 }
 
 impl ConsensusParams {
@@ -293,7 +246,7 @@ impl ConsensusParams {
 
 				equihash_params: Some((200, 9)),
 
-				joinsplit_verification_key: testnet_pghr_verification_key(),
+				joinsplit_verification_key: mainnet_pghr_verification_key(),
 				joinsplit_groth16_verification_key: &JOINSPLIT_GROTH16_VK,
 
 				sapling_spend_verifying_key: &SAPLING_SPEND_VK,
@@ -327,7 +280,7 @@ impl ConsensusParams {
 
 				equihash_params: Some((200, 9)),
 
-				joinsplit_verification_key: regtest_pghr_verification_key(),
+				joinsplit_verification_key: mainnet_pghr_verification_key(),
 				joinsplit_groth16_verification_key: &JOINSPLIT_GROTH16_VK,
 
 				sapling_spend_verifying_key: &SAPLING_SPEND_VK,
@@ -360,7 +313,7 @@ impl ConsensusParams {
 
 				equihash_params: None,
 
-				joinsplit_verification_key: unitest_pghr_verification_key(),
+				joinsplit_verification_key: mainnet_pghr_verification_key(),
 				joinsplit_groth16_verification_key: &JOINSPLIT_GROTH16_VK,
 
 				sapling_spend_verifying_key: &SAPLING_SPEND_VK,
