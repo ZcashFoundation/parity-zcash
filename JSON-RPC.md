@@ -1,6 +1,6 @@
 # JSON-RPC
 
-The JSON-RPC interface is served on port :8232 for mainnet and :18232 for testnet unless you specified otherwise. So if you are using testnet, you will need to change the port in the sample curl requests shown below.
+The JSON-RPC interface is served on port :8232 for mainnet, and :18232 for testnet-or-regtest mode, unless you specified otherwise. So if you are using testnet-or-regtest, you will need to change the port in the sample curl requests shown below.
 
 ### Network
 
