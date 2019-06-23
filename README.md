@@ -50,7 +50,7 @@ You will need the clang and gcc compilers plus cmake to build some of the depend
 
 On macOS <br />
 
-`build-essential` is a Debian package. On macOS you will need to make sure you have Xcode installed. If you already have Homebrew installed, you probably also already have the Xcode tools installed as well. If not, you can run the command below:
+You will need to make sure you have Xcode installed. If you already have Homebrew installed, you probably also already have the Xcode tools installed as well. If not, you can run the command below:
 ```
 xcode-select --install
 ```
