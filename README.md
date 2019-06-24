@@ -2,6 +2,10 @@
 
 [![Build Status][travis-image]][travis-url]
 
+⚠️ Zebra is currently alpha software and subject to change. We do not recommend running Zebra on mainnet yet. ⚠️
+
+We are currently in the process of heavy refactoring; for the next several weeks, it's very likely that external PRs may fall out of sync or have code refactored out from under them.
+
 ## Blog: [Parity teams up with Zcash Foundation for Parity Zcash client](https://www.parity.io/parity-teams-up-with-zcash-foundation-for-parity-zcash-client/)
 
 - [Installing from source](#installing-from-source)
