@@ -389,25 +389,38 @@ mod tests {
 		}
 	}
 
-	fn test_equihash_verifier(input: &[u8], nonce: U256, solution: &[u32]) -> bool {
-		let solution = get_minimal_from_indices(solution, TestEquihash::BSTR_INDEX_BITS);
+	fn get_valid_equihash_solution() -> (Vec<u8>, Vec<u8>) {
+		let input = b"Equihash is an asymmetric PoW based on the Generalised Birthday problem.";
+		let nonce = U256::one();
+		let indices: &[u32] = &[2261, 15185, 36112, 104243, 23779, 118390, 118332, 130041, 32642, 69878, 76925, 80080, 45858, 116805, 92842, 111026, 15972, 115059, 85191, 90330, 68190, 122819, 81830, 91132, 23460, 49807, 52426, 80391, 69567, 114474, 104973, 122568];
+
+		let solution = get_minimal_from_indices(indices, TestEquihash::BSTR_INDEX_BITS);
 
 		let mut le_nonce = vec![0; 32];
 		nonce.to_little_endian(&mut le_nonce);
 		let mut input = input.to_vec();
 		input.extend(le_nonce);
 
-		verify_equihash_solution::<TestEquihash>(&input, &solution)
+		(input, solution)
 	}
 
 	#[test]
 	fn verify_equihash_solution_works() {
-		assert!(test_equihash_verifier(
-			b"Equihash is an asymmetric PoW based on the Generalised Birthday problem.",
-			U256::one(), &vec![
-				2261, 15185, 36112, 104243, 23779, 118390, 118332, 130041, 32642, 69878, 76925, 80080, 45858, 116805, 92842, 111026, 15972, 115059, 85191, 90330, 68190, 122819, 81830, 91132, 23460, 49807, 52426, 80391, 69567, 114474, 104973, 122568,
-			],
-		));
+		let (input, solution) = get_valid_equihash_solution();
+		assert!(verify_equihash_solution::<TestEquihash>(&input, &solution));
+	}
+
+	#[test]
+	fn no_ambiguity_in_equihash_minimal_solution() {
+		let (input, solution) = get_valid_equihash_solution();
+		// Make sure it starts off valid...
+		assert!(verify_equihash_solution::<TestEquihash>(&input, &solution));
+		// ...but any single bit flip will invalidate it.
+		for i in 0..(solution.len()*8) {
+			let mut solution_flip = solution.clone();
+			solution_flip[i/8] ^= 1 << (i % 8);
+			assert!(!verify_equihash_solution::<TestEquihash>(&input, &solution_flip));
+		}
 	}
 
 	#[test]
