@@ -16,12 +16,12 @@ pub use self::best_headers_chain::{BestHeadersChain, Information as BestHeadersC
 pub use self::bloom_filter::BloomFilter;
 pub use self::connection_filter::ConnectionFilter;
 pub use self::fee_rate_filter::FeeRateFilter;
-pub use self::hash_queue::{HashQueue, HashQueueChain, HashPosition};
-pub use self::known_hash_filter::{KnownHashType, KnownHashFilter};
+pub use self::hash_queue::{HashPosition, HashQueue, HashQueueChain};
+pub use self::known_hash_filter::{KnownHashFilter, KnownHashType};
 pub use self::memory_pool_transaction_provider::MemoryPoolTransactionOutputProvider;
 pub use self::orphan_blocks_pool::OrphanBlocksPool;
-pub use self::orphan_transactions_pool::{OrphanTransactionsPool, OrphanTransaction};
-pub use self::partial_merkle_tree::{PartialMerkleTree, build_partial_merkle_tree};
+pub use self::orphan_transactions_pool::{OrphanTransaction, OrphanTransactionsPool};
+pub use self::partial_merkle_tree::{build_partial_merkle_tree, PartialMerkleTree};
 pub use self::synchronization_state::SynchronizationState;
 
 /// Block height type

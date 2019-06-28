@@ -54,24 +54,24 @@
 extern crate time;
 #[macro_use]
 extern crate log;
-extern crate parking_lot;
-extern crate rayon;
 extern crate byteorder;
+extern crate parking_lot;
 #[cfg(test)]
 extern crate rand;
+extern crate rayon;
 extern crate rustc_hex as hex;
 #[macro_use]
 extern crate bitflags;
 
-extern crate storage;
+extern crate bitcrypto as crypto;
+extern crate bitvec;
 extern crate chain;
 extern crate keys;
 extern crate network;
 extern crate primitives;
-extern crate serialization as ser;
 extern crate script;
-extern crate bitcrypto as crypto;
-extern crate bitvec;
+extern crate serialization as ser;
+extern crate storage;
 
 #[cfg(test)]
 extern crate db;
@@ -80,8 +80,8 @@ extern crate db;
 #[macro_use]
 extern crate assert_matches;
 
-pub mod constants;
 mod canon;
+pub mod constants;
 mod deployments;
 mod equihash;
 mod error;
@@ -109,44 +109,44 @@ mod chain_verifier;
 
 mod tree_cache;
 
-pub use primitives::{bigint, hash, compact};
+pub use primitives::{bigint, compact, hash};
 
-pub use canon::{CanonBlock, CanonHeader, CanonTransaction};
 pub use accept_block::BlockAcceptor;
 pub use accept_chain::ChainAcceptor;
 pub use accept_header::HeaderAcceptor;
-pub use accept_transaction::{TransactionAcceptor, MemoryPoolTransactionAcceptor};
+pub use accept_transaction::{MemoryPoolTransactionAcceptor, TransactionAcceptor};
+pub use canon::{CanonBlock, CanonHeader, CanonTransaction};
 
 pub use verify_block::BlockVerifier;
 pub use verify_chain::ChainVerifier;
 pub use verify_header::HeaderVerifier;
-pub use verify_transaction::{TransactionVerifier, MemoryPoolTransactionVerifier};
+pub use verify_transaction::{MemoryPoolTransactionVerifier, TransactionVerifier};
 
 pub use chain_verifier::BackwardsCompatibleChainVerifier;
+pub use deployments::Deployments;
 pub use error::{Error, TransactionError};
 pub use fee::checked_transaction_fee;
 pub use sigops::transaction_sigops;
 pub use timestamp::{median_timestamp, median_timestamp_inclusive};
-pub use work::{work_required, is_valid_proof_of_work, is_valid_proof_of_work_hash};
-pub use deployments::Deployments;
 pub use tree_cache::TreeCache;
+pub use work::{is_valid_proof_of_work, is_valid_proof_of_work_hash, work_required};
 
 bitflags! {
-	/// Blocks verification level.
-	pub struct VerificationLevel: u32 {
-		/// Base level: perform full block verification.
-		const FULL = 0x00000001;
-		/// Base level: transaction scripts are not checked.
-		const HEADER = 0x00000002;
-		/// Base level: no blocks verification at all.
-		const NO_VERIFICATION = 0x00000004;
+    /// Blocks verification level.
+    pub struct VerificationLevel: u32 {
+        /// Base level: perform full block verification.
+        const FULL = 0x00000001;
+        /// Base level: transaction scripts are not checked.
+        const HEADER = 0x00000002;
+        /// Base level: no blocks verification at all.
+        const NO_VERIFICATION = 0x00000004;
 
-		/// This bit is set if header pre-verification (non-context) has already been performed for the block.
-		const HINT_HEADER_PRE_VERIFIED = 0x10000000;
-	}
+        /// This bit is set if header pre-verification (non-context) has already been performed for the block.
+        const HINT_HEADER_PRE_VERIFIED = 0x10000000;
+    }
 }
 
 /// Interface for block verification
-pub trait Verify : Send + Sync {
-	fn verify(&self, level: VerificationLevel, block: &chain::IndexedBlock) -> Result<(), Error>;
+pub trait Verify: Send + Sync {
+    fn verify(&self, level: VerificationLevel, block: &chain::IndexedBlock) -> Result<(), Error>;
 }

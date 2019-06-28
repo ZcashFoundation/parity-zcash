@@ -1,14 +1,14 @@
-use std::net;
-use network::Magic;
+use io::SharedTcpStream;
 use message::common::Services;
 use message::types;
-use io::SharedTcpStream;
+use network::Magic;
+use std::net;
 
 pub struct Connection {
-	pub stream: SharedTcpStream,
-	pub version: u32,
-	pub version_message: types::Version,
-	pub magic: Magic,
-	pub services: Services,
-	pub address: net::SocketAddr,
+    pub stream: SharedTcpStream,
+    pub version: u32,
+    pub version_message: types::Version,
+    pub magic: Magic,
+    pub services: Services,
+    pub address: net::SocketAddr,
 }

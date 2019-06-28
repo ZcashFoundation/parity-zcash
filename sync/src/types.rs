@@ -1,10 +1,10 @@
-use std::sync::Arc;
+use super::SyncListener;
 use futures::Future;
-use parking_lot::{Mutex, RwLock};
-use storage;
 use local_node::LocalNode;
 use miner::MemoryPool;
-use super::SyncListener;
+use parking_lot::{Mutex, RwLock};
+use std::sync::Arc;
+use storage;
 use synchronization_client::SynchronizationClient;
 use synchronization_executor::LocalSynchronizationTaskExecutor;
 use synchronization_peers::Peers;
@@ -21,7 +21,7 @@ pub type RequestId = u32;
 pub type PeerIndex = usize;
 
 // No-error, no-result future
-pub type EmptyBoxFuture = Box<Future<Item=(), Error=()> + Send>;
+pub type EmptyBoxFuture = Box<Future<Item = (), Error = ()> + Send>;
 
 /// Reference to storage
 pub type StorageRef = storage::SharedStore;
@@ -48,7 +48,9 @@ pub type ClientCoreRef<T> = Arc<Mutex<T>>;
 pub type ServerRef<T> = Arc<T>;
 
 /// Reference to local node
-pub type LocalNodeRef = Arc<LocalNode<ServerImpl, SynchronizationClient<LocalSynchronizationTaskExecutor, AsyncVerifier>>>;
+pub type LocalNodeRef = Arc<
+    LocalNode<ServerImpl, SynchronizationClient<LocalSynchronizationTaskExecutor, AsyncVerifier>>,
+>;
 
 /// Synchronization events listener reference
 pub type SyncListenerRef = Box<SyncListener>;

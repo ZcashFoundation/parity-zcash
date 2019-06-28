@@ -2,597 +2,666 @@
 
 use byteorder::{ByteOrder, LittleEndian};
 use bytes::Bytes;
-use crypto::{dhash256, blake2b_personal};
+use chain::{
+    JoinSplit, OutPoint, Sapling, Transaction, TransactionInput, TransactionOutput,
+    SAPLING_TX_VERSION_GROUP_ID,
+};
+use crypto::{blake2b_personal, dhash256};
 use hash::H256;
 use ser::Stream;
-use chain::{Transaction, TransactionOutput, OutPoint, TransactionInput, JoinSplit,
-	Sapling, SAPLING_TX_VERSION_GROUP_ID};
 use Script;
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 #[repr(u8)]
 pub enum SighashBase {
-	All = 1,
-	None = 2,
-	Single = 3,
+    All = 1,
+    None = 2,
+    Single = 3,
 }
 
 impl From<SighashBase> for u32 {
-	fn from(s: SighashBase) -> Self {
-		s as u32
-	}
+    fn from(s: SighashBase) -> Self {
+        s as u32
+    }
 }
 
 /// Signature portions cache.
 #[derive(Debug, Default, PartialEq)]
 pub struct SighashCache {
-	pub hash_prevouts: Option<H256>,
-	pub hash_sequence: Option<H256>,
-	pub hash_outputs: Option<H256>,
-	pub hash_join_split: Option<H256>,
-	pub hash_sapling_spends: Option<H256>,
-	pub hash_sapling_outputs: Option<H256>,
+    pub hash_prevouts: Option<H256>,
+    pub hash_sequence: Option<H256>,
+    pub hash_outputs: Option<H256>,
+    pub hash_join_split: Option<H256>,
+    pub hash_sapling_spends: Option<H256>,
+    pub hash_sapling_outputs: Option<H256>,
 }
 
-#[cfg_attr(feature="cargo-clippy", allow(doc_markdown))]
+#[cfg_attr(feature = "cargo-clippy", allow(doc_markdown))]
 /// Signature hash type. [Documentation](https://en.bitcoin.it/wiki/OP_CHECKSIG#Procedure_for_Hashtype_SIGHASH_SINGLE)
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Sighash {
-	pub base: SighashBase,
-	pub anyone_can_pay: bool,
-	pub fork_id: bool,
+    pub base: SighashBase,
+    pub anyone_can_pay: bool,
+    pub fork_id: bool,
 }
 
 impl From<Sighash> for u32 {
-	fn from(s: Sighash) -> Self {
-		let base = s.base as u32;
-		let base = if s.anyone_can_pay {
-			base | 0x80
-		} else {
-			base
-		};
+    fn from(s: Sighash) -> Self {
+        let base = s.base as u32;
+        let base = if s.anyone_can_pay { base | 0x80 } else { base };
 
-		if s.fork_id {
-			base | 0x40
-		} else {
-			base
-		}
-	}
+        if s.fork_id {
+            base | 0x40
+        } else {
+            base
+        }
+    }
 }
 
 impl Sighash {
-	pub fn new(base: SighashBase, anyone_can_pay: bool, fork_id: bool) -> Self {
-		Sighash {
-			base: base,
-			anyone_can_pay: anyone_can_pay,
-			fork_id: fork_id,
-		}
-	}
+    pub fn new(base: SighashBase, anyone_can_pay: bool, fork_id: bool) -> Self {
+        Sighash {
+            base: base,
+            anyone_can_pay: anyone_can_pay,
+            fork_id: fork_id,
+        }
+    }
 
-	/// Used by SCRIPT_VERIFY_STRICTENC
-	pub fn is_defined(u: u32) -> bool {
-		// reset anyone_can_pay && fork_id (if applicable) bits
-		let u = u & !(0x80);
+    /// Used by SCRIPT_VERIFY_STRICTENC
+    pub fn is_defined(u: u32) -> bool {
+        // reset anyone_can_pay && fork_id (if applicable) bits
+        let u = u & !(0x80);
 
-		// Only exact All | None | Single values are passing this check
-		match u {
-			1 | 2 | 3 => true,
-			_ => false,
-		}
-	}
+        // Only exact All | None | Single values are passing this check
+        match u {
+            1 | 2 | 3 => true,
+            _ => false,
+        }
+    }
 
-	/// Creates Sighash from any u, even if is_defined() == false
-	pub fn from_u32(u: u32) -> Self {
-		let anyone_can_pay = (u & 0x80) == 0x80;
-		let base = match u & 0x1f {
-			2 => SighashBase::None,
-			3 => SighashBase::Single,
-			1 | _ => SighashBase::All,
-		};
+    /// Creates Sighash from any u, even if is_defined() == false
+    pub fn from_u32(u: u32) -> Self {
+        let anyone_can_pay = (u & 0x80) == 0x80;
+        let base = match u & 0x1f {
+            2 => SighashBase::None,
+            3 => SighashBase::Single,
+            1 | _ => SighashBase::All,
+        };
 
-		Sighash::new(base, anyone_can_pay, false)
-	}
+        Sighash::new(base, anyone_can_pay, false)
+    }
 }
 
 #[derive(Debug)]
 pub struct UnsignedTransactionInput {
-	pub previous_output: OutPoint,
-	pub sequence: u32,
+    pub previous_output: OutPoint,
+    pub sequence: u32,
 }
 
 /// Used for resigning and loading test transactions
 impl From<TransactionInput> for UnsignedTransactionInput {
-	fn from(i: TransactionInput) -> Self {
-		UnsignedTransactionInput {
-			previous_output: i.previous_output,
-			sequence: i.sequence,
-		}
-	}
+    fn from(i: TransactionInput) -> Self {
+        UnsignedTransactionInput {
+            previous_output: i.previous_output,
+            sequence: i.sequence,
+        }
+    }
 }
 
 #[derive(Debug)]
 pub struct TransactionInputSigner {
-	pub overwintered: bool,
-	pub version: i32,
-	pub version_group_id: u32,
-	pub inputs: Vec<UnsignedTransactionInput>,
-	pub outputs: Vec<TransactionOutput>,
-	pub lock_time: u32,
-	pub expiry_height: u32,
-	pub join_split: Option<JoinSplit>,
-	pub sapling: Option<Sapling>,
+    pub overwintered: bool,
+    pub version: i32,
+    pub version_group_id: u32,
+    pub inputs: Vec<UnsignedTransactionInput>,
+    pub outputs: Vec<TransactionOutput>,
+    pub lock_time: u32,
+    pub expiry_height: u32,
+    pub join_split: Option<JoinSplit>,
+    pub sapling: Option<Sapling>,
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 enum SignatureVersion {
-	Sprout,
-	Overwinter,
-	Sapling,
+    Sprout,
+    Overwinter,
+    Sapling,
 }
 
 /// Used for resigning and loading test transactions
 impl From<Transaction> for TransactionInputSigner {
-	fn from(t: Transaction) -> Self {
-		TransactionInputSigner {
-			overwintered: t.overwintered,
-			version: t.version,
-			version_group_id: t.version_group_id,
-			inputs: t.inputs.into_iter().map(Into::into).collect(),
-			outputs: t.outputs,
-			lock_time: t.lock_time,
-			expiry_height: t.expiry_height,
-			join_split: t.join_split,
-			sapling: t.sapling,
-		}
-	}
+    fn from(t: Transaction) -> Self {
+        TransactionInputSigner {
+            overwintered: t.overwintered,
+            version: t.version,
+            version_group_id: t.version_group_id,
+            inputs: t.inputs.into_iter().map(Into::into).collect(),
+            outputs: t.outputs,
+            lock_time: t.lock_time,
+            expiry_height: t.expiry_height,
+            join_split: t.join_split,
+            sapling: t.sapling,
+        }
+    }
 }
 
 impl TransactionInputSigner {
-	/// Pass None as input_index to compute transparent input signature
-	pub fn signature_hash(
-		&self,
-		cache: &mut SighashCache,
-		input_index: Option<usize>,
-		input_amount: u64,
-		script_pubkey: &Script,
-		sighashtype: u32,
-		consensus_branch_id: u32,
-	) -> H256 {
-		let sighash = Sighash::from_u32(sighashtype);
-		let signature_version = self.signature_version();
-		match signature_version {
-			SignatureVersion::Sprout => self.signature_hash_sprout(input_index, script_pubkey, sighashtype, sighash),
-			SignatureVersion::Overwinter | SignatureVersion::Sapling => self.signature_hash_post_overwinter(
-				cache,
-				input_index,
-				input_amount,
-				script_pubkey,
-				sighashtype,
-				sighash,
-				consensus_branch_id,
-				signature_version == SignatureVersion::Sapling
-			),
-		}
-	}
+    /// Pass None as input_index to compute transparent input signature
+    pub fn signature_hash(
+        &self,
+        cache: &mut SighashCache,
+        input_index: Option<usize>,
+        input_amount: u64,
+        script_pubkey: &Script,
+        sighashtype: u32,
+        consensus_branch_id: u32,
+    ) -> H256 {
+        let sighash = Sighash::from_u32(sighashtype);
+        let signature_version = self.signature_version();
+        match signature_version {
+            SignatureVersion::Sprout => {
+                self.signature_hash_sprout(input_index, script_pubkey, sighashtype, sighash)
+            }
+            SignatureVersion::Overwinter | SignatureVersion::Sapling => self
+                .signature_hash_post_overwinter(
+                    cache,
+                    input_index,
+                    input_amount,
+                    script_pubkey,
+                    sighashtype,
+                    sighash,
+                    consensus_branch_id,
+                    signature_version == SignatureVersion::Sapling,
+                ),
+        }
+    }
 
-	/// Sprout version of the signature.
-	fn signature_hash_sprout(&self, input_index: Option<usize>, script_pubkey: &Script, sighashtype: u32, sighash: Sighash) -> H256 {
-		let input_index = match input_index {
-			Some(input_index) if input_index < self.inputs.len() => input_index,
-			_ => if sighash.anyone_can_pay || sighash.base == SighashBase::Single { return Default::default(); } else { usize::max_value()-1 },
-		};
-		let inputs = if sighash.anyone_can_pay {
-			let input = &self.inputs[input_index];
-			vec![TransactionInput {
-				previous_output: input.previous_output.clone(),
-				script_sig: script_pubkey.to_bytes(),
-				sequence: input.sequence,
-			}]
-		} else {
-			self.inputs.iter()
-				.enumerate()
-				.map(|(n, input)| TransactionInput {
-					previous_output: input.previous_output.clone(),
-					script_sig: if n == input_index {
-						script_pubkey.to_bytes()
-					} else {
-						Bytes::default()
-					},
-					sequence: match sighash.base {
-						SighashBase::Single | SighashBase::None if n != input_index => 0,
-						_ => input.sequence,
-					},
-				})
-				.collect()
-		};
+    /// Sprout version of the signature.
+    fn signature_hash_sprout(
+        &self,
+        input_index: Option<usize>,
+        script_pubkey: &Script,
+        sighashtype: u32,
+        sighash: Sighash,
+    ) -> H256 {
+        let input_index = match input_index {
+            Some(input_index) if input_index < self.inputs.len() => input_index,
+            _ => {
+                if sighash.anyone_can_pay || sighash.base == SighashBase::Single {
+                    return Default::default();
+                } else {
+                    usize::max_value() - 1
+                }
+            }
+        };
+        let inputs = if sighash.anyone_can_pay {
+            let input = &self.inputs[input_index];
+            vec![TransactionInput {
+                previous_output: input.previous_output.clone(),
+                script_sig: script_pubkey.to_bytes(),
+                sequence: input.sequence,
+            }]
+        } else {
+            self.inputs
+                .iter()
+                .enumerate()
+                .map(|(n, input)| TransactionInput {
+                    previous_output: input.previous_output.clone(),
+                    script_sig: if n == input_index {
+                        script_pubkey.to_bytes()
+                    } else {
+                        Bytes::default()
+                    },
+                    sequence: match sighash.base {
+                        SighashBase::Single | SighashBase::None if n != input_index => 0,
+                        _ => input.sequence,
+                    },
+                })
+                .collect()
+        };
 
-		let outputs = match sighash.base {
-			SighashBase::All => self.outputs.clone(),
-			SighashBase::Single => self.outputs.iter()
-				.take(input_index + 1)
-				.enumerate()
-				.map(|(n, out)| if n == input_index {
-					out.clone()
-				} else {
-					TransactionOutput::default()
-				})
-				.collect(),
-			SighashBase::None => Vec::new(),
-		};
+        let outputs = match sighash.base {
+            SighashBase::All => self.outputs.clone(),
+            SighashBase::Single => self
+                .outputs
+                .iter()
+                .take(input_index + 1)
+                .enumerate()
+                .map(|(n, out)| {
+                    if n == input_index {
+                        out.clone()
+                    } else {
+                        TransactionOutput::default()
+                    }
+                })
+                .collect(),
+            SighashBase::None => Vec::new(),
+        };
 
-		let tx = Transaction {
-			overwintered: self.overwintered,
-			version: self.version,
-			version_group_id: self.version_group_id,
-			inputs: inputs,
-			outputs: outputs,
-			lock_time: self.lock_time,
-			expiry_height: self.expiry_height,
-			join_split: self.join_split.as_ref().map(|js| {
-				JoinSplit {
-					descriptions: js.descriptions.clone(),
-					pubkey: js.pubkey.clone(),
-					sig: [0u8; 64].as_ref().into(), // null signature for signing
-				}
-			}),
-			sapling: None,
-		};
+        let tx = Transaction {
+            overwintered: self.overwintered,
+            version: self.version,
+            version_group_id: self.version_group_id,
+            inputs: inputs,
+            outputs: outputs,
+            lock_time: self.lock_time,
+            expiry_height: self.expiry_height,
+            join_split: self.join_split.as_ref().map(|js| {
+                JoinSplit {
+                    descriptions: js.descriptions.clone(),
+                    pubkey: js.pubkey.clone(),
+                    sig: [0u8; 64].as_ref().into(), // null signature for signing
+                }
+            }),
+            sapling: None,
+        };
 
-		let mut stream = Stream::default();
-		stream.append(&tx);
-		stream.append(&sighashtype);
-		let out = stream.out();
-		dhash256(&out)
-	}
+        let mut stream = Stream::default();
+        stream.append(&tx);
+        stream.append(&sighashtype);
+        let out = stream.out();
+        dhash256(&out)
+    }
 
-	/// Overwinter/sapling version of the signature.
-	fn signature_hash_post_overwinter(
-		&self,
-		cache: &mut SighashCache,
-		input_index: Option<usize>,
-		input_amount: u64,
-		script_pubkey: &Script,
-		sighashtype: u32,
-		sighash: Sighash,
-		consensus_branch_id: u32,
-		sapling: bool,
-	) -> H256 {
-		// compute signature portions that can be reused for other inputs
-		//
-		// compute_* decides if it wants to use cached value
-		// compute_* decides if it wants to cache computed value
-		let (hash_prevouts, cache_hash_prevouts) = compute_hash_prevouts(cache, sighash, &self.inputs);
-		let (hash_sequence, cache_hash_sequence) = compute_hash_sequence(cache, sighash, &self.inputs);
-		let (hash_outputs, cache_hash_outputs) = compute_hash_outputs(cache, sighash, input_index, &self.outputs);
-		let (hash_join_split, cache_hash_join_split) = compute_hash_join_split(cache, self.join_split.as_ref());
-		let (hash_sapling_spends, cache_hash_sapling_spends) = compute_hash_sapling_spends(cache, sapling, self.sapling.as_ref());
-		let (hash_sapling_outputs, cache_hash_sapling_outputs) = compute_hash_sapling_outputs(cache, sapling, self.sapling.as_ref());
+    /// Overwinter/sapling version of the signature.
+    fn signature_hash_post_overwinter(
+        &self,
+        cache: &mut SighashCache,
+        input_index: Option<usize>,
+        input_amount: u64,
+        script_pubkey: &Script,
+        sighashtype: u32,
+        sighash: Sighash,
+        consensus_branch_id: u32,
+        sapling: bool,
+    ) -> H256 {
+        // compute signature portions that can be reused for other inputs
+        //
+        // compute_* decides if it wants to use cached value
+        // compute_* decides if it wants to cache computed value
+        let (hash_prevouts, cache_hash_prevouts) =
+            compute_hash_prevouts(cache, sighash, &self.inputs);
+        let (hash_sequence, cache_hash_sequence) =
+            compute_hash_sequence(cache, sighash, &self.inputs);
+        let (hash_outputs, cache_hash_outputs) =
+            compute_hash_outputs(cache, sighash, input_index, &self.outputs);
+        let (hash_join_split, cache_hash_join_split) =
+            compute_hash_join_split(cache, self.join_split.as_ref());
+        let (hash_sapling_spends, cache_hash_sapling_spends) =
+            compute_hash_sapling_spends(cache, sapling, self.sapling.as_ref());
+        let (hash_sapling_outputs, cache_hash_sapling_outputs) =
+            compute_hash_sapling_outputs(cache, sapling, self.sapling.as_ref());
 
-		// update cache
-		if cache_hash_prevouts {
-			cache.hash_prevouts = Some(hash_prevouts);
-		}
-		if cache_hash_sequence {
-			cache.hash_sequence = Some(hash_sequence);
-		}
-		if cache_hash_outputs {
-			cache.hash_outputs = Some(hash_outputs);
-		}
-		if cache_hash_join_split {
-			cache.hash_join_split = Some(hash_join_split);
-		}
-		if cache_hash_sapling_spends {
-			cache.hash_sapling_spends = Some(hash_sapling_spends);
-		}
-		if cache_hash_sapling_outputs {
-			cache.hash_sapling_outputs = Some(hash_sapling_outputs);
-		}
+        // update cache
+        if cache_hash_prevouts {
+            cache.hash_prevouts = Some(hash_prevouts);
+        }
+        if cache_hash_sequence {
+            cache.hash_sequence = Some(hash_sequence);
+        }
+        if cache_hash_outputs {
+            cache.hash_outputs = Some(hash_outputs);
+        }
+        if cache_hash_join_split {
+            cache.hash_join_split = Some(hash_join_split);
+        }
+        if cache_hash_sapling_spends {
+            cache.hash_sapling_spends = Some(hash_sapling_spends);
+        }
+        if cache_hash_sapling_outputs {
+            cache.hash_sapling_outputs = Some(hash_sapling_outputs);
+        }
 
-		let mut personalization = [0u8; 16];
-		personalization[..12].copy_from_slice(b"ZcashSigHash");
-		LittleEndian::write_u32(&mut personalization[12..], consensus_branch_id);
+        let mut personalization = [0u8; 16];
+        personalization[..12].copy_from_slice(b"ZcashSigHash");
+        LittleEndian::write_u32(&mut personalization[12..], consensus_branch_id);
 
-		let mut version = self.version as u32;
-		if self.overwintered {
-			version = version | 0x80000000;
-		}
+        let mut version = self.version as u32;
+        if self.overwintered {
+            version = version | 0x80000000;
+        }
 
-		let mut stream = Stream::default();
-		stream.append(&version);
-		stream.append(&self.version_group_id);
-		stream.append(&hash_prevouts);
-		stream.append(&hash_sequence);
-		stream.append(&hash_outputs);
-		stream.append(&hash_join_split);
-		if sapling {
-			stream.append(&hash_sapling_spends);
-			stream.append(&hash_sapling_outputs);
-		}
-		stream.append(&self.lock_time);
-		stream.append(&self.expiry_height);
-		if sapling {
-			if let Some(ref sapling) = self.sapling {
-				stream.append(&sapling.balancing_value);
-			}
-		}
+        let mut stream = Stream::default();
+        stream.append(&version);
+        stream.append(&self.version_group_id);
+        stream.append(&hash_prevouts);
+        stream.append(&hash_sequence);
+        stream.append(&hash_outputs);
+        stream.append(&hash_join_split);
+        if sapling {
+            stream.append(&hash_sapling_spends);
+            stream.append(&hash_sapling_outputs);
+        }
+        stream.append(&self.lock_time);
+        stream.append(&self.expiry_height);
+        if sapling {
+            if let Some(ref sapling) = self.sapling {
+                stream.append(&sapling.balancing_value);
+            }
+        }
 
-		stream.append(&sighashtype);
+        stream.append(&sighashtype);
 
-		if let Some(input_index) = input_index {
-			stream.append(&self.inputs[input_index].previous_output);
-			stream.append_list(&**script_pubkey);
-			stream.append(&input_amount);
-			stream.append(&self.inputs[input_index].sequence);
-		}
+        if let Some(input_index) = input_index {
+            stream.append(&self.inputs[input_index].previous_output);
+            stream.append_list(&**script_pubkey);
+            stream.append(&input_amount);
+            stream.append(&self.inputs[input_index].sequence);
+        }
 
-		blake2b_personal(&personalization, &stream.out())
-	}
+        blake2b_personal(&personalization, &stream.out())
+    }
 
-	fn signature_version(&self) -> SignatureVersion {
-		if self.overwintered {
-			if self.version_group_id == SAPLING_TX_VERSION_GROUP_ID {
-				SignatureVersion::Sapling
-			} else {
-				SignatureVersion::Overwinter
-			}
-		} else {
-			SignatureVersion::Sprout
-		}
-	}
+    fn signature_version(&self) -> SignatureVersion {
+        if self.overwintered {
+            if self.version_group_id == SAPLING_TX_VERSION_GROUP_ID {
+                SignatureVersion::Sapling
+            } else {
+                SignatureVersion::Overwinter
+            }
+        } else {
+            SignatureVersion::Sprout
+        }
+    }
 }
 
 fn compute_hash_prevouts(
-	cache: &SighashCache,
-	sighash: Sighash,
-	inputs: &[UnsignedTransactionInput],
+    cache: &SighashCache,
+    sighash: Sighash,
+    inputs: &[UnsignedTransactionInput],
 ) -> (H256, bool) {
-	const PERSONALIZATION: &'static [u8; 16] = b"ZcashPrevoutHash";
+    const PERSONALIZATION: &'static [u8; 16] = b"ZcashPrevoutHash";
 
-	match sighash.anyone_can_pay {
-		false => (cache.hash_prevouts.unwrap_or_else(|| {
-			let mut stream = Stream::default();
-			for input in inputs {
-				stream.append(&input.previous_output);
-			}
-			blake2b_personal(PERSONALIZATION, &stream.out())
-		}), true),
-		true => (0u8.into(), false),
-	}
+    match sighash.anyone_can_pay {
+        false => (
+            cache.hash_prevouts.unwrap_or_else(|| {
+                let mut stream = Stream::default();
+                for input in inputs {
+                    stream.append(&input.previous_output);
+                }
+                blake2b_personal(PERSONALIZATION, &stream.out())
+            }),
+            true,
+        ),
+        true => (0u8.into(), false),
+    }
 }
 
 fn compute_hash_sequence(
-	cache: &SighashCache,
-	sighash: Sighash,
-	inputs: &[UnsignedTransactionInput],
+    cache: &SighashCache,
+    sighash: Sighash,
+    inputs: &[UnsignedTransactionInput],
 ) -> (H256, bool) {
-	const PERSONALIZATION: &'static [u8; 16] = b"ZcashSequencHash";
+    const PERSONALIZATION: &'static [u8; 16] = b"ZcashSequencHash";
 
-	match sighash.base {
-		SighashBase::All if !sighash.anyone_can_pay => (cache.hash_sequence.unwrap_or_else(|| {
-			let mut stream = Stream::default();
-			for input in inputs {
-				stream.append(&input.sequence);
-			}
-			blake2b_personal(PERSONALIZATION, &stream.out())
-		}), true),
-		_ => (0u8.into(), false),
-	}
+    match sighash.base {
+        SighashBase::All if !sighash.anyone_can_pay => (
+            cache.hash_sequence.unwrap_or_else(|| {
+                let mut stream = Stream::default();
+                for input in inputs {
+                    stream.append(&input.sequence);
+                }
+                blake2b_personal(PERSONALIZATION, &stream.out())
+            }),
+            true,
+        ),
+        _ => (0u8.into(), false),
+    }
 }
 
 fn compute_hash_outputs(
-	cache: &SighashCache,
-	sighash: Sighash,
-	input_index: Option<usize>,
-	outputs: &[TransactionOutput]
+    cache: &SighashCache,
+    sighash: Sighash,
+    input_index: Option<usize>,
+    outputs: &[TransactionOutput],
 ) -> (H256, bool) {
-	const PERSONALIZATION: &'static [u8; 16] = b"ZcashOutputsHash";
+    const PERSONALIZATION: &'static [u8; 16] = b"ZcashOutputsHash";
 
-	match (sighash.base, input_index) {
-		(SighashBase::All, _) => (cache.hash_outputs.unwrap_or_else(|| {
-			let mut stream = Stream::default();
-			for output in outputs {
-				stream.append(output);
-			}
-			blake2b_personal(PERSONALIZATION, &stream.out())
-		}), true),
-		(SighashBase::Single, Some(input_index)) if input_index < outputs.len() => {
-			let mut stream = Stream::default();
-			stream.append(&outputs[input_index]);
-			(blake2b_personal(PERSONALIZATION, &stream.out()), false)
-		},
-		_ => (0u8.into(), false),
-	}
+    match (sighash.base, input_index) {
+        (SighashBase::All, _) => (
+            cache.hash_outputs.unwrap_or_else(|| {
+                let mut stream = Stream::default();
+                for output in outputs {
+                    stream.append(output);
+                }
+                blake2b_personal(PERSONALIZATION, &stream.out())
+            }),
+            true,
+        ),
+        (SighashBase::Single, Some(input_index)) if input_index < outputs.len() => {
+            let mut stream = Stream::default();
+            stream.append(&outputs[input_index]);
+            (blake2b_personal(PERSONALIZATION, &stream.out()), false)
+        }
+        _ => (0u8.into(), false),
+    }
 }
 
-fn compute_hash_join_split(
-	cache: &SighashCache,
-	join_split: Option<&JoinSplit>,
-) -> (H256, bool) {
-	const PERSONALIZATION: &'static [u8; 16] = b"ZcashJSplitsHash";
+fn compute_hash_join_split(cache: &SighashCache, join_split: Option<&JoinSplit>) -> (H256, bool) {
+    const PERSONALIZATION: &'static [u8; 16] = b"ZcashJSplitsHash";
 
-	match join_split {
-		Some(join_split) if !join_split.descriptions.is_empty() => (cache.hash_join_split.unwrap_or_else(|| {
-			let mut stream = Stream::default();
-			for description in &join_split.descriptions {
-				stream.append(description);
-			}
-			stream.append(&join_split.pubkey);
-			blake2b_personal(PERSONALIZATION, &stream.out())
-		}), true),
-		_ => (0u8.into(), false),
-	}
+    match join_split {
+        Some(join_split) if !join_split.descriptions.is_empty() => (
+            cache.hash_join_split.unwrap_or_else(|| {
+                let mut stream = Stream::default();
+                for description in &join_split.descriptions {
+                    stream.append(description);
+                }
+                stream.append(&join_split.pubkey);
+                blake2b_personal(PERSONALIZATION, &stream.out())
+            }),
+            true,
+        ),
+        _ => (0u8.into(), false),
+    }
 }
 
 fn compute_hash_sapling_spends(
-	cache: &SighashCache,
-	is_sapling: bool,
-	sapling: Option<&Sapling>,
+    cache: &SighashCache,
+    is_sapling: bool,
+    sapling: Option<&Sapling>,
 ) -> (H256, bool) {
-	const PERSONALIZATION: &'static [u8; 16] = b"ZcashSSpendsHash";
+    const PERSONALIZATION: &'static [u8; 16] = b"ZcashSSpendsHash";
 
-	if !is_sapling {
-		return (0u8.into(), false);
-	}
+    if !is_sapling {
+        return (0u8.into(), false);
+    }
 
-	match sapling {
-		Some(sapling) if !sapling.spends.is_empty() => (cache.hash_sapling_spends.unwrap_or_else(|| {
-			let mut stream = Stream::default();
-			for spend in &sapling.spends {
-				stream.append(&spend.value_commitment);
-				stream.append(&spend.anchor);
-				stream.append(&spend.nullifier);
-				stream.append(&spend.randomized_key);
-				stream.append(&spend.zkproof);
-			}
-			blake2b_personal(PERSONALIZATION, &stream.out())
-		}), true),
-		_ => (0u8.into(), false),
-	}
+    match sapling {
+        Some(sapling) if !sapling.spends.is_empty() => (
+            cache.hash_sapling_spends.unwrap_or_else(|| {
+                let mut stream = Stream::default();
+                for spend in &sapling.spends {
+                    stream.append(&spend.value_commitment);
+                    stream.append(&spend.anchor);
+                    stream.append(&spend.nullifier);
+                    stream.append(&spend.randomized_key);
+                    stream.append(&spend.zkproof);
+                }
+                blake2b_personal(PERSONALIZATION, &stream.out())
+            }),
+            true,
+        ),
+        _ => (0u8.into(), false),
+    }
 }
 
 fn compute_hash_sapling_outputs(
-	cache: &SighashCache,
-	is_sapling: bool,
-	sapling: Option<&Sapling>,
+    cache: &SighashCache,
+    is_sapling: bool,
+    sapling: Option<&Sapling>,
 ) -> (H256, bool) {
-	const PERSONALIZATION: &'static [u8; 16] = b"ZcashSOutputHash";
+    const PERSONALIZATION: &'static [u8; 16] = b"ZcashSOutputHash";
 
-	if !is_sapling {
-		return (0u8.into(), false);
-	}
+    if !is_sapling {
+        return (0u8.into(), false);
+    }
 
-	match sapling {
-		Some(sapling) if !sapling.outputs.is_empty() => (cache.hash_sapling_outputs.unwrap_or_else(|| {
-			let mut stream = Stream::default();
-			for output in &sapling.outputs {
-				stream.append(output);
-			}
-			blake2b_personal(PERSONALIZATION, &stream.out())
-		}), true),
-		_ => (0u8.into(), false),
-	}
+    match sapling {
+        Some(sapling) if !sapling.outputs.is_empty() => (
+            cache.hash_sapling_outputs.unwrap_or_else(|| {
+                let mut stream = Stream::default();
+                for output in &sapling.outputs {
+                    stream.append(output);
+                }
+                blake2b_personal(PERSONALIZATION, &stream.out())
+            }),
+            true,
+        ),
+        _ => (0u8.into(), false),
+    }
 }
 
 #[cfg(test)]
 mod tests {
-	use hex::FromHex;
-	use serde_json::{Value, from_slice};
-	use bytes::Bytes;
-	use hash::H256;
-	use keys::{KeyPair, Private, Address};
-	use chain::{OutPoint, TransactionOutput, Transaction};
-	use script::Script;
-	use ser::deserialize;
-	use super::{Sighash, UnsignedTransactionInput, TransactionInputSigner, SighashBase};
-	use {verify_script, VerificationFlags, TransactionSignatureChecker};
+    use super::{Sighash, SighashBase, TransactionInputSigner, UnsignedTransactionInput};
+    use bytes::Bytes;
+    use chain::{OutPoint, Transaction, TransactionOutput};
+    use hash::H256;
+    use hex::FromHex;
+    use keys::{Address, KeyPair, Private};
+    use script::Script;
+    use ser::deserialize;
+    use serde_json::{from_slice, Value};
+    use {verify_script, TransactionSignatureChecker, VerificationFlags};
 
-	#[test]
-	fn test_signature_hash_simple() {
-		let private: Private = "5HxWvvfubhXpYYpS3tJkw6fq9jE9j18THftkZjHHfmFiWtmAbrj".into();
-		let previous_tx_hash = H256::from_reversed_str("81b4c832d70cb56ff957589752eb4125a4cab78a25a8fc52d6a09e5bd4404d48");
-		let previous_output_index = 0;
-		let from: Address = "t1h8SqgtM3QM5e2M8EzhhT1yL2PXXtA6oqe".into();
-		let to: Address = "t1Xxa5ZVPKvs9bGMn7aWTiHjyHvR31XkUst".into();
-		let previous_output = "76a914df3bd30160e6c6145baaf2c88a8844c13a00d1d588ac".into();
-		let current_output: Bytes = "76a9149a823b698f778ece90b094dc3f12a81f5e3c334588ac".into();
-		let value = 91234;
-		let expected_signature_hash = "f6d326b3b48fd8f6d6e29b590d76507aebe647043b1588a35605e9405234e391".into();
+    #[test]
+    fn test_signature_hash_simple() {
+        let private: Private = "5HxWvvfubhXpYYpS3tJkw6fq9jE9j18THftkZjHHfmFiWtmAbrj".into();
+        let previous_tx_hash = H256::from_reversed_str(
+            "81b4c832d70cb56ff957589752eb4125a4cab78a25a8fc52d6a09e5bd4404d48",
+        );
+        let previous_output_index = 0;
+        let from: Address = "t1h8SqgtM3QM5e2M8EzhhT1yL2PXXtA6oqe".into();
+        let to: Address = "t1Xxa5ZVPKvs9bGMn7aWTiHjyHvR31XkUst".into();
+        let previous_output = "76a914df3bd30160e6c6145baaf2c88a8844c13a00d1d588ac".into();
+        let current_output: Bytes = "76a9149a823b698f778ece90b094dc3f12a81f5e3c334588ac".into();
+        let value = 91234;
+        let expected_signature_hash =
+            "f6d326b3b48fd8f6d6e29b590d76507aebe647043b1588a35605e9405234e391".into();
 
-		// this is irrelevant
-		let kp = KeyPair::from_private(private).unwrap();
-		assert_eq!(kp.address(), from);
-		assert_eq!(&current_output[3..23], &*to.hash);
+        // this is irrelevant
+        let kp = KeyPair::from_private(private).unwrap();
+        assert_eq!(kp.address(), from);
+        assert_eq!(&current_output[3..23], &*to.hash);
 
-		let unsigned_input = UnsignedTransactionInput {
-			sequence: 0xffff_ffff,
-			previous_output: OutPoint {
-				index: previous_output_index,
-				hash: previous_tx_hash,
-			},
-		};
+        let unsigned_input = UnsignedTransactionInput {
+            sequence: 0xffff_ffff,
+            previous_output: OutPoint {
+                index: previous_output_index,
+                hash: previous_tx_hash,
+            },
+        };
 
-		let output = TransactionOutput {
-			value: value,
-			script_pubkey: current_output,
-		};
+        let output = TransactionOutput {
+            value: value,
+            script_pubkey: current_output,
+        };
 
-		let input_signer = TransactionInputSigner {
-			overwintered: false,
-			version: 1,
-			version_group_id: 0,
-			lock_time: 0,
-			expiry_height: 0,
-			inputs: vec![unsigned_input],
-			outputs: vec![output],
-			join_split: None,
-			sapling: None,
-		};
+        let input_signer = TransactionInputSigner {
+            overwintered: false,
+            version: 1,
+            version_group_id: 0,
+            lock_time: 0,
+            expiry_height: 0,
+            inputs: vec![unsigned_input],
+            outputs: vec![output],
+            join_split: None,
+            sapling: None,
+        };
 
-		let mut cache = Default::default();
-		let hash = input_signer.signature_hash(&mut cache, Some(0), 0, &previous_output, SighashBase::All.into(), 0);
-		assert_eq!(hash, expected_signature_hash);
-	}
+        let mut cache = Default::default();
+        let hash = input_signer.signature_hash(
+            &mut cache,
+            Some(0),
+            0,
+            &previous_output,
+            SighashBase::All.into(),
+            0,
+        );
+        assert_eq!(hash, expected_signature_hash);
+    }
 
-	#[test]
-	fn test_sighash_forkid_from_u32() {
-		assert!(!Sighash::is_defined(0xFFFFFF82));
-		assert!(!Sighash::is_defined(0x00000182));
-		assert!(!Sighash::is_defined(0x00000080));
-		assert!( Sighash::is_defined(0x00000001));
-		assert!( Sighash::is_defined(0x00000082));
-		assert!( Sighash::is_defined(0x00000003));
-	}
+    #[test]
+    fn test_sighash_forkid_from_u32() {
+        assert!(!Sighash::is_defined(0xFFFFFF82));
+        assert!(!Sighash::is_defined(0x00000182));
+        assert!(!Sighash::is_defined(0x00000080));
+        assert!(Sighash::is_defined(0x00000001));
+        assert!(Sighash::is_defined(0x00000082));
+        assert!(Sighash::is_defined(0x00000003));
+    }
 
-	fn run_test_sighash(
-		idx: usize,
-		tx: &str,
-		script: &str,
-		input_index: usize,
-		hash_type: i32,
-		consensus_branch_id: u32,
-		result: &str,
-	) {
-		let tx: Transaction = deserialize(&tx.from_hex::<Vec<u8>>().unwrap() as &[u8]).unwrap();
-		let signer: TransactionInputSigner = tx.into();
-		let script: Script = Script::new(script.parse().unwrap());
-		let expected: H256 = result.parse().unwrap();
-		let expected = expected.reversed();
+    fn run_test_sighash(
+        idx: usize,
+        tx: &str,
+        script: &str,
+        input_index: usize,
+        hash_type: i32,
+        consensus_branch_id: u32,
+        result: &str,
+    ) {
+        let tx: Transaction = deserialize(&tx.from_hex::<Vec<u8>>().unwrap() as &[u8]).unwrap();
+        let signer: TransactionInputSigner = tx.into();
+        let script: Script = Script::new(script.parse().unwrap());
+        let expected: H256 = result.parse().unwrap();
+        let expected = expected.reversed();
 
-		let mut cache = Default::default();
-		let input_index = if input_index as u64 == ::std::u64::MAX { None } else { Some(input_index) };
-		let hash = signer.signature_hash(&mut cache, input_index, 0, &script, hash_type as u32, consensus_branch_id);
-		if expected != hash {
-			panic!("Test#{} of {:?} sighash failed: expected {}, got {}", idx, signer.signature_version(), expected, hash);
-		} else {
-			println!("Test#{} succeeded: expected {}, got {}", idx, expected, hash);
-		}
-	}
+        let mut cache = Default::default();
+        let input_index = if input_index as u64 == ::std::u64::MAX {
+            None
+        } else {
+            Some(input_index)
+        };
+        let hash = signer.signature_hash(
+            &mut cache,
+            input_index,
+            0,
+            &script,
+            hash_type as u32,
+            consensus_branch_id,
+        );
+        if expected != hash {
+            panic!(
+                "Test#{} of {:?} sighash failed: expected {}, got {}",
+                idx,
+                signer.signature_version(),
+                expected,
+                hash
+            );
+        } else {
+            println!(
+                "Test#{} succeeded: expected {}, got {}",
+                idx, expected, hash
+            );
+        }
+    }
 
-	// Official test vectors from Zcash codebase referenced by both sighash-related ZIPs
-	// ZIP143 (https://github.com/zcash/zips/blob/9515d73aac0aea3494f77bcd634e1e4fbd744b97/zip-0143.rst)
-	// ZIP243 (https://github.com/zcash/zips/blob/9515d73aac0aea3494f77bcd634e1e4fbd744b97/zip-0243.rst)
-	// revision:
-	// https://github.com/zcash/zcash/blob/9cd74866c72857145952bb9e3aa8e0c04a99b711/src/test/data/sighash.json
-	#[test]
-	fn test_signature_hash() {
-		let tests = include_bytes!("../data/sighash_tests.json");
-		let tests: Vec<Value> = from_slice(tests).unwrap();
-		for (idx, test) in tests.into_iter().skip(1).enumerate() {
-			run_test_sighash(
-				idx,
-				test[0].as_str().unwrap(),
-				test[1].as_str().unwrap(),
-				test[2].as_u64().unwrap() as usize,
-				test[3].as_i64().unwrap() as i32,
-				test[4].as_u64().unwrap() as u32,
-				test[5].as_str().unwrap(),
-			);
-		}
-	}
+    // Official test vectors from Zcash codebase referenced by both sighash-related ZIPs
+    // ZIP143 (https://github.com/zcash/zips/blob/9515d73aac0aea3494f77bcd634e1e4fbd744b97/zip-0143.rst)
+    // ZIP243 (https://github.com/zcash/zips/blob/9515d73aac0aea3494f77bcd634e1e4fbd744b97/zip-0243.rst)
+    // revision:
+    // https://github.com/zcash/zcash/blob/9cd74866c72857145952bb9e3aa8e0c04a99b711/src/test/data/sighash.json
+    #[test]
+    fn test_signature_hash() {
+        let tests = include_bytes!("../data/sighash_tests.json");
+        let tests: Vec<Value> = from_slice(tests).unwrap();
+        for (idx, test) in tests.into_iter().skip(1).enumerate() {
+            run_test_sighash(
+                idx,
+                test[0].as_str().unwrap(),
+                test[1].as_str().unwrap(),
+                test[2].as_u64().unwrap() as usize,
+                test[3].as_i64().unwrap() as i32,
+                test[4].as_u64().unwrap() as u32,
+                test[5].as_str().unwrap(),
+            );
+        }
+    }
 
-	#[test]
-	fn test_sighash_cache_works_correctly() {
-		let test_cases: Vec<(Transaction, Transaction, usize)> = vec![
+    #[test]
+    fn test_sighash_cache_works_correctly() {
+        let test_cases: Vec<(Transaction, Transaction, usize)> = vec![
 			(
 				// tx#1 from block#419201
 				// https://zcash.blockexplorer.com/api/rawblock/00000000014d117faa2ea701b24261d364a6c6a62e5bc4bc27335eb9b3c1e2a8
@@ -616,38 +685,38 @@ mod tests {
 			)
 		];
 
-		for (spend_tx, donor_tx, input_index) in test_cases {
-			let output_index = spend_tx.inputs[input_index].previous_output.index as usize;
+        for (spend_tx, donor_tx, input_index) in test_cases {
+            let output_index = spend_tx.inputs[input_index].previous_output.index as usize;
 
-			// prepare tx signature checker
-			let consensus_branch_id = 0x76b809bb; // all test cases are for sapling era
-			let signer: TransactionInputSigner = spend_tx.clone().into();
-			let mut checker = TransactionSignatureChecker {
-				signer,
-				input_index,
-				input_amount: donor_tx.outputs[output_index].value,
-				consensus_branch_id,
-				cache: Default::default(),
-			};
+            // prepare tx signature checker
+            let consensus_branch_id = 0x76b809bb; // all test cases are for sapling era
+            let signer: TransactionInputSigner = spend_tx.clone().into();
+            let mut checker = TransactionSignatureChecker {
+                signer,
+                input_index,
+                input_amount: donor_tx.outputs[output_index].value,
+                consensus_branch_id,
+                cache: Default::default(),
+            };
 
-			// calculate signature => fill cache
-			checker.signer.signature_hash(
-				&mut checker.cache,
-				None,
-				0,
-				&From::from(vec![]),
-				::sign::SighashBase::All.into(),
-				consensus_branch_id,
-			);
+            // calculate signature => fill cache
+            checker.signer.signature_hash(
+                &mut checker.cache,
+                None,
+                0,
+                &From::from(vec![]),
+                ::sign::SighashBase::All.into(),
+                consensus_branch_id,
+            );
 
-			// and finally check input (the cached signature portions are used here)
-			let input: Script = spend_tx.inputs[input_index].script_sig.clone().into();
-			let output: Script = donor_tx.outputs[output_index].script_pubkey.clone().into();
-			let flags = VerificationFlags::default()
-				.verify_p2sh(true)
-				.verify_locktime(true)
-				.verify_dersig(true);
-			assert_eq!(verify_script(&input, &output, &flags, &mut checker), Ok(()));
-		}
-	}
+            // and finally check input (the cached signature portions are used here)
+            let input: Script = spend_tx.inputs[input_index].script_sig.clone().into();
+            let output: Script = donor_tx.outputs[output_index].script_pubkey.clone().into();
+            let flags = VerificationFlags::default()
+                .verify_p2sh(true)
+                .verify_locktime(true)
+                .verify_dersig(true);
+            assert_eq!(verify_script(&input, &output, &flags, &mut checker), Ok(()));
+        }
+    }
 }
