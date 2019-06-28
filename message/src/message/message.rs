@@ -1,46 +1,49 @@
-use ser::Stream;
-use bytes::{TaggedBytes, Bytes};
-use network::Magic;
+use bytes::{Bytes, TaggedBytes};
 use common::Command;
+use network::Magic;
+use ser::Stream;
 use serialization::serialize_payload;
-use {Payload, MessageResult, MessageHeader};
+use {MessageHeader, MessageResult, Payload};
 
 pub fn to_raw_message(magic: Magic, command: Command, payload: &Bytes) -> Bytes {
-	let header = MessageHeader::for_data(magic, command, payload);
-	let mut stream = Stream::default();
-	stream.append(&header);
-	stream.append_slice(payload);
-	stream.out()
+    let header = MessageHeader::for_data(magic, command, payload);
+    let mut stream = Stream::default();
+    stream.append(&header);
+    stream.append_slice(payload);
+    stream.out()
 }
 
 pub struct Message<T> {
-	bytes: TaggedBytes<T>,
+    bytes: TaggedBytes<T>,
 }
 
-impl<T> Message<T> where T: Payload {
-	pub fn new(magic: Magic, version: u32, payload: &T) -> MessageResult<Self> {
-		let serialized = try!(serialize_payload(payload, version));
+impl<T> Message<T>
+where
+    T: Payload,
+{
+    pub fn new(magic: Magic, version: u32, payload: &T) -> MessageResult<Self> {
+        let serialized = try!(serialize_payload(payload, version));
 
-		let message = Message {
-			bytes: TaggedBytes::new(to_raw_message(magic, T::command().into(), &serialized)),
-		};
+        let message = Message {
+            bytes: TaggedBytes::new(to_raw_message(magic, T::command().into(), &serialized)),
+        };
 
-		Ok(message)
-	}
+        Ok(message)
+    }
 
-	pub fn len(&self) -> usize {
-		self.bytes.len()
-	}
+    pub fn len(&self) -> usize {
+        self.bytes.len()
+    }
 }
 
 impl<T> AsRef<[u8]> for Message<T> {
-	fn as_ref(&self) -> &[u8] {
-		self.bytes.as_ref()
-	}
+    fn as_ref(&self) -> &[u8] {
+        self.bytes.as_ref()
+    }
 }
 
 impl<T> From<Message<T>> for Bytes {
-	fn from(m: Message<T>) -> Self {
-		m.bytes.into_raw()
-	}
+    fn from(m: Message<T>) -> Self {
+        m.bytes.into_raw()
+    }
 }

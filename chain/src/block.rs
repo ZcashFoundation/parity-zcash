@@ -1,5 +1,5 @@
 use hex::FromHex;
-use ser::{deserialize};
+use ser::deserialize;
 use {BlockHeader, Transaction};
 
 #[cfg(any(test, feature = "test-helpers"))]
@@ -9,52 +9,59 @@ use merkle_root::merkle_root;
 
 #[derive(Debug, PartialEq, Clone, Serializable, Deserializable)]
 pub struct Block {
-	pub block_header: BlockHeader,
-	pub transactions: Vec<Transaction>,
+    pub block_header: BlockHeader,
+    pub transactions: Vec<Transaction>,
 }
 
 impl From<&'static str> for Block {
-	fn from(s: &'static str) -> Self {
-		deserialize(&s.from_hex::<Vec<u8>>().unwrap() as &[u8]).unwrap()
-	}
+    fn from(s: &'static str) -> Self {
+        deserialize(&s.from_hex::<Vec<u8>>().unwrap() as &[u8]).unwrap()
+    }
 }
 
 impl Block {
-	pub fn new(header: BlockHeader, transactions: Vec<Transaction>) -> Self {
-		Block { block_header: header, transactions: transactions }
-	}
+    pub fn new(header: BlockHeader, transactions: Vec<Transaction>) -> Self {
+        Block {
+            block_header: header,
+            transactions: transactions,
+        }
+    }
 
-	/// Returns block's merkle root.
-	#[cfg(any(test, feature = "test-helpers"))]
-	pub fn merkle_root(&self) -> H256 {
-		let hashes = self.transactions.iter().map(Transaction::hash).collect::<Vec<H256>>();
-		merkle_root(&hashes)
-	}
+    /// Returns block's merkle root.
+    #[cfg(any(test, feature = "test-helpers"))]
+    pub fn merkle_root(&self) -> H256 {
+        let hashes = self
+            .transactions
+            .iter()
+            .map(Transaction::hash)
+            .collect::<Vec<H256>>();
+        merkle_root(&hashes)
+    }
 
-	pub fn transactions(&self) -> &[Transaction] {
-		&self.transactions
-	}
+    pub fn transactions(&self) -> &[Transaction] {
+        &self.transactions
+    }
 
-	pub fn header(&self) -> &BlockHeader {
-		&self.block_header
-	}
+    pub fn header(&self) -> &BlockHeader {
+        &self.block_header
+    }
 
-	#[cfg(any(test, feature = "test-helpers"))]
-	pub fn hash(&self) -> H256 {
-		self.block_header.hash()
-	}
+    #[cfg(any(test, feature = "test-helpers"))]
+    pub fn hash(&self) -> H256 {
+        self.block_header.hash()
+    }
 }
 
 #[cfg(test)]
 mod tests {
-	use hex::FromHex;
-	use hash::H256;
-	use ser::{serialize, deserialize};
-	use super::Block;
+    use super::Block;
+    use hash::H256;
+    use hex::FromHex;
+    use ser::{deserialize, serialize};
 
-	#[test]
-	fn test_block_parse() {
-		let blocks = vec![
+    #[test]
+    fn test_block_parse() {
+        let blocks = vec![
 			(
 				// https://zcash.blockexplorer.com/block/00040fe8ec8471911baa1db1266ea15dd06b4a8a5c453883c000b031973dce08
 				// https://zcash.blockexplorer.com/api/rawblock/00040fe8ec8471911baa1db1266ea15dd06b4a8a5c453883c000b031973dce08
@@ -78,20 +85,20 @@ mod tests {
 			)
 		];
 
-		for (origin_block, origin_block_hash, origin_merkle_root) in blocks {
-			// check that block is parsed and serialized back
-			let origin_block = origin_block.from_hex::<Vec<u8>>().unwrap();
-			let parsed: Block = deserialize(&origin_block as &[u8]).unwrap();
-			let serialized = serialize(&parsed).take();
-			assert_eq!(origin_block, serialized);
+        for (origin_block, origin_block_hash, origin_merkle_root) in blocks {
+            // check that block is parsed and serialized back
+            let origin_block = origin_block.from_hex::<Vec<u8>>().unwrap();
+            let parsed: Block = deserialize(&origin_block as &[u8]).unwrap();
+            let serialized = serialize(&parsed).take();
+            assert_eq!(origin_block, serialized);
 
-			// check that block hash is equal to original
-			let origin_block_hash = H256::from_reversed_str(origin_block_hash);
-			assert_eq!(origin_block_hash, parsed.hash());
+            // check that block hash is equal to original
+            let origin_block_hash = H256::from_reversed_str(origin_block_hash);
+            assert_eq!(origin_block_hash, parsed.hash());
 
-			// check that merkle root is equal to original
-			let origin_merkle_root = H256::from_reversed_str(origin_merkle_root);
-			assert_eq!(origin_merkle_root, parsed.merkle_root());
-		}
-	}
+            // check that merkle root is equal to original
+            let origin_merkle_root = H256::from_reversed_str(origin_merkle_root);
+            assert_eq!(origin_merkle_root, parsed.merkle_root());
+        }
+    }
 }

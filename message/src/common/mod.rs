@@ -14,7 +14,7 @@ pub use self::block_header_and_ids::BlockHeaderAndIDs;
 pub use self::block_transactions::BlockTransactions;
 pub use self::block_transactions_request::BlockTransactionsRequest;
 pub use self::command::Command;
-pub use self::inventory::{InventoryVector, InventoryType};
+pub use self::inventory::{InventoryType, InventoryVector};
 pub use self::ip::IpAddress;
 pub use self::port::Port;
 pub use self::prefilled_transaction::PrefilledTransaction;

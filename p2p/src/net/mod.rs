@@ -8,10 +8,10 @@ mod connections;
 mod peer_context;
 mod stats;
 
-pub use self::accept_connection::{AcceptConnection, accept_connection};
+pub use self::accept_connection::{accept_connection, AcceptConnection};
 pub use self::channel::Channel;
 pub use self::config::Config;
-pub use self::connect::{Connect, connect};
+pub use self::connect::{connect, Connect};
 pub use self::connection::Connection;
 pub use self::connection_counter::ConnectionCounter;
 pub use self::connections::Connections;
