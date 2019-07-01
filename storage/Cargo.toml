@@ -1,7 +1,8 @@
 [package]
 name = "storage"
 version = "0.1.0"
-authors = ["Parity Technologies <admin@parity.io>"]
+license = "GPL-3.0"
+authors = ["Zcash Foundation <zebra@zfnd.org>"]
 
 [dependencies]
 elastic-array = "0.10"

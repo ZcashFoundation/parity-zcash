@@ -2,7 +2,7 @@
 name = "zebra"
 version = "0.1.0"
 license = "GPL-3.0"
-authors = ["Zcash Foundation"]
+authors = ["Zcash Foundation <zebra@zfnd.org>"]
 description = "A consensus-compatible Zcash node client written in Rust."
 
 [dependencies]

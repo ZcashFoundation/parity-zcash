@@ -1,7 +1,8 @@
 [package]
 name = "miner"
 version = "0.1.0"
-authors = ["Ethcore <admin@ethcore.io>"]
+license = "GPL-3.0"
+authors = ["Zcash Foundation <zebra@zfnd.org>"]
 
 [dependencies]
 byteorder = "1.0"
