@@ -1,7 +1,7 @@
-use common::NetAddress;
-use ser::{Deserializable, Error as ReaderError, Reader, Serializable, Stream};
+use crate::common::NetAddress;
+use crate::ser::{Deserializable, Error as ReaderError, Reader, Serializable, Stream};
 use std::io;
-use {MessageResult, Payload};
+use crate::{MessageResult, Payload};
 
 #[derive(Debug, PartialEq)]
 pub enum Addr {
@@ -73,8 +73,8 @@ impl Deserializable for AddressEntry {
         T: io::Read,
     {
         let entry = AddressEntry {
-            timestamp: try!(reader.read()),
-            address: try!(reader.read()),
+            timestamp: r#try!(reader.read()),
+            address: r#try!(reader.read()),
         };
 
         Ok(entry)
@@ -98,7 +98,7 @@ impl Deserializable for V31402 {
         T: io::Read,
     {
         let result = V31402 {
-            addresses: try!(reader.read_list_max(1000)),
+            addresses: r#try!(reader.read_list_max(1000)),
         };
 
         Ok(result)
@@ -122,7 +122,7 @@ impl Deserializable for V0 {
         T: io::Read,
     {
         let result = V0 {
-            addresses: try!(reader.read_list_max(1000)),
+            addresses: r#try!(reader.read_list_max(1000)),
         };
 
         Ok(result)
@@ -149,8 +149,8 @@ impl<'a> Serializable for V31402AsV0<'a> {
 #[cfg(test)]
 mod tests {
     use super::{AddressEntry, V31402};
-    use bytes::Bytes;
-    use ser::{deserialize, serialize};
+    use crate::bytes::Bytes;
+    use crate::ser::{deserialize, serialize};
 
     #[test]
     fn test_addr_serialize() {

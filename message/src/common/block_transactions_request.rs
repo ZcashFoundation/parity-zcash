@@ -1,5 +1,5 @@
-use hash::H256;
-use ser::{CompactInteger, Deserializable, Error as ReaderError, Reader, Serializable, Stream};
+use crate::hash::H256;
+use crate::ser::{CompactInteger, Deserializable, Error as ReaderError, Reader, Serializable, Stream};
 use std::io;
 
 #[derive(Debug, PartialEq)]
@@ -21,8 +21,8 @@ impl Deserializable for BlockTransactionsRequest {
     where
         T: io::Read,
     {
-        let blockhash = try!(reader.read());
-        let indexes: Vec<CompactInteger> = try!(reader.read_list());
+        let blockhash = r#try!(reader.read());
+        let indexes: Vec<CompactInteger> = r#try!(reader.read_list());
 
         let request = BlockTransactionsRequest {
             blockhash: blockhash,

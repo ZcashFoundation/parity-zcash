@@ -4,7 +4,7 @@ use message::types;
 use murmur3::murmur3_32;
 use parking_lot::Mutex;
 use script::Script;
-use ser::serialize;
+use crate::ser::serialize;
 
 /// Constant optimized to create large differences in the seed for different values of `hash_functions_num`.
 const SEED_OFFSET: u32 = 0xFBA4C795;
@@ -211,7 +211,7 @@ mod tests {
     use message::types;
     use primitives::bytes::Bytes;
     use primitives::hash::H256;
-    use ser::serialize;
+    use crate::ser::serialize;
     use std::iter::repeat;
 
     fn default_filterload() -> types::FilterLoad {

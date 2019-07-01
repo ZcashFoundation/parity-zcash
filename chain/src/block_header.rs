@@ -1,11 +1,11 @@
-use compact::Compact;
-use crypto::dhash256;
-use hash::H256;
-use hex::FromHex;
+use crate::compact::Compact;
+use crate::crypto::dhash256;
+use crate::hash::H256;
+use crate::hex::FromHex;
 use primitives::bytes::Bytes;
-use ser::Stream;
-use ser::{deserialize, serialize};
-use solution::EquihashSolution;
+use crate::ser::Stream;
+use crate::ser::{deserialize, serialize};
+use crate::solution::EquihashSolution;
 use std::fmt;
 
 #[derive(PartialEq, Clone, Serializable, Deserializable)]
@@ -72,8 +72,8 @@ pub(crate) fn block_header_hash(block_header: &BlockHeader) -> H256 {
 #[cfg(test)]
 mod tests {
     use super::BlockHeader;
-    use ser::{Error as ReaderError, Reader, Stream};
-    use solution::SOLUTION_SIZE;
+    use crate::ser::{Error as ReaderError, Reader, Stream};
+    use crate::solution::SOLUTION_SIZE;
 
     fn test_block_buffer() -> Vec<u8> {
         let mut buffer = vec![

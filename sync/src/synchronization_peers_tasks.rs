@@ -4,8 +4,8 @@ use std::cmp::Ordering;
 use std::collections::{HashMap, HashSet};
 use std::fmt;
 use time::precise_time_s;
-use types::PeerIndex;
-use utils::AverageSpeedMeter;
+use crate::types::PeerIndex;
+use crate::utils::AverageSpeedMeter;
 
 /// Max peer failures # before excluding from sync process
 const MAX_PEER_FAILURES: usize = 4;
@@ -428,7 +428,7 @@ impl fmt::Debug for Information {
 mod tests {
     use super::{PeersTasks, MAX_BLOCKS_FAILURES, MAX_PEER_FAILURES};
     use primitives::hash::H256;
-    use types::PeerIndex;
+    use crate::types::PeerIndex;
 
     #[test]
     fn peers_empty_on_start() {

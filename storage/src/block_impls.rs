@@ -1,6 +1,6 @@
 use chain::{IndexedBlock, IndexedTransaction, OutPoint, TransactionOutput};
 use std::cmp;
-use TransactionOutputProvider;
+use crate::TransactionOutputProvider;
 
 fn transaction_output(
     transactions: &[IndexedTransaction],

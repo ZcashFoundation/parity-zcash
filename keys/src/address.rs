@@ -6,12 +6,12 @@
 //! https://en.bitcoin.it/wiki/Address
 
 use base58::{FromBase58, ToBase58};
-use crypto::checksum;
-use network::Network;
+use crate::crypto::checksum;
+use crate::network::Network;
 use std::fmt;
 use std::ops::Deref;
 use std::str::FromStr;
-use {AddressHash, DisplayLayout, Error};
+use crate::{AddressHash, DisplayLayout, Error};
 
 /// There are two transparent address formats currently in use.
 /// https://bitcoin.org/en/developer-reference#address-conversion
@@ -114,7 +114,7 @@ impl FromStr for Address {
     where
         Self: Sized,
     {
-        let hex = try!(s.from_base58().map_err(|_| Error::InvalidAddress));
+        let hex = r#try!(s.from_base58().map_err(|_| Error::InvalidAddress));
         Address::from_layout(&hex)
     }
 }
@@ -128,7 +128,7 @@ impl From<&'static str> for Address {
 #[cfg(test)]
 mod tests {
     use super::{Address, Type};
-    use network::Network;
+    use crate::network::Network;
 
     #[test]
     fn test_address_to_string() {

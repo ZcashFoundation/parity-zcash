@@ -1,10 +1,10 @@
 use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
-use bytes::Bytes;
-use compact::Compact;
-use compact_integer::CompactInteger;
-use hash::{H160, H256, H264, H32, H48, H512, H520, H96};
+use crate::bytes::Bytes;
+use crate::compact::Compact;
+use crate::compact_integer::CompactInteger;
+use crate::hash::{H160, H256, H264, H32, H48, H512, H520, H96};
 use std::io;
-use {Deserializable, Error, Reader, Serializable, Stream};
+use crate::{Deserializable, Error, Reader, Serializable, Stream};
 
 impl Serializable for bool {
     #[inline]
@@ -96,7 +96,7 @@ impl Deserializable for bool {
     where
         T: io::Read,
     {
-        let value = try!(reader.read_u8());
+        let value = r#try!(reader.read_u8());
         match value {
             0 => Ok(false),
             1 => Ok(true),
@@ -111,7 +111,7 @@ impl Deserializable for i32 {
     where
         T: io::Read,
     {
-        Ok(try!(reader.read_i32::<LittleEndian>()))
+        Ok(r#try!(reader.read_i32::<LittleEndian>()))
     }
 }
 
@@ -121,7 +121,7 @@ impl Deserializable for i64 {
     where
         T: io::Read,
     {
-        Ok(try!(reader.read_i64::<LittleEndian>()))
+        Ok(r#try!(reader.read_i64::<LittleEndian>()))
     }
 }
 
@@ -131,7 +131,7 @@ impl Deserializable for u8 {
     where
         T: io::Read,
     {
-        Ok(try!(reader.read_u8()))
+        Ok(r#try!(reader.read_u8()))
     }
 }
 
@@ -141,7 +141,7 @@ impl Deserializable for u16 {
     where
         T: io::Read,
     {
-        Ok(try!(reader.read_u16::<LittleEndian>()))
+        Ok(r#try!(reader.read_u16::<LittleEndian>()))
     }
 }
 
@@ -151,7 +151,7 @@ impl Deserializable for u32 {
     where
         T: io::Read,
     {
-        Ok(try!(reader.read_u32::<LittleEndian>()))
+        Ok(r#try!(reader.read_u32::<LittleEndian>()))
     }
 }
 
@@ -161,7 +161,7 @@ impl Deserializable for u64 {
     where
         T: io::Read,
     {
-        Ok(try!(reader.read_u64::<LittleEndian>()))
+        Ok(r#try!(reader.read_u64::<LittleEndian>()))
     }
 }
 
@@ -200,7 +200,7 @@ impl Deserializable for String {
     where
         T: io::Read,
     {
-        let bytes: Bytes = try!(reader.read());
+        let bytes: Bytes = r#try!(reader.read());
         Ok(String::from_utf8_lossy(&bytes).into_owned())
     }
 }
@@ -224,7 +224,7 @@ macro_rules! impl_ser_for_hash {
                 T: io::Read,
             {
                 let mut result = Self::default();
-                try!(reader.read_slice(&mut *result));
+                r#try!(reader.read_slice(&mut *result));
                 Ok(result)
             }
         }
@@ -258,9 +258,9 @@ impl Deserializable for Bytes {
     where
         T: io::Read,
     {
-        let len = try!(reader.read::<CompactInteger>());
+        let len = r#try!(reader.read::<CompactInteger>());
         let mut bytes = Bytes::new_with_len(len.into());
-        try!(reader.read_slice(&mut bytes));
+        r#try!(reader.read_slice(&mut bytes));
         Ok(bytes)
     }
 }
@@ -310,8 +310,8 @@ impl<T: Deserializable + Sized> Deserializable for Option<T> {
 
 #[cfg(test)]
 mod tests {
-    use bytes::Bytes;
-    use {deserialize, deserialize_iterator, serialize, Error, Reader, Stream};
+    use crate::bytes::Bytes;
+    use crate::{deserialize, deserialize_iterator, serialize, Error, Reader, Stream};
 
     #[test]
     fn test_reader_read() {

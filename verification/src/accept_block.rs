@@ -1,16 +1,16 @@
-use canon::CanonBlock;
-use deployments::BlockDeployments;
-use error::Error;
-use fee::checked_transaction_fee;
+use crate::canon::CanonBlock;
+use crate::deployments::BlockDeployments;
+use crate::error::Error;
+use crate::fee::checked_transaction_fee;
 use keys::Address;
 use network::ConsensusParams;
 use script::{self, Builder};
-use sigops::transaction_sigops;
+use crate::sigops::transaction_sigops;
 use storage::{
     BlockHeaderProvider, DuplexTransactionOutputProvider, SaplingTreeState,
     TransactionOutputProvider, TreeStateProvider,
 };
-use timestamp::median_timestamp;
+use crate::timestamp::median_timestamp;
 
 /// Flexible verification of ordered block
 pub struct BlockAcceptor<'a> {
@@ -363,7 +363,7 @@ mod tests {
     use network::{ConsensusParams, Network};
     use std::collections::HashMap;
     use storage::{SaplingTreeState, TransactionOutputProvider};
-    use {CanonBlock, Error};
+    use crate::{CanonBlock, Error};
 
     #[test]
     fn test_block_coinbase_script() {

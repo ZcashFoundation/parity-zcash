@@ -1,11 +1,11 @@
 //! Key-Value store abstraction with `RocksDB` backend.
 
-use bytes::Bytes;
-use kv::{
+use crate::bytes::Bytes;
+use crate::kv::{
     Key, KeyState, KeyValueDatabase, Location, RawKey, RawKeyValue, RawOperation, RawTransaction,
     Transaction, Value,
 };
-use rocksdb::{
+use crate::rocksdb::{
     BlockBasedOptions, Cache, Column, DBCompactionStyle, DBIterator, IteratorMode, Options,
     ReadOptions, Writable, WriteBatch, WriteOptions, DB,
 };
@@ -156,10 +156,10 @@ impl Database {
 
         let mut opts = Options::new();
         if let Some(rate_limit) = config.compaction.write_rate_limit {
-            try!(opts.set_parsed_options(&format!("rate_limiter_bytes_per_sec={}", rate_limit)));
+            r#try!(opts.set_parsed_options(&format!("rate_limiter_bytes_per_sec={}", rate_limit)));
         }
-        try!(opts.set_parsed_options(&format!("max_total_wal_size={}", 64 * 1024 * 1024)));
-        try!(opts.set_parsed_options("verify_checksums_in_compaction=0"));
+        r#try!(opts.set_parsed_options(&format!("max_total_wal_size={}", 64 * 1024 * 1024)));
+        r#try!(opts.set_parsed_options("verify_checksums_in_compaction=0"));
         opts.set_max_open_files(config.max_open_files);
         opts.create_if_missing(true);
         opts.set_use_fsync(false);
@@ -230,7 +230,7 @@ impl Database {
                         // retry and create CFs
                         match DB::open_cf(&opts, &path, &[], &[]) {
                             Ok(mut db) => {
-                                cfs = try!(cfnames
+                                cfs = r#try!(cfnames
                                     .iter()
                                     .enumerate()
                                     .map(|(i, n)| db.create_cf(n, &cf_options[i]))
@@ -250,11 +250,11 @@ impl Database {
             Err(ref s) if s.starts_with("Corruption:") => {
                 info!("{}", s);
                 info!("Attempting DB repair for {}", path);
-                try!(DB::repair(&opts, &path));
+                r#try!(DB::repair(&opts, &path));
 
                 match cfnames.is_empty() {
-                    true => try!(DB::open(&opts, &path)),
-                    false => try!(DB::open_cf(&opts, &path, &cfnames, &cf_options)),
+                    true => r#try!(DB::open(&opts, &path)),
+                    false => r#try!(DB::open_cf(&opts, &path, &cfnames, &cf_options)),
                 }
             }
             Err(s) => {
@@ -330,7 +330,7 @@ mod tests {
 
     use self::tempdir::TempDir;
     use super::*;
-    use kv::{Location, RawTransaction};
+    use crate::kv::{Location, RawTransaction};
 
     fn test_db(config: DatabaseConfig) {
         let tempdir = TempDir::new("").unwrap();

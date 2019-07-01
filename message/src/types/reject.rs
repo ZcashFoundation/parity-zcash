@@ -1,6 +1,6 @@
-use ser::{Deserializable, Error as ReaderError, Reader, Serializable, Stream};
+use crate::ser::{Deserializable, Error as ReaderError, Reader, Serializable, Stream};
 use std::io;
-use {MessageResult, Payload};
+use crate::{MessageResult, Payload};
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 #[repr(u8)]
@@ -50,7 +50,7 @@ impl Deserializable for RejectCode {
     where
         T: io::Read,
     {
-        let v: u8 = try!(reader.read());
+        let v: u8 = r#try!(reader.read());
         RejectCode::from_u8(v).ok_or_else(|| ReaderError::MalformedData)
     }
 }
@@ -77,9 +77,9 @@ impl Payload for Reject {
         T: io::Read,
     {
         let reject = Reject {
-            message: try!(reader.read()),
-            code: try!(reader.read()),
-            reason: try!(reader.read()),
+            message: r#try!(reader.read()),
+            code: r#try!(reader.read()),
+            reason: r#try!(reader.read()),
         };
 
         Ok(reject)

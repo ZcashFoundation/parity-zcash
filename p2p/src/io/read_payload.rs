@@ -1,7 +1,7 @@
-use bytes::Bytes;
-use crypto::checksum;
+use crate::bytes::Bytes;
+use crate::crypto::checksum;
 use futures::{Future, Poll};
-use hash::H32;
+use crate::hash::H32;
 use message::{deserialize_payload, Error, MessageResult, Payload};
 use std::io;
 use std::marker::PhantomData;
@@ -49,7 +49,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::read_payload;
-    use bytes::Bytes;
+    use crate::bytes::Bytes;
     use futures::Future;
     use message::types::Ping;
     use message::Error;

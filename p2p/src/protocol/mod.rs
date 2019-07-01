@@ -2,7 +2,7 @@ mod addr;
 mod ping;
 mod sync;
 
-use bytes::Bytes;
+use crate::bytes::Bytes;
 use message::common::Command;
 use message::Error;
 

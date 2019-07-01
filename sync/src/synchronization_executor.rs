@@ -3,9 +3,9 @@ use message::common::InventoryVector;
 use message::types;
 use primitives::hash::H256;
 use std::sync::Arc;
-use synchronization_peers::{BlockAnnouncementType, TransactionAnnouncementType};
-use types::{PeerIndex, PeersRef, RequestId};
-use utils::KnownHashType;
+use crate::synchronization_peers::{BlockAnnouncementType, TransactionAnnouncementType};
+use crate::types::{PeerIndex, PeersRef, RequestId};
+use crate::utils::KnownHashType;
 
 /// Synchronization task executor
 pub trait TaskExecutor: Send + Sync + 'static {
@@ -219,13 +219,13 @@ pub mod tests {
 
     use super::*;
     use chain::Transaction;
-    use inbound_connection::tests::DummyOutboundSyncConnection;
-    use local_node::tests::{default_filterload, make_filteradd};
+    use crate::inbound_connection::tests::DummyOutboundSyncConnection;
+    use crate::local_node::tests::{default_filterload, make_filteradd};
     use message::{types, Services};
     use parking_lot::{Condvar, Mutex};
     use std::sync::Arc;
     use std::time;
-    use synchronization_peers::{
+    use crate::synchronization_peers::{
         BlockAnnouncementType, PeersContainer, PeersFilters, PeersImpl, PeersOptions,
     };
 

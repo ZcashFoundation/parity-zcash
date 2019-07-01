@@ -9,8 +9,8 @@ mod list;
 mod reader;
 mod stream;
 
-pub use compact_integer::CompactInteger;
-pub use list::List;
+pub use crate::compact_integer::CompactInteger;
+pub use crate::list::List;
 pub use primitives::{bytes, compact, hash};
-pub use reader::{deserialize, deserialize_iterator, Deserializable, Error, ReadIterator, Reader};
-pub use stream::{serialize, serialize_list, serialized_list_size, Serializable, Stream};
+pub use crate::reader::{deserialize, deserialize_iterator, Deserializable, Error, ReadIterator, Reader};
+pub use crate::stream::{serialize, serialize_list, serialized_list_size, Serializable, Stream};

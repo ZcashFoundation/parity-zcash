@@ -8,12 +8,12 @@ use network::ConsensusParams;
 use parking_lot::{Condvar, Mutex};
 use primitives::hash::H256;
 use std::sync::Arc;
-use synchronization_client::Client;
-use synchronization_peers::{BlockAnnouncementType, TransactionAnnouncementType};
-use synchronization_server::{Server, ServerTask};
-use synchronization_verifier::TransactionVerificationSink;
+use crate::synchronization_client::Client;
+use crate::synchronization_peers::{BlockAnnouncementType, TransactionAnnouncementType};
+use crate::synchronization_server::{Server, ServerTask};
+use crate::synchronization_verifier::TransactionVerificationSink;
 use time;
-use types::{
+use crate::types::{
     BlockHeight, ClientRef, MemoryPoolRef, PeerIndex, PeersRef, RequestId, ServerRef, StorageRef,
     SyncListenerRef, SynchronizationStateRef,
 };
@@ -299,17 +299,17 @@ pub mod tests {
     use primitives::bytes::Bytes;
     use std::iter::repeat;
     use std::sync::Arc;
-    use synchronization_chain::Chain;
-    use synchronization_client::SynchronizationClient;
-    use synchronization_client_core::{Config, CoreVerificationSink, SynchronizationClientCore};
-    use synchronization_executor::tests::DummyTaskExecutor;
-    use synchronization_executor::Task;
-    use synchronization_peers::PeersImpl;
-    use synchronization_server::tests::DummyServer;
-    use synchronization_server::ServerTask;
-    use synchronization_verifier::tests::DummyVerifier;
-    use types::SynchronizationStateRef;
-    use utils::SynchronizationState;
+    use crate::synchronization_chain::Chain;
+    use crate::synchronization_client::SynchronizationClient;
+    use crate::synchronization_client_core::{Config, CoreVerificationSink, SynchronizationClientCore};
+    use crate::synchronization_executor::tests::DummyTaskExecutor;
+    use crate::synchronization_executor::Task;
+    use crate::synchronization_peers::PeersImpl;
+    use crate::synchronization_server::tests::DummyServer;
+    use crate::synchronization_server::ServerTask;
+    use crate::synchronization_verifier::tests::DummyVerifier;
+    use crate::types::SynchronizationStateRef;
+    use crate::utils::SynchronizationState;
 
     pub fn default_filterload() -> types::FilterLoad {
         types::FilterLoad {

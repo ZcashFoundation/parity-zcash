@@ -1,5 +1,5 @@
 use byteorder::{BigEndian, ReadBytesExt, WriteBytesExt};
-use ser::{Deserializable, Error as ReaderError, Reader, Serializable, Stream};
+use crate::ser::{Deserializable, Error as ReaderError, Reader, Serializable, Stream};
 use std::{io, net, str};
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -60,24 +60,24 @@ impl Deserializable for IpAddress {
         T: io::Read,
     {
         let bytes: &mut [u8] = &mut [0u8; 12];
-        try!(reader.read_slice(bytes));
+        r#try!(reader.read_slice(bytes));
         if bytes == &[0u8; 12] {
             let address: &mut [u8] = &mut [0u8; 4];
-            try!(reader.read_slice(address));
+            r#try!(reader.read_slice(address));
             let address = net::Ipv4Addr::new(address[0], address[1], address[2], address[3]);
             Ok(IpAddress(net::IpAddr::V4(address)))
         } else {
             // compiler needs some help here...
             let mut b = bytes as &[u8];
             let address = net::Ipv6Addr::new(
-                try!(b.read_u16::<BigEndian>()),
-                try!(b.read_u16::<BigEndian>()),
-                try!(b.read_u16::<BigEndian>()),
-                try!(b.read_u16::<BigEndian>()),
-                try!(b.read_u16::<BigEndian>()),
-                try!(b.read_u16::<BigEndian>()),
-                try!(reader.read_u16::<BigEndian>()),
-                try!(reader.read_u16::<BigEndian>()),
+                r#try!(b.read_u16::<BigEndian>()),
+                r#try!(b.read_u16::<BigEndian>()),
+                r#try!(b.read_u16::<BigEndian>()),
+                r#try!(b.read_u16::<BigEndian>()),
+                r#try!(b.read_u16::<BigEndian>()),
+                r#try!(b.read_u16::<BigEndian>()),
+                r#try!(reader.read_u16::<BigEndian>()),
+                r#try!(reader.read_u16::<BigEndian>()),
             );
             Ok(IpAddress(net::IpAddr::V6(address)))
         }
@@ -87,7 +87,7 @@ impl Deserializable for IpAddress {
 #[cfg(test)]
 mod test {
     use super::IpAddress;
-    use ser::{deserialize, serialize};
+    use crate::ser::{deserialize, serialize};
     use std::net;
 
     #[test]

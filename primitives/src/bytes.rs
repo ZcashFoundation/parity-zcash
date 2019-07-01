@@ -1,7 +1,7 @@
 //! Wrapper around `Vec<u8>`
 
 use heapsize::HeapSizeOf;
-use hex::{FromHex, FromHexError, ToHex};
+use crate::hex::{FromHex, FromHexError, ToHex};
 use std::{fmt, io, marker, ops, str};
 
 /// Wrapper around `Vec<u8>`

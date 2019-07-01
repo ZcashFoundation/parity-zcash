@@ -6,7 +6,7 @@ where
     P: AsRef<path::Path>,
 {
     let read_blk_dir = ReadBlkDir {
-        read_dir: try!(fs::read_dir(path)),
+        read_dir: r#try!(fs::read_dir(path)),
     };
 
     Ok(read_blk_dir)

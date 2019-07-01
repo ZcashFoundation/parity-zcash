@@ -1,15 +1,15 @@
 //! Transaction signer
 
 use byteorder::{ByteOrder, LittleEndian};
-use bytes::Bytes;
+use crate::bytes::Bytes;
 use chain::{
     JoinSplit, OutPoint, Sapling, Transaction, TransactionInput, TransactionOutput,
     SAPLING_TX_VERSION_GROUP_ID,
 };
-use crypto::{blake2b_personal, dhash256};
-use hash::H256;
-use ser::Stream;
-use Script;
+use crate::crypto::{blake2b_personal, dhash256};
+use crate::hash::H256;
+use crate::ser::Stream;
+use crate::Script;
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 #[repr(u8)]
@@ -515,15 +515,15 @@ fn compute_hash_sapling_outputs(
 #[cfg(test)]
 mod tests {
     use super::{Sighash, SighashBase, TransactionInputSigner, UnsignedTransactionInput};
-    use bytes::Bytes;
+    use crate::bytes::Bytes;
     use chain::{OutPoint, Transaction, TransactionOutput};
-    use hash::H256;
-    use hex::FromHex;
+    use crate::hash::H256;
+    use crate::hex::FromHex;
     use keys::{Address, KeyPair, Private};
-    use script::Script;
-    use ser::deserialize;
+    use crate::script::Script;
+    use crate::ser::deserialize;
     use serde_json::{from_slice, Value};
-    use {verify_script, TransactionSignatureChecker, VerificationFlags};
+    use crate::{verify_script, TransactionSignatureChecker, VerificationFlags};
 
     #[test]
     fn test_signature_hash_simple() {
@@ -705,7 +705,7 @@ mod tests {
                 None,
                 0,
                 &From::from(vec![]),
-                ::sign::SighashBase::All.into(),
+                crate::sign::SighashBase::All.into(),
                 consensus_branch_id,
             );
 

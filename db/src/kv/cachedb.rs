@@ -1,6 +1,6 @@
 use chain::BlockHeader;
-use hash::H256;
-use kv::{Key, KeyState, KeyValue, KeyValueDatabase, Operation, Transaction, Value};
+use crate::hash::H256;
+use crate::kv::{Key, KeyState, KeyValue, KeyValueDatabase, Operation, Transaction, Value};
 use lru_cache::LruCache;
 use parking_lot::Mutex;
 

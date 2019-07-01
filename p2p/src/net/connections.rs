@@ -1,13 +1,13 @@
-use net::{Channel, Connection};
-use p2p::Context;
+use crate::net::{Channel, Connection};
+use crate::p2p::Context;
 use parking_lot::RwLock;
-use session::SessionFactory;
+use crate::session::SessionFactory;
 use std::collections::{HashMap, HashSet};
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Arc;
 use std::{mem, net};
-use util::{Direction, PeerInfo};
-use PeerId;
+use crate::util::{Direction, PeerInfo};
+use crate::PeerId;
 
 const SYNCHRONOUS_RESPONSES: bool = true;
 

@@ -1,5 +1,5 @@
-use hash::H256;
-use {SaplingTreeState, SproutTreeState};
+use crate::hash::H256;
+use crate::{SaplingTreeState, SproutTreeState};
 
 pub trait TreeStateProvider: Send + Sync {
     fn sprout_tree_at(&self, root: &H256) -> Option<SproutTreeState>;

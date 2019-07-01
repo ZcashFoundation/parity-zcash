@@ -1,9 +1,9 @@
-use bytes::{Bytes, TaggedBytes};
-use common::Command;
+use crate::bytes::{Bytes, TaggedBytes};
+use crate::common::Command;
 use network::Magic;
-use ser::Stream;
-use serialization::serialize_payload;
-use {MessageHeader, MessageResult, Payload};
+use crate::ser::Stream;
+use crate::serialization::serialize_payload;
+use crate::{MessageHeader, MessageResult, Payload};
 
 pub fn to_raw_message(magic: Magic, command: Command, payload: &Bytes) -> Bytes {
     let header = MessageHeader::for_data(magic, command, payload);
@@ -22,7 +22,7 @@ where
     T: Payload,
 {
     pub fn new(magic: Magic, version: u32, payload: &T) -> MessageResult<Self> {
-        let serialized = try!(serialize_payload(payload, version));
+        let serialized = r#try!(serialize_payload(payload, version));
 
         let message = Message {
             bytes: TaggedBytes::new(to_raw_message(magic, T::command().into(), &serialized)),

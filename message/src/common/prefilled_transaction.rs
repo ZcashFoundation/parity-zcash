@@ -1,5 +1,5 @@
 use chain::Transaction;
-use ser::{CompactInteger, Deserializable, Error as ReaderError, Reader, Serializable, Stream};
+use crate::ser::{CompactInteger, Deserializable, Error as ReaderError, Reader, Serializable, Stream};
 use std::io;
 
 #[derive(Debug, PartialEq)]
@@ -21,10 +21,10 @@ impl Deserializable for PrefilledTransaction {
     where
         T: io::Read,
     {
-        let compact: CompactInteger = try!(reader.read());
+        let compact: CompactInteger = r#try!(reader.read());
         let tx = PrefilledTransaction {
             index: compact.into(),
-            transaction: try!(reader.read()),
+            transaction: r#try!(reader.read()),
         };
 
         Ok(tx)

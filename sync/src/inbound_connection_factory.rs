@@ -1,8 +1,8 @@
-use inbound_connection::InboundConnection;
+use crate::inbound_connection::InboundConnection;
 use message::Services;
 use p2p::{InboundSyncConnectionRef, LocalSyncNode, LocalSyncNodeRef, OutboundSyncConnectionRef};
 use std::sync::atomic::{AtomicUsize, Ordering};
-use types::{LocalNodeRef, PeersRef};
+use crate::types::{LocalNodeRef, PeersRef};
 
 /// Inbound synchronization connection factory
 pub struct InboundConnectionFactory {

@@ -1,9 +1,9 @@
-use common::Command;
-use crypto::checksum;
-use hash::H32;
+use crate::common::Command;
+use crate::crypto::checksum;
+use crate::hash::H32;
 use network::Magic;
-use ser::{Reader, Serializable, Stream};
-use Error;
+use crate::ser::{Reader, Serializable, Stream};
+use crate::Error;
 
 #[derive(Debug, PartialEq)]
 pub struct MessageHeader {
@@ -31,7 +31,7 @@ impl MessageHeader {
         }
 
         let mut reader = Reader::new(data);
-        let magic: u32 = try!(reader.read());
+        let magic: u32 = r#try!(reader.read());
         let magic = Magic::from(magic);
         if expected != magic {
             return Err(Error::InvalidMagic);
@@ -39,9 +39,9 @@ impl MessageHeader {
 
         let header = MessageHeader {
             magic: magic,
-            command: try!(reader.read()),
-            len: try!(reader.read()),
-            checksum: try!(reader.read()),
+            command: r#try!(reader.read()),
+            len: r#try!(reader.read()),
+            checksum: r#try!(reader.read()),
         };
 
         Ok(header)
@@ -61,9 +61,9 @@ impl Serializable for MessageHeader {
 #[cfg(test)]
 mod tests {
     use super::MessageHeader;
-    use bytes::Bytes;
+    use crate::bytes::Bytes;
     use network::Network;
-    use ser::serialize;
+    use crate::ser::serialize;
 
     #[test]
     fn test_message_header_serialization() {

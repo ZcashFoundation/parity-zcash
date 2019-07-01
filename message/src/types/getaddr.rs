@@ -1,6 +1,6 @@
-use ser::{Reader, Stream};
+use crate::ser::{Reader, Stream};
 use std::io;
-use {MessageResult, Payload};
+use crate::{MessageResult, Payload};
 
 #[derive(Debug, PartialEq)]
 pub struct GetAddr;

@@ -1,9 +1,9 @@
 //! Serialized script, used inside transaction inputs and outputs.
 
-use bytes::Bytes;
+use crate::bytes::Bytes;
 use keys::{self, AddressHash, Public};
 use std::{fmt, ops};
-use {Error, Opcode};
+use crate::{Error, Opcode};
 
 /// Maximum number of bytes pushable to the stack
 pub const MAX_SCRIPT_ELEMENT_SIZE: usize = 520;
@@ -489,7 +489,7 @@ impl fmt::Display for Script {
 mod tests {
     use super::{Script, ScriptAddress, ScriptType, MAX_SCRIPT_ELEMENT_SIZE};
     use keys::{Address, Public};
-    use {Builder, Opcode};
+    use crate::{Builder, Opcode};
 
     #[test]
     fn test_is_pay_to_script_hash() {

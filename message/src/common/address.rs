@@ -1,6 +1,6 @@
-use bytes::Bytes;
-use common::{IpAddress, Port, Services};
-use ser::deserialize;
+use crate::bytes::Bytes;
+use crate::common::{IpAddress, Port, Services};
+use crate::ser::deserialize;
 
 #[derive(Debug, Default, PartialEq, Clone, Serializable, Deserializable)]
 pub struct NetAddress {
@@ -19,8 +19,8 @@ impl From<&'static str> for NetAddress {
 #[cfg(test)]
 mod tests {
     use super::NetAddress;
-    use common::Services;
-    use ser::{deserialize, serialize};
+    use crate::common::Services;
+    use crate::ser::{deserialize, serialize};
 
     #[test]
     fn test_net_address_serialize() {

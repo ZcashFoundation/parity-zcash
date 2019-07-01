@@ -6,9 +6,9 @@ extern crate quote;
 mod de;
 mod ser;
 
-use de::impl_deserializable;
+use crate::de::impl_deserializable;
 use proc_macro::TokenStream;
-use ser::impl_serializable;
+use crate::ser::impl_serializable;
 
 #[proc_macro_derive(Serializable)]
 pub fn serializable(input: TokenStream) -> TokenStream {

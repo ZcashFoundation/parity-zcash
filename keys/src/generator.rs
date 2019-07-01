@@ -1,6 +1,6 @@
-use network::Network;
+use crate::network::Network;
 use rand::os::OsRng;
-use {Error, KeyPair, SECP256K1};
+use crate::{Error, KeyPair, SECP256K1};
 
 pub trait Generator {
     fn generate(&self) -> Result<KeyPair, Error>;
@@ -19,8 +19,8 @@ impl Random {
 impl Generator for Random {
     fn generate(&self) -> Result<KeyPair, Error> {
         let context = &SECP256K1;
-        let mut rng = try!(OsRng::new().map_err(|_| Error::FailedKeyGeneration));
-        let (secret, public) = try!(context.generate_keypair(&mut rng));
+        let mut rng = r#try!(OsRng::new().map_err(|_| Error::FailedKeyGeneration));
+        let (secret, public) = r#try!(context.generate_keypair(&mut rng));
         Ok(KeyPair::from_keypair(secret, public, self.network))
     }
 }

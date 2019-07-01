@@ -1,9 +1,9 @@
-use hash::H256;
+use crate::hash::H256;
 use heapsize::HeapSizeOf;
-use read_and_hash::ReadAndHash;
-use ser::{Deserializable, Error as ReaderError, Reader};
+use crate::read_and_hash::ReadAndHash;
+use crate::ser::{Deserializable, Error as ReaderError, Reader};
 use std::{cmp, fmt, io};
-use transaction::{transaction_hash, Transaction};
+use crate::transaction::{transaction_hash, Transaction};
 
 #[derive(Default, Clone)]
 pub struct IndexedTransaction {
@@ -67,7 +67,7 @@ impl Deserializable for IndexedTransaction {
     where
         T: io::Read,
     {
-        let data = try!(reader.read_and_hash::<Transaction>());
+        let data = r#try!(reader.read_and_hash::<Transaction>());
         // TODO: use len
         let tx = IndexedTransaction {
             raw: data.data,

@@ -16,7 +16,7 @@ where
     T: 'static,
 {
     let timeout: DeadlineBox<F> =
-        Box::new(try!(Timeout::new(duration, handle)).map(|_| DeadlineStatus::Timeout));
+        Box::new(r#try!(Timeout::new(duration, handle)).map(|_| DeadlineStatus::Timeout));
     let future: DeadlineBox<F> = Box::new(future.map(DeadlineStatus::Meet));
     let deadline = Deadline {
         future: timeout.select(future),

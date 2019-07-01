@@ -2,10 +2,10 @@ use chain::{IndexedBlock, IndexedBlockHeader, IndexedTransaction};
 use message::types;
 use parking_lot::Mutex;
 use std::sync::Arc;
-use synchronization_client_core::{ClientCore, SynchronizationClientCore};
-use synchronization_executor::TaskExecutor;
-use synchronization_verifier::{TransactionVerificationSink, Verifier};
-use types::{ClientCoreRef, EmptyBoxFuture, PeerIndex, SyncListenerRef, SynchronizationStateRef};
+use crate::synchronization_client_core::{ClientCore, SynchronizationClientCore};
+use crate::synchronization_executor::TaskExecutor;
+use crate::synchronization_verifier::{TransactionVerificationSink, Verifier};
+use crate::types::{ClientCoreRef, EmptyBoxFuture, PeerIndex, SyncListenerRef, SynchronizationStateRef};
 
 #[cfg_attr(feature = "cargo-clippy", allow(doc_markdown))]
 ///! TODO: update with headers-first corrections
@@ -237,7 +237,7 @@ where
         sink: Box<TransactionVerificationSink>,
     ) -> Result<(), String> {
         let mut transactions_to_verify =
-            try!(self.core.lock().accept_transaction(transaction, sink));
+            r#try!(self.core.lock().accept_transaction(transaction, sink));
 
         let next_block_height = self.shared_state.best_storage_block_height() + 1;
         while let Some(tx) = transactions_to_verify.pop_front() {

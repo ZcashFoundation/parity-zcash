@@ -1,5 +1,5 @@
 use chain::{BlockHeader, ShortTransactionID};
-use common::PrefilledTransaction;
+use crate::common::PrefilledTransaction;
 
 #[derive(Debug, PartialEq, Serializable, Deserializable)]
 pub struct BlockHeaderAndIDs {

@@ -1,4 +1,4 @@
-use compact_integer::CompactInteger;
+use crate::compact_integer::CompactInteger;
 use std::{io, marker};
 
 pub fn deserialize<R, T>(buffer: R) -> Result<T, Error>
@@ -7,7 +7,7 @@ where
     T: Deserializable,
 {
     let mut reader = Reader::from_read(buffer);
-    let result = try!(reader.read());
+    let result = r#try!(reader.read());
 
     if reader.is_finished() {
         Ok(result)
@@ -140,11 +140,11 @@ where
     where
         T: Deserializable,
     {
-        let len: usize = try!(self.read::<CompactInteger>()).into();
+        let len: usize = r#try!(self.read::<CompactInteger>()).into();
         let mut result = Vec::with_capacity(len);
 
         for _ in 0..len {
-            result.push(try!(self.read()));
+            result.push(r#try!(self.read()));
         }
 
         Ok(result)
@@ -154,7 +154,7 @@ where
     where
         T: Deserializable,
     {
-        let len: usize = try!(self.read::<CompactInteger>()).into();
+        let len: usize = r#try!(self.read::<CompactInteger>()).into();
         if len > max {
             return Err(Error::MalformedData);
         }
@@ -162,7 +162,7 @@ where
         let mut result = Vec::with_capacity(len);
 
         for _ in 0..len {
-            result.push(try!(self.read()));
+            result.push(r#try!(self.read()));
         }
 
         Ok(result)
@@ -172,7 +172,7 @@ where
     where
         T: Deserializable,
     {
-        let len: usize = try!(self.read::<CompactInteger>()).into();
+        let len: usize = r#try!(self.read::<CompactInteger>()).into();
         if len != expected_len {
             return Err(Error::MalformedData);
         }
@@ -180,7 +180,7 @@ where
         let mut result = Vec::with_capacity(len);
 
         for _ in 0..len {
-            result.push(try!(self.read()));
+            result.push(r#try!(self.read()));
         }
 
         Ok(result)
@@ -242,7 +242,7 @@ where
     T: FnMut(&[u8]),
 {
     fn read(&mut self, buf: &mut [u8]) -> Result<usize, io::Error> {
-        let len = try!(io::Read::read(&mut self.from, buf));
+        let len = r#try!(io::Read::read(&mut self.from, buf));
         let to = &mut self.to;
         to(&buf[..len]);
         Ok(len)

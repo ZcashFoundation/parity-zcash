@@ -1,15 +1,15 @@
 //! Secret with additional network identifier and format type
 
 use base58::{FromBase58, ToBase58};
-use crypto::checksum;
-use hash::H520;
-use hex::ToHex;
-use network::Network;
+use crate::crypto::checksum;
+use crate::hash::H520;
+use crate::hex::ToHex;
+use crate::network::Network;
 use secp256k1::key;
 use secp256k1::Message as SecpMessage;
 use std::fmt;
 use std::str::FromStr;
-use {CompactSignature, DisplayLayout, Error, Message, Secret, Signature, SECP256K1};
+use crate::{CompactSignature, DisplayLayout, Error, Message, Secret, Signature, SECP256K1};
 
 /// Secret with additional network identifier and format type
 #[derive(PartialEq)]
@@ -25,18 +25,18 @@ pub struct Private {
 impl Private {
     pub fn sign(&self, message: &Message) -> Result<Signature, Error> {
         let context = &SECP256K1;
-        let secret = try!(key::SecretKey::from_slice(context, &*self.secret));
-        let message = try!(SecpMessage::from_slice(&**message));
-        let signature = try!(context.sign(&message, &secret));
+        let secret = r#try!(key::SecretKey::from_slice(context, &*self.secret));
+        let message = r#try!(SecpMessage::from_slice(&**message));
+        let signature = r#try!(context.sign(&message, &secret));
         let data = signature.serialize_der(context);
         Ok(data.into())
     }
 
     pub fn sign_compact(&self, message: &Message) -> Result<CompactSignature, Error> {
         let context = &SECP256K1;
-        let secret = try!(key::SecretKey::from_slice(context, &*self.secret));
-        let message = try!(SecpMessage::from_slice(&**message));
-        let signature = try!(context.sign_recoverable(&message, &secret));
+        let secret = r#try!(key::SecretKey::from_slice(context, &*self.secret));
+        let message = r#try!(SecpMessage::from_slice(&**message));
+        let signature = r#try!(context.sign_recoverable(&message, &secret));
         let (recovery_id, data) = signature.serialize_compact(context);
         let recovery_id = recovery_id.to_i32() as u8;
         let mut signature = H520::default();
@@ -110,8 +110,8 @@ impl DisplayLayout for Private {
 
 impl fmt::Debug for Private {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        try!(writeln!(f, "network: {:?}", self.network));
-        try!(writeln!(f, "secret: {}", self.secret.to_hex::<String>()));
+        r#try!(writeln!(f, "network: {:?}", self.network));
+        r#try!(writeln!(f, "secret: {}", self.secret.to_hex::<String>()));
         writeln!(f, "compressed: {}", self.compressed)
     }
 }
@@ -129,7 +129,7 @@ impl FromStr for Private {
     where
         Self: Sized,
     {
-        let hex = try!(s.from_base58().map_err(|_| Error::InvalidPrivate));
+        let hex = r#try!(s.from_base58().map_err(|_| Error::InvalidPrivate));
         Private::from_layout(&hex)
     }
 }
@@ -143,8 +143,8 @@ impl From<&'static str> for Private {
 #[cfg(test)]
 mod tests {
     use super::Private;
-    use hash::H256;
-    use network::Network;
+    use crate::hash::H256;
+    use crate::network::Network;
 
     #[test]
     fn test_private_to_string() {

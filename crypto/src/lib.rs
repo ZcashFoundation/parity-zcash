@@ -23,7 +23,7 @@ pub mod json;
 mod pghr13;
 
 pub use blake2_rfc::blake2b::Blake2b;
-pub use rcrypto::digest::Digest;
+pub use crate::rcrypto::digest::Digest;
 
 lazy_static! {
     pub static ref JUBJUB: sapling_crypto::jubjub::JubjubBls12 =
@@ -31,26 +31,26 @@ lazy_static! {
 }
 
 use primitives::hash::{H160, H256, H32};
-use rcrypto::ripemd160::Ripemd160;
-use rcrypto::sha1::Sha1;
-use rcrypto::sha2::Sha256;
+use crate::rcrypto::ripemd160::Ripemd160;
+use crate::rcrypto::sha1::Sha1;
+use crate::rcrypto::sha2::Sha256;
 use siphasher::sip::SipHasher24;
 use std::hash::Hasher;
 
-pub use json::groth16::{
+pub use crate::json::groth16::{
     load_joinsplit_groth16_verifying_key, load_sapling_output_verifying_key,
     load_sapling_spend_verifying_key,
 };
 
-pub use pghr13::{
+pub use crate::pghr13::{
     verify as pghr13_verify, Proof as Pghr13Proof, VerifyingKey as Pghr13VerifyingKey,
 };
 
-pub use groth16::{Error as Groth16Error, Proof as Groth16Proof};
+pub use crate::groth16::{Error as Groth16Error, Proof as Groth16Proof};
 
 pub mod curve {
     pub mod bn {
-        pub use pghr13::{Fr, Group, G1, G2, U256};
+        pub use crate::pghr13::{Fr, Group, G1, G2, U256};
     }
 
     pub mod bls {
@@ -326,7 +326,7 @@ pub fn verify_ed25519(
     public_key: &[u8; 32],
     signature: &[u8; 64],
 ) -> Result<(), Error> {
-    use ed25519::{PublicKey, Signature};
+    use crate::ed25519::{PublicKey, Signature};
 
     let public =
         PublicKey::from_bytes(&public_key[..]).map_err(|_| Error::InvalidPublicEncoding)?;

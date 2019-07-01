@@ -1,5 +1,5 @@
 use chain::BlockHeader;
-use crypto::Blake2b;
+use crate::crypto::Blake2b;
 
 /// Verify equihash solution of the block header.
 pub fn verify_block_equihash_solution(params: (u32, u32), header: &BlockHeader) -> bool {

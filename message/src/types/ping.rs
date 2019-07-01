@@ -1,6 +1,6 @@
-use ser::{Reader, Stream};
+use crate::ser::{Reader, Stream};
 use std::io;
-use {MessageResult, Payload};
+use crate::{MessageResult, Payload};
 
 #[derive(Debug, PartialEq)]
 pub struct Ping {
@@ -27,7 +27,7 @@ impl Payload for Ping {
         T: io::Read,
     {
         let ping = Ping {
-            nonce: try!(reader.read()),
+            nonce: r#try!(reader.read()),
         };
 
         Ok(ping)

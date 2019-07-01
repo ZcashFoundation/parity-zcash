@@ -12,4 +12,4 @@ mod fs;
 
 pub use primitives::{bytes, hash};
 
-pub use blk::{open_blk_dir, BlkDir};
+pub use crate::blk::{open_blk_dir, BlkDir};

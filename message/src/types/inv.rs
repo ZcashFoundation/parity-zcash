@@ -1,7 +1,7 @@
-use common::InventoryVector;
-use ser::{Reader, Stream};
+use crate::common::InventoryVector;
+use crate::ser::{Reader, Stream};
 use std::io;
-use {MessageResult, Payload};
+use crate::{MessageResult, Payload};
 
 pub const INV_MAX_INVENTORY_LEN: usize = 50_000;
 
@@ -32,7 +32,7 @@ impl Payload for Inv {
         T: io::Read,
     {
         let inv = Inv {
-            inventory: try!(reader.read_list_max(50_000)),
+            inventory: r#try!(reader.read_list_max(50_000)),
         };
 
         Ok(inv)

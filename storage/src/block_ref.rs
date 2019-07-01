@@ -1,4 +1,4 @@
-use hash::H256;
+use crate::hash::H256;
 
 #[derive(Debug, Clone)]
 pub enum BlockRef {

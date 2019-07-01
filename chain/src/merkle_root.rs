@@ -1,5 +1,5 @@
-use crypto::dhash256;
-use hash::{H256, H512};
+use crate::crypto::dhash256;
+use crate::hash::{H256, H512};
 
 #[inline]
 fn concat<T>(a: T, b: T) -> H512
@@ -49,7 +49,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::merkle_root;
-    use hash::H256;
+    use crate::hash::H256;
 
     // block 80_000
     // https://blockchain.info/block/000000000043a8c0fd1d6f726790caa2a406010d19efd2780db27bdbbd93baf6

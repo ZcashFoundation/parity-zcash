@@ -1,5 +1,5 @@
 use bn::{self, AffineG1, AffineG2, Fq, Fq2};
-use hex::FromHex;
+use crate::hex::FromHex;
 
 use std::fmt;
 

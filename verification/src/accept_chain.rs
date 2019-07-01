@@ -1,16 +1,16 @@
-use accept_block::BlockAcceptor;
-use accept_header::HeaderAcceptor;
-use accept_transaction::TransactionAcceptor;
-use canon::CanonBlock;
-use deployments::BlockDeployments;
-use error::Error;
+use crate::accept_block::BlockAcceptor;
+use crate::accept_header::HeaderAcceptor;
+use crate::accept_transaction::TransactionAcceptor;
+use crate::canon::CanonBlock;
+use crate::deployments::BlockDeployments;
+use crate::error::Error;
 use network::ConsensusParams;
 use rayon::prelude::{IndexedParallelIterator, IntoParallelRefIterator, ParallelIterator};
 use storage::{
     BlockHeaderProvider, DuplexTransactionOutputProvider, NullifierTracker,
     TransactionMetaProvider, TransactionOutputProvider, TreeStateProvider,
 };
-use VerificationLevel;
+use crate::VerificationLevel;
 
 pub struct ChainAcceptor<'a> {
     pub block: BlockAcceptor<'a>,
@@ -77,9 +77,9 @@ impl<'a> ChainAcceptor<'a> {
     }
 
     pub fn check(&self) -> Result<(), Error> {
-        try!(self.block.check());
-        try!(self.header.check());
-        try!(self.check_transactions());
+        r#try!(self.block.check());
+        r#try!(self.header.check());
+        r#try!(self.check_transactions());
         Ok(())
     }
 

@@ -7,8 +7,8 @@ use std::collections::{HashMap, VecDeque};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::thread;
-use synchronization_executor::{Task, TaskExecutor};
-use types::{BlockHeight, ExecutorRef, MemoryPoolRef, PeerIndex, PeersRef, RequestId, StorageRef};
+use crate::synchronization_executor::{Task, TaskExecutor};
+use crate::types::{BlockHeight, ExecutorRef, MemoryPoolRef, PeerIndex, PeersRef, RequestId, StorageRef};
 
 /// Synchronization server task
 #[derive(Debug, PartialEq)]
@@ -467,8 +467,8 @@ pub mod tests {
     use super::{Server, ServerImpl, ServerTask, ServerTaskExecutor};
     use chain::Transaction;
     use db::BlockChainDatabase;
-    use inbound_connection::tests::DummyOutboundSyncConnection;
-    use local_node::tests::{default_filterload, make_filteradd};
+    use crate::inbound_connection::tests::DummyOutboundSyncConnection;
+    use crate::local_node::tests::{default_filterload, make_filteradd};
     use message::common::{InventoryType, InventoryVector, Services};
     use message::types;
     use miner::{MemoryPool, NonZeroFeeCalculator};
@@ -476,10 +476,10 @@ pub mod tests {
     use primitives::hash::H256;
     use std::mem::replace;
     use std::sync::Arc;
-    use synchronization_executor::tests::DummyTaskExecutor;
-    use synchronization_executor::Task;
-    use synchronization_peers::{PeersContainer, PeersFilters, PeersImpl};
-    use types::{ExecutorRef, MemoryPoolRef, PeerIndex, PeersRef, StorageRef};
+    use crate::synchronization_executor::tests::DummyTaskExecutor;
+    use crate::synchronization_executor::Task;
+    use crate::synchronization_peers::{PeersContainer, PeersFilters, PeersImpl};
+    use crate::types::{ExecutorRef, MemoryPoolRef, PeerIndex, PeersRef, StorageRef};
 
     pub struct DummyServer {
         tasks: Mutex<Vec<ServerTask>>,

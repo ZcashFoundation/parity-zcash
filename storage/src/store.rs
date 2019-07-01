@@ -1,6 +1,6 @@
 use chain::IndexedBlockHeader;
 use std::sync::Arc;
-use {
+use crate::{
     BestBlock, BlockChain, BlockHeaderProvider, BlockProvider, Forkable, NullifierTracker,
     TransactionMetaProvider, TransactionOutputProvider, TransactionProvider, TreeStateProvider,
 };

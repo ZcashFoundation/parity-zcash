@@ -1,7 +1,7 @@
-use crypto::Groth16Proof;
-use hash::{H256, H512};
-use hex::ToHex;
-use ser::{CompactInteger, Error, Reader, Serializable, Stream};
+use crate::crypto::Groth16Proof;
+use crate::hash::{H256, H512};
+use crate::hex::ToHex;
+use crate::ser::{CompactInteger, Error, Reader, Serializable, Stream};
 use std::{fmt, io};
 
 #[derive(Clone)]

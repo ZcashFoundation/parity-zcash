@@ -1,7 +1,7 @@
-use common::InventoryVector;
-use ser::{Reader, Stream};
+use crate::common::InventoryVector;
+use crate::ser::{Reader, Stream};
 use std::io;
-use {MessageResult, Payload};
+use crate::{MessageResult, Payload};
 
 #[derive(Debug, PartialEq)]
 pub struct NotFound {
@@ -30,7 +30,7 @@ impl Payload for NotFound {
         T: io::Read,
     {
         let inv = NotFound {
-            inventory: try!(reader.read_list_max(50_000)),
+            inventory: r#try!(reader.read_list_max(50_000)),
         };
 
         Ok(inv)

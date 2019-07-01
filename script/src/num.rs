@@ -1,8 +1,8 @@
 //! Script numeric
 
-use bytes::Bytes;
+use crate::bytes::Bytes;
 use std::ops;
-use Error;
+use crate::Error;
 
 /// Script numeric
 ///

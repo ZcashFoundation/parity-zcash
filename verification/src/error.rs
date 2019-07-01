@@ -1,5 +1,5 @@
-use compact::Compact;
-use hash::H256;
+use crate::compact::Compact;
+use crate::hash::H256;
 use script::Error as SignatureError;
 use storage::Error as DBError;
 
@@ -141,7 +141,7 @@ pub enum TransactionError {
     /// Join split is not supported in the transaction version.
     JoinSplitVersionInvalid,
     /// Invalid join split signature
-    JoinSplitSignature(::crypto::Error),
+    JoinSplitSignature(crate::crypto::Error),
     /// Transaction sapling verification has failed.
     InvalidSapling,
     /// Sapling nullifier already revealed earlier in the chain.

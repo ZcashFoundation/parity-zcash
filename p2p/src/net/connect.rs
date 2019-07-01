@@ -1,8 +1,8 @@
 use futures::{Async, Future, Poll};
-use io::{deadline, handshake, Deadline, Handshake};
+use crate::io::{deadline, handshake, Deadline, Handshake};
 use message::types::Version;
 use message::Error;
-use net::{Config, Connection};
+use crate::net::{Config, Connection};
 use network::Magic;
 use std::io;
 use std::net::SocketAddr;

@@ -3,7 +3,7 @@ use chain::constants::{
     SEQUENCE_LOCKTIME_TYPE_FLAG,
 };
 use keys::{Message, Public, Signature};
-use {Num, Script, SighashCache, TransactionInputSigner};
+use crate::{Num, Script, SighashCache, TransactionInputSigner};
 
 /// Checks transaction signature
 pub trait SignatureChecker {

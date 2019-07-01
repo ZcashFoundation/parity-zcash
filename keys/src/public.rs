@@ -1,13 +1,13 @@
-use crypto::dhash160;
-use hash::{H264, H520};
-use hex::ToHex;
+use crate::crypto::dhash160;
+use crate::hash::{H264, H520};
+use crate::hex::ToHex;
 use secp256k1::key;
 use secp256k1::{
     Error as SecpError, Message as SecpMessage, RecoverableSignature, RecoveryId,
     Signature as SecpSignature,
 };
 use std::{fmt, ops};
-use {AddressHash, CompactSignature, Error, Message, Signature, SECP256K1};
+use crate::{AddressHash, CompactSignature, Error, Message, Signature, SECP256K1};
 
 /// Secret public key
 pub enum Public {
@@ -40,10 +40,10 @@ impl Public {
 
     pub fn verify(&self, message: &Message, signature: &Signature) -> Result<bool, Error> {
         let context = &SECP256K1;
-        let public = try!(key::PublicKey::from_slice(context, self));
-        let mut signature = try!(SecpSignature::from_der_lax(context, signature));
+        let public = r#try!(key::PublicKey::from_slice(context, self));
+        let mut signature = r#try!(SecpSignature::from_der_lax(context, signature));
         signature.normalize_s(context);
-        let message = try!(SecpMessage::from_slice(&**message));
+        let message = r#try!(SecpMessage::from_slice(&**message));
         match context.verify(&message, &signature, &public) {
             Ok(_) => Ok(true),
             Err(SecpError::IncorrectSignature) => Ok(false),
@@ -55,14 +55,14 @@ impl Public {
         let context = &SECP256K1;
         let recovery_id = (signature[0] - 27) & 3;
         let compressed = (signature[0] - 27) & 4 != 0;
-        let recovery_id = try!(RecoveryId::from_i32(recovery_id as i32));
-        let signature = try!(RecoverableSignature::from_compact(
+        let recovery_id = r#try!(RecoveryId::from_i32(recovery_id as i32));
+        let signature = r#try!(RecoverableSignature::from_compact(
             context,
             &signature[1..65],
             recovery_id
         ));
-        let message = try!(SecpMessage::from_slice(&**message));
-        let pubkey = try!(context.recover(&message, &signature));
+        let message = r#try!(SecpMessage::from_slice(&**message));
+        let pubkey = r#try!(context.recover(&message, &signature));
         let serialized = pubkey.serialize_vec(context, compressed);
         let public = if compressed {
             let mut public = H264::default();

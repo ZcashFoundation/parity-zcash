@@ -2,11 +2,11 @@ use chain::{
     IndexedTransaction, BTC_TX_VERSION, OVERWINTER_TX_VERSION, OVERWINTER_TX_VERSION_GROUP_ID,
     SAPLING_TX_VERSION_GROUP_ID,
 };
-use constants::{MAX_COINBASE_SIZE, MIN_COINBASE_SIZE};
-use error::TransactionError;
+use crate::constants::{MAX_COINBASE_SIZE, MIN_COINBASE_SIZE};
+use crate::error::TransactionError;
 use network::ConsensusParams;
-use ser::Serializable;
-use sigops::transaction_sigops;
+use crate::ser::Serializable;
+use crate::sigops::transaction_sigops;
 use std::{collections::HashMap, ops};
 use storage::NoopStore;
 
@@ -640,7 +640,7 @@ mod tests {
         JoinSplit, JoinSplitDescription, Sapling, BTC_TX_VERSION, OVERWINTER_TX_VERSION,
         OVERWINTER_TX_VERSION_GROUP_ID, SAPLING_TX_VERSION_GROUP_ID,
     };
-    use error::TransactionError;
+    use crate::error::TransactionError;
     use network::{ConsensusParams, Network};
 
     #[test]

@@ -1,4 +1,4 @@
-use bytes::Bytes;
+use crate::bytes::Bytes;
 use std::collections::{HashMap, HashSet};
 
 /// Queue of out-of-order responses. Each peer has its own queue.

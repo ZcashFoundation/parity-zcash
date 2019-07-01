@@ -111,25 +111,25 @@ mod tree_cache;
 
 pub use primitives::{bigint, compact, hash};
 
-pub use accept_block::BlockAcceptor;
-pub use accept_chain::ChainAcceptor;
-pub use accept_header::HeaderAcceptor;
-pub use accept_transaction::{MemoryPoolTransactionAcceptor, TransactionAcceptor};
-pub use canon::{CanonBlock, CanonHeader, CanonTransaction};
+pub use crate::accept_block::BlockAcceptor;
+pub use crate::accept_chain::ChainAcceptor;
+pub use crate::accept_header::HeaderAcceptor;
+pub use crate::accept_transaction::{MemoryPoolTransactionAcceptor, TransactionAcceptor};
+pub use crate::canon::{CanonBlock, CanonHeader, CanonTransaction};
 
-pub use verify_block::BlockVerifier;
-pub use verify_chain::ChainVerifier;
-pub use verify_header::HeaderVerifier;
-pub use verify_transaction::{MemoryPoolTransactionVerifier, TransactionVerifier};
+pub use crate::verify_block::BlockVerifier;
+pub use crate::verify_chain::ChainVerifier;
+pub use crate::verify_header::HeaderVerifier;
+pub use crate::verify_transaction::{MemoryPoolTransactionVerifier, TransactionVerifier};
 
-pub use chain_verifier::BackwardsCompatibleChainVerifier;
-pub use deployments::Deployments;
-pub use error::{Error, TransactionError};
-pub use fee::checked_transaction_fee;
-pub use sigops::transaction_sigops;
-pub use timestamp::{median_timestamp, median_timestamp_inclusive};
-pub use tree_cache::TreeCache;
-pub use work::{is_valid_proof_of_work, is_valid_proof_of_work_hash, work_required};
+pub use crate::chain_verifier::BackwardsCompatibleChainVerifier;
+pub use crate::deployments::Deployments;
+pub use crate::error::{Error, TransactionError};
+pub use crate::fee::checked_transaction_fee;
+pub use crate::sigops::transaction_sigops;
+pub use crate::timestamp::{median_timestamp, median_timestamp_inclusive};
+pub use crate::tree_cache::TreeCache;
+pub use crate::work::{is_valid_proof_of_work, is_valid_proof_of_work_hash, work_required};
 
 bitflags! {
     /// Blocks verification level.

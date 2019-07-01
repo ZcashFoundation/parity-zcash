@@ -1,16 +1,16 @@
 //! Bitcoin transaction.
 //! https://en.bitcoin.it/wiki/Protocol_documentation#tx
 
-use bytes::Bytes;
-use constants::{LOCKTIME_THRESHOLD, SEQUENCE_FINAL};
-use crypto::dhash256;
-use hash::H256;
+use crate::bytes::Bytes;
+use crate::constants::{LOCKTIME_THRESHOLD, SEQUENCE_FINAL};
+use crate::crypto::dhash256;
+use crate::hash::H256;
 use heapsize::HeapSizeOf;
-use hex::FromHex;
-use join_split::{deserialize_join_split, serialize_join_split, JoinSplit};
-use sapling::Sapling;
-use ser::{deserialize, serialize};
-use ser::{Deserializable, Error, Reader, Serializable, Stream};
+use crate::hex::FromHex;
+use crate::join_split::{deserialize_join_split, serialize_join_split, JoinSplit};
+use crate::sapling::Sapling;
+use crate::ser::{deserialize, serialize};
+use crate::ser::{Deserializable, Error, Reader, Serializable, Stream};
 use std::io;
 
 /// Original bitcoin transaction version.
@@ -350,9 +350,9 @@ pub(crate) fn transaction_hash(transaction: &Transaction) -> H256 {
 #[cfg(test)]
 mod tests {
     use super::Transaction;
-    use hash::H256;
-    use hex::ToHex;
-    use ser::{serialize, Serializable};
+    use crate::hash::H256;
+    use crate::hex::ToHex;
+    use crate::ser::{serialize, Serializable};
 
     // real transaction from Zcash block 30003
     // https://zcash.blockexplorer.com/api/rawtx/54c8acf69271dad83e9faa34284cda725caa5bea7378db92acf35becd0989463

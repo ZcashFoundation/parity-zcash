@@ -1,5 +1,5 @@
-use crypto::{pedersen_hash, sha256_compress};
-use hash::H256;
+use crate::crypto::{pedersen_hash, sha256_compress};
+use crate::hash::H256;
 
 lazy_static! {
     static ref SPROUT_EMPTY_ROOTS: Vec<H256> = [

@@ -1,5 +1,5 @@
 use bellman::groth16::{prepare_verifying_key, VerifyingKey as BellmanVerifyingKey};
-use hex::FromHex;
+use crate::hex::FromHex;
 use pairing::{
     bls12_381::{Bls12, G1Uncompressed, G2Uncompressed},
     EncodedPoint,
@@ -7,8 +7,8 @@ use pairing::{
 use serde::de::{self, Deserialize, Deserializer, Visitor};
 use std::fmt;
 
-use json::pghr13::clean_0x;
-use Groth16VerifyingKey;
+use crate::json::pghr13::clean_0x;
+use crate::Groth16VerifyingKey;
 
 /// Load Sapling spend verification key.
 pub fn load_sapling_spend_verifying_key() -> Result<Groth16VerifyingKey, String> {

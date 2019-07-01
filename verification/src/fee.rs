@@ -1,6 +1,6 @@
 use chain::Transaction;
 use storage::TransactionOutputProvider;
-use TransactionError;
+use crate::TransactionError;
 
 /// Compute miner fee for given transaction.
 ///

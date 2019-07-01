@@ -1,27 +1,27 @@
-use canon::CanonTransaction;
+use crate::canon::CanonTransaction;
 use chain::{
     OVERWINTER_TX_VERSION, OVERWINTER_TX_VERSION_GROUP_ID, SAPLING_TX_VERSION,
     SAPLING_TX_VERSION_GROUP_ID,
 };
-use constants::COINBASE_MATURITY;
-use crypto::Groth16VerifyingKey;
-use deployments::BlockDeployments;
-use error::TransactionError;
+use crate::constants::COINBASE_MATURITY;
+use crate::crypto::Groth16VerifyingKey;
+use crate::deployments::BlockDeployments;
+use crate::error::TransactionError;
 use network::ConsensusParams;
 use primitives::hash::H256;
-use sapling::accept_sapling;
+use crate::sapling::accept_sapling;
 use script::{
     verify_script, Script, SighashBase, TransactionInputSigner, TransactionSignatureChecker,
     VerificationFlags,
 };
-use ser::Serializable;
-use sigops::transaction_sigops;
+use crate::ser::Serializable;
+use crate::sigops::transaction_sigops;
 use storage::{
     DuplexTransactionOutputProvider, EpochRef, EpochTag, NullifierTracker, TransactionMetaProvider,
     TransactionOutputProvider, TreeStateProvider,
 };
-use tree_cache::TreeCache;
-use {checked_transaction_fee, VerificationLevel};
+use crate::tree_cache::TreeCache;
+use crate::{checked_transaction_fee, VerificationLevel};
 
 pub struct TransactionAcceptor<'a> {
     pub version: TransactionVersion<'a>,
@@ -649,7 +649,7 @@ impl<'a> JoinSplitProof<'a> {
     }
 
     fn check(&self) -> Result<(), TransactionError> {
-        use sprout;
+        use crate::sprout;
 
         if let Some(ref join_split) = self.transaction.raw.join_split {
             let mut index = 0;
@@ -727,7 +727,7 @@ impl<'a> JoinSplitVerification<'a> {
 
     pub fn check(&self, sighash: H256) -> Result<(), TransactionError> {
         if let Some(ref join_split) = self.transaction.raw.join_split {
-            ::crypto::verify_ed25519(
+            crate::crypto::verify_ed25519(
                 &sighash[..],
                 &join_split.pubkey.into(),
                 &join_split.sig.into(),

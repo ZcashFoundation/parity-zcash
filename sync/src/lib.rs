@@ -38,8 +38,8 @@ mod synchronization_verifier;
 mod types;
 mod utils;
 
-pub use types::LocalNodeRef;
-pub use types::PeersRef;
+pub use crate::types::LocalNodeRef;
+pub use crate::types::PeersRef;
 
 use network::{ConsensusParams, Network};
 use parking_lot::RwLock;
@@ -87,7 +87,7 @@ pub fn create_sync_blocks_writer(
 
 /// Create synchronization peers
 pub fn create_sync_peers() -> PeersRef {
-    use synchronization_peers::PeersImpl;
+    use crate::synchronization_peers::PeersImpl;
 
     Arc::new(PeersImpl::default())
 }
@@ -99,18 +99,18 @@ pub fn create_local_sync_node(
     peers: PeersRef,
     verification_params: VerificationParameters,
 ) -> LocalNodeRef {
-    use local_node::LocalNode as SyncNode;
+    use crate::local_node::LocalNode as SyncNode;
     use miner::MemoryPool;
-    use synchronization_chain::Chain as SyncChain;
-    use synchronization_client::SynchronizationClient;
-    use synchronization_client_core::{
+    use crate::synchronization_chain::Chain as SyncChain;
+    use crate::synchronization_client::SynchronizationClient;
+    use crate::synchronization_client_core::{
         Config as SynchronizationConfig, CoreVerificationSink, SynchronizationClientCore,
     };
-    use synchronization_executor::LocalSynchronizationTaskExecutor as SyncExecutor;
-    use synchronization_server::ServerImpl;
-    use synchronization_verifier::AsyncVerifier;
-    use types::SynchronizationStateRef;
-    use utils::SynchronizationState;
+    use crate::synchronization_executor::LocalSynchronizationTaskExecutor as SyncExecutor;
+    use crate::synchronization_server::ServerImpl;
+    use crate::synchronization_verifier::AsyncVerifier;
+    use crate::types::SynchronizationStateRef;
+    use crate::utils::SynchronizationState;
 
     let network = consensus.network;
     let sync_client_config = SynchronizationConfig {
@@ -177,7 +177,7 @@ pub fn create_sync_connection_factory(
     peers: PeersRef,
     local_sync_node: LocalNodeRef,
 ) -> p2p::LocalSyncNodeRef {
-    use inbound_connection_factory::InboundConnectionFactory as SyncConnectionFactory;
+    use crate::inbound_connection_factory::InboundConnectionFactory as SyncConnectionFactory;
 
     SyncConnectionFactory::new(peers, local_sync_node).boxed()
 }

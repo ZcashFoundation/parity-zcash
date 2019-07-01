@@ -2,7 +2,7 @@
 //! https://www.anintegratedworld.com/unravelling-the-mysterious-block-chain-magic-number/
 
 use chain::IndexedBlock;
-use compact::Compact;
+use crate::compact::Compact;
 use primitives::bigint::U256;
 use primitives::hash::H256;
 

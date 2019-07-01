@@ -1,7 +1,7 @@
-use common::BlockTransactions;
-use ser::{Reader, Stream};
+use crate::common::BlockTransactions;
+use crate::ser::{Reader, Stream};
 use std::io;
-use {MessageResult, Payload};
+use crate::{MessageResult, Payload};
 
 #[derive(Debug, PartialEq)]
 pub struct BlockTxn {
@@ -22,7 +22,7 @@ impl Payload for BlockTxn {
         T: io::Read,
     {
         let block = BlockTxn {
-            request: try!(reader.read()),
+            request: r#try!(reader.read()),
         };
 
         Ok(block)

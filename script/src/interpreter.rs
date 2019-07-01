@@ -1,10 +1,10 @@
-use bytes::Bytes;
+use crate::bytes::Bytes;
 use chain::constants::SEQUENCE_LOCKTIME_DISABLE_FLAG;
-use crypto::{dhash160, dhash256, ripemd160, sha1, sha256};
+use crate::crypto::{dhash160, dhash256, ripemd160, sha1, sha256};
 use keys::{Public, Signature};
-use sign::Sighash;
+use crate::sign::Sighash;
 use std::{cmp, mem};
-use {script, Error, Num, Opcode, Script, SignatureChecker, Stack, VerificationFlags};
+use crate::{script, Error, Num, Opcode, Script, SignatureChecker, Stack, VerificationFlags};
 
 /// Helper function.
 fn check_signature(
@@ -891,9 +891,9 @@ pub fn eval_script(
 #[cfg(test)]
 mod tests {
     use super::{eval_script, is_public_key, verify_script};
-    use bytes::Bytes;
+    use crate::bytes::Bytes;
     use chain::Transaction;
-    use {
+    use crate::{
         Builder, Error, NoopSignatureChecker, Num, Opcode, Script, Stack, TransactionInputSigner,
         TransactionSignatureChecker, VerificationFlags,
     };

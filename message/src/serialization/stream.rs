@@ -1,13 +1,13 @@
-use bytes::Bytes;
-use ser::Stream;
-use {Error, MessageResult, Payload};
+use crate::bytes::Bytes;
+use crate::ser::Stream;
+use crate::{Error, MessageResult, Payload};
 
 pub fn serialize_payload<T>(t: &T, version: u32) -> MessageResult<Bytes>
 where
     T: Payload,
 {
     let mut stream = PayloadStream::new(version);
-    try!(stream.append(t));
+    r#try!(stream.append(t));
     Ok(stream.out())
 }
 

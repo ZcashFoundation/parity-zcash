@@ -6,8 +6,8 @@ use std::collections::hash_map::Entry;
 use std::collections::{BTreeSet, HashMap, HashSet};
 use std::net::SocketAddr;
 use std::{fs, io, net, path};
-use util::time::{RealTime, Time};
-use util::InternetProtocol;
+use crate::util::time::{RealTime, Time};
+use crate::util::InternetProtocol;
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Node {
@@ -415,7 +415,7 @@ where
                 u64::from(n.services),
                 n.failures,
             );
-            try!(writer.serialize(record).map_err(|_| err()));
+            r#try!(writer.serialize(record).map_err(|_| err()));
         }
 
         Ok(())
@@ -439,11 +439,11 @@ where
 
         for row in rdr.deserialize() {
             let (addr, time, services, failures): (String, i64, u64, u32) =
-                try!(row.map_err(|_| err()));
+                r#try!(row.map_err(|_| err()));
 
             let services = services.into();
             let node = Node {
-                addr: try!(addr.parse().map_err(|_| err())),
+                addr: r#try!(addr.parse().map_err(|_| err())),
                 time: time,
                 services: services,
                 is_preferable: services.includes(&preferable_services),
@@ -465,8 +465,8 @@ mod tests {
     use message::common::Services;
     use std::collections::HashSet;
     use std::net::SocketAddr;
-    use util::time::{IncrementalTime, ZeroTime};
-    use util::InternetProtocol;
+    use crate::util::time::{IncrementalTime, ZeroTime};
+    use crate::util::InternetProtocol;
 
     #[test]
     fn test_node_table_insert() {

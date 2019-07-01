@@ -1,7 +1,7 @@
-use bytes::Bytes;
-use crypto::checksum;
+use crate::bytes::Bytes;
+use crate::crypto::checksum;
 use futures::{Async, Future, Poll};
-use io::{read_header, ReadHeader};
+use crate::io::{read_header, ReadHeader};
 use message::{Command, Error, MessageHeader, MessageResult};
 use network::Magic;
 use std::io;
@@ -71,7 +71,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::read_any_message;
-    use bytes::Bytes;
+    use crate::bytes::Bytes;
     use futures::Future;
     use message::Error;
     use network::Network;

@@ -1,10 +1,10 @@
-use canon::CanonHeader;
-use deployments::Deployments;
-use error::Error;
+use crate::canon::CanonHeader;
+use crate::deployments::Deployments;
+use crate::error::Error;
 use network::ConsensusParams;
 use storage::BlockHeaderProvider;
-use timestamp::median_timestamp;
-use work::work_required;
+use crate::timestamp::median_timestamp;
+use crate::work::work_required;
 
 pub struct HeaderAcceptor<'a> {
     pub version: HeaderVersion<'a>,

@@ -1,9 +1,9 @@
-use bytes::Bytes;
+use crate::bytes::Bytes;
 use chain::BlockHeader;
-use hash::H256;
-use ser::{Reader, Stream};
+use crate::hash::H256;
+use crate::ser::{Reader, Stream};
 use std::io;
-use {MessageResult, Payload};
+use crate::{MessageResult, Payload};
 
 #[derive(Debug, PartialEq)]
 pub struct MerkleBlock {
@@ -27,10 +27,10 @@ impl Payload for MerkleBlock {
         T: io::Read,
     {
         let merkle_block = MerkleBlock {
-            block_header: try!(reader.read()),
-            total_transactions: try!(reader.read()),
-            hashes: try!(reader.read_list()),
-            flags: try!(reader.read()),
+            block_header: r#try!(reader.read()),
+            total_transactions: r#try!(reader.read()),
+            hashes: r#try!(reader.read_list()),
+            flags: r#try!(reader.read()),
         };
 
         Ok(merkle_block)

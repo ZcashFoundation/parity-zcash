@@ -15,7 +15,7 @@ pub mod types;
 
 pub use primitives::{bytes, hash};
 
-pub use common::{Command, Services};
-pub use error::{Error, MessageResult};
-pub use message::{to_raw_message, Message, MessageHeader, Payload};
-pub use serialization::{deserialize_payload, serialize_payload};
+pub use crate::common::{Command, Services};
+pub use crate::error::{Error, MessageResult};
+pub use crate::message::{to_raw_message, Message, MessageHeader, Payload};
+pub use crate::serialization::{deserialize_payload, serialize_payload};

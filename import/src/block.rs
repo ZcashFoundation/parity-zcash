@@ -1,6 +1,6 @@
 use chain::IndexedBlock;
-use hash::H32;
-use ser::{Deserializable, Error as ReaderError, Reader};
+use crate::hash::H32;
+use crate::ser::{Deserializable, Error as ReaderError, Reader};
 use std::io;
 
 #[derive(Debug, PartialEq)]

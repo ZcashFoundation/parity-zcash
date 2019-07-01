@@ -4,7 +4,7 @@ use chain::{
 };
 use primitives::bytes::Bytes;
 use primitives::hash::H256;
-use ser::Serializable;
+use crate::ser::Serializable;
 
 #[derive(Debug, Default, Clone)]
 pub struct ChainBuilder {

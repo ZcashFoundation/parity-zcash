@@ -1,7 +1,7 @@
-use block_header::{block_header_hash, BlockHeader};
-use hash::H256;
-use read_and_hash::ReadAndHash;
-use ser::{Deserializable, Error as ReaderError, Reader};
+use crate::block_header::{block_header_hash, BlockHeader};
+use crate::hash::H256;
+use crate::read_and_hash::ReadAndHash;
+use crate::ser::{Deserializable, Error as ReaderError, Reader};
 use std::{cmp, fmt, io};
 
 #[derive(Clone)]
@@ -52,7 +52,7 @@ impl Deserializable for IndexedBlockHeader {
     where
         T: io::Read,
     {
-        let data = try!(reader.read_and_hash::<BlockHeader>());
+        let data = r#try!(reader.read_and_hash::<BlockHeader>());
         // TODO: use len
         let header = IndexedBlockHeader {
             raw: data.data,

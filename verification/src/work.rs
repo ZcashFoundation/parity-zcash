@@ -3,7 +3,7 @@ use primitives::bigint::U256;
 use primitives::compact::Compact;
 use primitives::hash::H256;
 use storage::{BlockAncestors, BlockHeaderProvider};
-use timestamp::median_timestamp_inclusive;
+use crate::timestamp::median_timestamp_inclusive;
 
 /// Returns true if hash is lower or equal than target represented by compact bits
 pub fn is_valid_proof_of_work_hash(bits: Compact, hash: &H256) -> bool {
@@ -135,7 +135,7 @@ mod tests {
     use primitives::hash::H256;
     use std::collections::HashMap;
     use storage::{BlockHeaderProvider, BlockRef};
-    use timestamp::median_timestamp_inclusive;
+    use crate::timestamp::median_timestamp_inclusive;
 
     #[derive(Default)]
     pub struct MemoryBlockHeaderProvider {

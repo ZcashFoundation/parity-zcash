@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use chain::hash::H256;
-use error::TransactionError;
+use crate::error::TransactionError;
 use storage::{SaplingTreeState, SproutTreeState, TreeStateProvider};
 
 #[derive(Clone)]

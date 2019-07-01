@@ -11,23 +11,23 @@ use std::collections::hash_map::Entry;
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::sync::Arc;
 #[cfg(test)]
-use synchronization_chain::Information as ChainInformation;
-use synchronization_chain::{BlockInsertionResult, BlockState, Chain, TransactionState};
-use synchronization_executor::{Task, TaskExecutor};
-use synchronization_manager::ManagementWorker;
+use crate::synchronization_chain::Information as ChainInformation;
+use crate::synchronization_chain::{BlockInsertionResult, BlockState, Chain, TransactionState};
+use crate::synchronization_executor::{Task, TaskExecutor};
+use crate::synchronization_manager::ManagementWorker;
 #[cfg(test)]
-use synchronization_peers_tasks::Information as PeersTasksInformation;
-use synchronization_peers_tasks::PeersTasks;
-use synchronization_verifier::{
+use crate::synchronization_peers_tasks::Information as PeersTasksInformation;
+use crate::synchronization_peers_tasks::PeersTasks;
+use crate::synchronization_verifier::{
     BlockVerificationSink, HeadersVerificationSink, PartiallyVerifiedBlock,
     TransactionVerificationSink, VerificationSink, VerificationTask,
 };
 use time::precise_time_s;
-use types::{
+use crate::types::{
     BlockHeight, ClientCoreRef, EmptyBoxFuture, PeerIndex, PeersRef, SyncListenerRef,
     SynchronizationStateRef,
 };
-use utils::{AverageSpeedMeter, HashPosition, OrphanBlocksPool, OrphanTransactionsPool};
+use crate::utils::{AverageSpeedMeter, HashPosition, OrphanBlocksPool, OrphanTransactionsPool};
 
 /// Approximate maximal number of blocks hashes in scheduled queue.
 const MAX_SCHEDULED_HASHES: BlockHeight = 4 * 1024;
@@ -1634,7 +1634,7 @@ pub mod tests {
     use super::{ClientCore, Config, CoreVerificationSink, SynchronizationClientCore};
     use chain::{Block, IndexedBlock, Transaction};
     use db::BlockChainDatabase;
-    use inbound_connection::tests::DummyOutboundSyncConnection;
+    use crate::inbound_connection::tests::DummyOutboundSyncConnection;
     use message::common::InventoryVector;
     use message::{types, Services};
     use miner::MemoryPool;
@@ -1642,14 +1642,14 @@ pub mod tests {
     use parking_lot::{Mutex, RwLock};
     use primitives::hash::H256;
     use std::sync::Arc;
-    use synchronization_chain::{BlockState, Chain};
-    use synchronization_client::{Client, SynchronizationClient};
-    use synchronization_executor::tests::DummyTaskExecutor;
-    use synchronization_executor::Task;
-    use synchronization_peers::PeersImpl;
-    use synchronization_verifier::tests::DummyVerifier;
-    use types::{ClientCoreRef, PeerIndex, StorageRef, SynchronizationStateRef};
-    use utils::SynchronizationState;
+    use crate::synchronization_chain::{BlockState, Chain};
+    use crate::synchronization_client::{Client, SynchronizationClient};
+    use crate::synchronization_executor::tests::DummyTaskExecutor;
+    use crate::synchronization_executor::Task;
+    use crate::synchronization_peers::PeersImpl;
+    use crate::synchronization_verifier::tests::DummyVerifier;
+    use crate::types::{ClientCoreRef, PeerIndex, StorageRef, SynchronizationStateRef};
+    use crate::utils::SynchronizationState;
     use verification::BackwardsCompatibleChainVerifier as ChainVerifier;
 
     #[derive(Default)]

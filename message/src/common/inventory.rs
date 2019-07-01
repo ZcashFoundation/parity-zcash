@@ -1,5 +1,5 @@
-use hash::H256;
-use ser::{Deserializable, Error as ReaderError, Reader, Serializable, Stream};
+use crate::hash::H256;
+use crate::ser::{Deserializable, Error as ReaderError, Reader, Serializable, Stream};
 use std::io;
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -40,7 +40,7 @@ impl Deserializable for InventoryType {
     where
         T: io::Read,
     {
-        let t: u32 = try!(reader.read());
+        let t: u32 = r#try!(reader.read());
         InventoryType::from_u32(t).ok_or(ReaderError::MalformedData)
     }
 }
@@ -79,8 +79,8 @@ impl Deserializable for InventoryVector {
         T: io::Read,
     {
         let vec = InventoryVector {
-            inv_type: try!(reader.read()),
-            hash: try!(reader.read()),
+            inv_type: r#try!(reader.read()),
+            hash: r#try!(reader.read()),
         };
 
         Ok(vec)
@@ -90,8 +90,8 @@ impl Deserializable for InventoryVector {
 #[cfg(test)]
 mod tests {
     use super::{InventoryType, InventoryVector};
-    use bytes::Bytes;
-    use ser::{deserialize, serialize};
+    use crate::bytes::Bytes;
+    use crate::ser::{deserialize, serialize};
 
     #[test]
     fn test_inventory_serialize() {

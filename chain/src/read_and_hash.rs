@@ -1,6 +1,6 @@
-use crypto::{DHash256, Digest};
-use hash::H256;
-use ser::{Deserializable, Error as ReaderError, Reader};
+use crate::crypto::{DHash256, Digest};
+use crate::hash::H256;
+use crate::ser::{Deserializable, Error as ReaderError, Reader};
 use std::io;
 
 pub struct HashedData<T> {

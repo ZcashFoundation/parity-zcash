@@ -4,12 +4,12 @@ use std::collections::HashSet;
 use std::sync::{Arc, Weak};
 use std::thread;
 use std::time::Duration;
-use synchronization_client_core::{ClientCore, SynchronizationClientCore};
-use synchronization_executor::TaskExecutor;
-use synchronization_peers_tasks::{PeersTasks, TrustLevel};
+use crate::synchronization_client_core::{ClientCore, SynchronizationClientCore};
+use crate::synchronization_executor::TaskExecutor;
+use crate::synchronization_peers_tasks::{PeersTasks, TrustLevel};
 use time::precise_time_s;
-use types::PeersRef;
-use utils::{OrphanBlocksPool, OrphanTransactionsPool};
+use crate::types::PeersRef;
+use crate::utils::{OrphanBlocksPool, OrphanTransactionsPool};
 
 /// Management interval (in ms)
 const MANAGEMENT_INTERVAL_MS: u64 = 10 * 1000;
@@ -406,9 +406,9 @@ mod tests {
     use primitives::hash::H256;
     use std::collections::HashSet;
     use std::sync::Arc;
-    use synchronization_peers::PeersImpl;
-    use synchronization_peers_tasks::{PeersTasks, TrustLevel};
-    use utils::{OrphanBlocksPool, OrphanTransactionsPool};
+    use crate::synchronization_peers::PeersImpl;
+    use crate::synchronization_peers_tasks::{PeersTasks, TrustLevel};
+    use crate::utils::{OrphanBlocksPool, OrphanTransactionsPool};
 
     #[test]
     fn manage_good_peer() {

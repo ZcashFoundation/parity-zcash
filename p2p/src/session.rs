@@ -1,11 +1,11 @@
-use bytes::Bytes;
+use crate::bytes::Bytes;
 use message::{Command, Error};
-use net::{PeerContext, PeerStats};
-use p2p::Context;
+use crate::net::{PeerContext, PeerStats};
+use crate::p2p::Context;
 use parking_lot::Mutex;
-use protocol::{AddrProtocol, PingProtocol, Protocol, SeednodeProtocol, SyncProtocol};
+use crate::protocol::{AddrProtocol, PingProtocol, Protocol, SeednodeProtocol, SyncProtocol};
 use std::sync::Arc;
-use util::PeerInfo;
+use crate::util::PeerInfo;
 
 pub trait SessionFactory {
     fn new_session(context: Arc<Context>, info: PeerInfo, synchronous: bool) -> Session;

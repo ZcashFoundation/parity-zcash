@@ -1,7 +1,7 @@
-use bytes::Bytes;
-use ser::{Reader, Stream};
+use crate::bytes::Bytes;
+use crate::ser::{Reader, Stream};
 use std::io;
-use {MessageResult, Payload};
+use crate::{MessageResult, Payload};
 
 pub const FILTERADD_MAX_DATA_LEN: usize = 520;
 
@@ -25,7 +25,7 @@ impl Payload for FilterAdd {
         T: io::Read,
     {
         let filteradd = FilterAdd {
-            data: try!(reader.read()),
+            data: r#try!(reader.read()),
         };
 
         Ok(filteradd)

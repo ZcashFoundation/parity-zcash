@@ -1,6 +1,6 @@
-use ser::{Reader, Stream};
+use crate::ser::{Reader, Stream};
 use std::io;
-use {MessageResult, Payload};
+use crate::{MessageResult, Payload};
 
 #[derive(Debug, PartialEq)]
 pub struct Pong {
@@ -27,7 +27,7 @@ impl Payload for Pong {
         T: io::Read,
     {
         let pong = Pong {
-            nonce: try!(reader.read()),
+            nonce: r#try!(reader.read()),
         };
 
         Ok(pong)

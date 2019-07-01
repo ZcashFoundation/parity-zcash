@@ -1,7 +1,7 @@
 use chain::IndexedBlock;
-use error::{Error, TransactionError};
+use crate::error::{Error, TransactionError};
 use network::ConsensusParams;
-use sigops::transaction_sigops;
+use crate::sigops::transaction_sigops;
 use std::collections::HashSet;
 use storage::NoopStore;
 

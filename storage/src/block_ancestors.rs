@@ -1,5 +1,5 @@
 use chain::IndexedBlockHeader;
-use {BlockHeaderProvider, BlockRef};
+use crate::{BlockHeaderProvider, BlockRef};
 
 pub struct BlockAncestors<'a> {
     block: Option<BlockRef>,

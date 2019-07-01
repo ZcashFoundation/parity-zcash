@@ -2,10 +2,10 @@
 //!
 //! http://bitcoin.stackexchange.com/q/12554/40688
 
-use hash::H520;
-use hex::{FromHex, ToHex};
+use crate::hash::H520;
+use crate::hex::{FromHex, ToHex};
 use std::{fmt, ops, str};
-use Error;
+use crate::Error;
 
 #[derive(PartialEq)]
 pub struct Signature(Vec<u8>);
@@ -34,7 +34,7 @@ impl str::FromStr for Signature {
     type Err = Error;
 
     fn from_str(s: &str) -> Result<Self, Error> {
-        let vec = try!(s.from_hex().map_err(|_| Error::InvalidSignature));
+        let vec = r#try!(s.from_hex().map_err(|_| Error::InvalidSignature));
         Ok(Signature(vec))
     }
 }

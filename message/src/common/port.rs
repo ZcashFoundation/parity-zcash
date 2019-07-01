@@ -1,5 +1,5 @@
 use byteorder::{BigEndian, ReadBytesExt, WriteBytesExt};
-use ser::{Deserializable, Error as ReaderError, Reader, Serializable, Stream};
+use crate::ser::{Deserializable, Error as ReaderError, Reader, Serializable, Stream};
 use std::io;
 
 #[derive(Debug, Default, PartialEq, Clone, Copy)]
@@ -28,14 +28,14 @@ impl Deserializable for Port {
     where
         T: io::Read,
     {
-        Ok(try!(reader.read_u16::<BigEndian>().map(Port)))
+        Ok(r#try!(reader.read_u16::<BigEndian>().map(Port)))
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::Port;
-    use ser::{deserialize, serialize};
+    use crate::ser::{deserialize, serialize};
 
     #[test]
     fn test_port_serialize() {

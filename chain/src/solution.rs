@@ -1,5 +1,5 @@
-use hex::ToHex;
-use ser::{Deserializable, Error, Reader, Serializable, Stream};
+use crate::hex::ToHex;
+use crate::ser::{Deserializable, Error, Reader, Serializable, Stream};
 use std::{fmt, io};
 
 /// Equihash solution size.

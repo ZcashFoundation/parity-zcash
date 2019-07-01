@@ -1,11 +1,11 @@
-use hex::FromHex;
-use ser::deserialize;
-use {BlockHeader, Transaction};
+use crate::hex::FromHex;
+use crate::ser::deserialize;
+use crate::{BlockHeader, Transaction};
 
 #[cfg(any(test, feature = "test-helpers"))]
-use hash::H256;
+use crate::hash::H256;
 #[cfg(any(test, feature = "test-helpers"))]
-use merkle_root::merkle_root;
+use crate::merkle_root::merkle_root;
 
 #[derive(Debug, PartialEq, Clone, Serializable, Deserializable)]
 pub struct Block {
@@ -55,9 +55,9 @@ impl Block {
 #[cfg(test)]
 mod tests {
     use super::Block;
-    use hash::H256;
-    use hex::FromHex;
-    use ser::{deserialize, serialize};
+    use crate::hash::H256;
+    use crate::hex::FromHex;
+    use crate::ser::{deserialize, serialize};
 
     #[test]
     fn test_block_parse() {

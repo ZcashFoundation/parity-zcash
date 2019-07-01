@@ -2,8 +2,8 @@ use message::common::{NetAddress, Services};
 use message::types::version::{Version, V0, V106, V70001};
 use network::Magic;
 use std::net::SocketAddr;
-use util::nonce::{NonceGenerator, RandomNonce};
-use util::time::{RealTime, Time};
+use crate::util::nonce::{NonceGenerator, RandomNonce};
+use crate::util::time::{RealTime, Time};
 
 #[derive(Debug, Clone)]
 pub struct Config {

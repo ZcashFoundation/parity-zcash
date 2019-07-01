@@ -2,13 +2,13 @@
 
 use super::genesis;
 use chain;
-use invoke::{Identity, Invoke};
+use crate::invoke::{Identity, Invoke};
 use network::ConsensusParams;
 use primitives::bytes::Bytes;
 use primitives::compact::Compact;
 use primitives::hash::H256;
 use script::{Builder as ScriptBuilder, Opcode};
-use ser::{serialized_list_size, Serializable};
+use crate::ser::{serialized_list_size, Serializable};
 use std::cell::Cell;
 
 thread_local! {

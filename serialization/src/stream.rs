@@ -1,6 +1,6 @@
 //! Stream used for serialization of Bitcoin structures
-use bytes::Bytes;
-use compact_integer::CompactInteger;
+use crate::bytes::Bytes;
+use crate::compact_integer::CompactInteger;
 use std::borrow::Borrow;
 use std::io::{self, Write};
 

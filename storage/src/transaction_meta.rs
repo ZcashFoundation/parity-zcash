@@ -1,8 +1,8 @@
 //! Transaction index
 
 use bit_vec::BitVec;
-use bytes::Bytes;
-use ser::{Deserializable, Error as ReaderError, Reader, Serializable, Stream};
+use crate::bytes::Bytes;
+use crate::ser::{Deserializable, Error as ReaderError, Reader, Serializable, Stream};
 use std::io;
 
 /// structure for indexing transaction info

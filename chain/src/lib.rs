@@ -24,22 +24,22 @@ mod read_and_hash;
 
 pub use primitives::{bigint, bytes, compact, hash};
 
-pub use transaction::{
+pub use crate::transaction::{
     BTC_TX_VERSION, OVERWINTER_TX_VERSION, SAPLING_TX_VERSION, SPROUT_TX_VERSION,
 };
-pub use transaction::{OVERWINTER_TX_VERSION_GROUP_ID, SAPLING_TX_VERSION_GROUP_ID};
+pub use crate::transaction::{OVERWINTER_TX_VERSION_GROUP_ID, SAPLING_TX_VERSION_GROUP_ID};
 
-pub use block::Block;
-pub use block_header::BlockHeader;
-pub use join_split::{JoinSplit, JoinSplitDescription, JoinSplitProof};
-pub use merkle_root::{merkle_node_hash, merkle_root};
-pub use sapling::{Sapling, SaplingOutputDescription, SaplingSpendDescription};
-pub use solution::EquihashSolution;
-pub use transaction::{OutPoint, Transaction, TransactionInput, TransactionOutput};
+pub use crate::block::Block;
+pub use crate::block_header::BlockHeader;
+pub use crate::join_split::{JoinSplit, JoinSplitDescription, JoinSplitProof};
+pub use crate::merkle_root::{merkle_node_hash, merkle_root};
+pub use crate::sapling::{Sapling, SaplingOutputDescription, SaplingSpendDescription};
+pub use crate::solution::EquihashSolution;
+pub use crate::transaction::{OutPoint, Transaction, TransactionInput, TransactionOutput};
 
-pub use indexed_block::IndexedBlock;
-pub use indexed_header::IndexedBlockHeader;
-pub use indexed_transaction::IndexedTransaction;
-pub use read_and_hash::{HashedData, ReadAndHash};
+pub use crate::indexed_block::IndexedBlock;
+pub use crate::indexed_header::IndexedBlockHeader;
+pub use crate::indexed_transaction::IndexedTransaction;
+pub use crate::read_and_hash::{HashedData, ReadAndHash};
 
 pub type ShortTransactionID = hash::H48;

@@ -1,7 +1,7 @@
 use chain::Transaction;
-use ser::{Reader, Stream};
+use crate::ser::{Reader, Stream};
 use std::io;
-use {MessageResult, Payload};
+use crate::{MessageResult, Payload};
 
 #[derive(Debug, PartialEq)]
 pub struct Tx {
@@ -30,7 +30,7 @@ impl Payload for Tx {
         T: io::Read,
     {
         let tx = Tx {
-            transaction: try!(reader.read()),
+            transaction: r#try!(reader.read()),
         };
 
         Ok(tx)

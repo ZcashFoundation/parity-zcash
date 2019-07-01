@@ -1,7 +1,7 @@
 use futures::{Future, Poll};
-use io::{accept_handshake, deadline, AcceptHandshake, Deadline};
+use crate::io::{accept_handshake, deadline, AcceptHandshake, Deadline};
 use message::MessageResult;
-use net::{Config, Connection};
+use crate::net::{Config, Connection};
 use network::Magic;
 use std::time::Duration;
 use std::{io, net};

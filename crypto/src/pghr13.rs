@@ -3,7 +3,7 @@ pub use bn::{
     arith::{U256, U512},
     AffineG1, AffineG2, CurveError, Fq, Fq2, Fr, Group, G1, G2,
 };
-use json::pghr13 as json;
+use crate::json::pghr13 as json;
 
 #[derive(Clone)]
 pub struct VerifyingKey {
@@ -110,7 +110,7 @@ pub fn verify(vk: &VerifyingKey, primary_input: &[Fr], proof: &Proof) -> bool {
 mod tests {
 
     use super::*;
-    use json;
+    use crate::json;
 
     fn vkey() -> VerifyingKey {
         json::pghr13::decode(include_bytes!("../../res/sprout-verifying-key.json"))
@@ -119,7 +119,7 @@ mod tests {
     }
 
     fn pgh13_proof(hex: &'static str) -> [u8; 296] {
-        use hex::FromHex;
+        use crate::hex::FromHex;
 
         assert_eq!(hex.len(), 296 * 2);
 

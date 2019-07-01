@@ -104,7 +104,7 @@ impl PartialMerkleTreeBuilder {
             matches: tree.flags,
         };
 
-        let merkle_root = try!(partial_merkle_tree.parse_tree());
+        let merkle_root = r#try!(partial_merkle_tree.parse_tree());
         Ok(ParsedPartialMerkleTree::new(
             merkle_root,
             partial_merkle_tree.all_hashes,
@@ -134,7 +134,7 @@ impl PartialMerkleTreeBuilder {
         let mut hashes_used = 0usize;
         let tree_height = self.tree_height();
         let merkle_root =
-            try!(self.parse_branch(tree_height, 0, &mut matches_used, &mut hashes_used));
+            r#try!(self.parse_branch(tree_height, 0, &mut matches_used, &mut hashes_used));
 
         if matches_used != self.matches.len() {
             return Err("not all matches used".into());
@@ -202,11 +202,11 @@ impl PartialMerkleTreeBuilder {
             Ok(hash.clone())
         } else {
             // proceed with left child
-            let left = try!(self.parse_branch(height - 1, pos << 1, matches_used, hashes_used));
+            let left = r#try!(self.parse_branch(height - 1, pos << 1, matches_used, hashes_used));
             // proceed with right child if any
             let has_right_child = (pos << 1) + 1 < self.level_width(height - 1);
             let right = if has_right_child {
-                try!(self.parse_branch(height - 1, (pos << 1) + 1, matches_used, hashes_used))
+                r#try!(self.parse_branch(height - 1, (pos << 1) + 1, matches_used, hashes_used))
             } else {
                 left.clone()
             };

@@ -1,5 +1,5 @@
 use std::ops;
-use Error;
+use crate::Error;
 
 #[derive(Debug, Default, PartialEq, Clone)]
 pub struct Stack<T> {
@@ -162,7 +162,7 @@ impl<T> Stack<T> {
 #[cfg(test)]
 mod tests {
     use super::Stack;
-    use Error;
+    use crate::Error;
 
     #[test]
     fn test_stack_require() {

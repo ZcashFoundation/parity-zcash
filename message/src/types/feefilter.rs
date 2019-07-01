@@ -1,6 +1,6 @@
-use ser::{Reader, Stream};
+use crate::ser::{Reader, Stream};
 use std::io;
-use {MessageResult, Payload};
+use crate::{MessageResult, Payload};
 
 #[derive(Debug, PartialEq)]
 pub struct FeeFilter {
@@ -27,7 +27,7 @@ impl Payload for FeeFilter {
         T: io::Read,
     {
         let fee_filter = FeeFilter {
-            fee_rate: try!(reader.read()),
+            fee_rate: r#try!(reader.read()),
         };
 
         Ok(fee_filter)

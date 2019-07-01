@@ -1,7 +1,7 @@
 use chain::Block as ChainBlock;
-use ser::{Reader, Stream};
+use crate::ser::{Reader, Stream};
 use std::io;
-use {MessageResult, Payload};
+use crate::{MessageResult, Payload};
 
 #[derive(Debug, PartialEq)]
 pub struct Block {
@@ -28,7 +28,7 @@ impl Payload for Block {
         T: io::Read,
     {
         let tx = Block {
-            block: try!(reader.read()),
+            block: r#try!(reader.read()),
         };
 
         Ok(tx)

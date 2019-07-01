@@ -1,5 +1,5 @@
 use chain::{Sapling, SaplingOutputDescription, SaplingSpendDescription};
-use crypto::{
+use crate::crypto::{
     bellman::{
         groth16::{verify_proof, Proof},
         SynthesisError,
@@ -369,8 +369,8 @@ mod tests {
     }
 
     fn bad_verifying_key() -> Groth16VerifyingKey {
-        use crypto::bellman::groth16::{prepare_verifying_key, VerifyingKey};
-        use crypto::pairing::{
+        use crate::crypto::bellman::groth16::{prepare_verifying_key, VerifyingKey};
+        use crate::crypto::pairing::{
             bls12_381::{G1Affine, G2Affine},
             CurveAffine,
         };

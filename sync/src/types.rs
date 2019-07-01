@@ -1,18 +1,18 @@
 use super::SyncListener;
 use futures::Future;
-use local_node::LocalNode;
+use crate::local_node::LocalNode;
 use miner::MemoryPool;
 use parking_lot::{Mutex, RwLock};
 use std::sync::Arc;
 use storage;
-use synchronization_client::SynchronizationClient;
-use synchronization_executor::LocalSynchronizationTaskExecutor;
-use synchronization_peers::Peers;
-use synchronization_server::ServerImpl;
-use synchronization_verifier::AsyncVerifier;
-use utils::SynchronizationState;
+use crate::synchronization_client::SynchronizationClient;
+use crate::synchronization_executor::LocalSynchronizationTaskExecutor;
+use crate::synchronization_peers::Peers;
+use crate::synchronization_server::ServerImpl;
+use crate::synchronization_verifier::AsyncVerifier;
+use crate::utils::SynchronizationState;
 
-pub use utils::BlockHeight;
+pub use crate::utils::BlockHeight;
 
 /// Network request id
 pub type RequestId = u32;

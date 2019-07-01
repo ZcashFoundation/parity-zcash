@@ -1,20 +1,20 @@
 //! Bitcoin chain verifier
 
-use accept_chain::ChainAcceptor;
-use accept_transaction::MemoryPoolTransactionAcceptor;
-use canon::{CanonBlock, CanonTransaction};
+use crate::accept_chain::ChainAcceptor;
+use crate::accept_transaction::MemoryPoolTransactionAcceptor;
+use crate::canon::{CanonBlock, CanonTransaction};
 use chain::{IndexedBlock, IndexedBlockHeader, IndexedTransaction};
-use deployments::{BlockDeployments, Deployments};
-use error::{Error, TransactionError};
+use crate::deployments::{BlockDeployments, Deployments};
+use crate::error::{Error, TransactionError};
 use network::ConsensusParams;
 use storage::{
     BlockHeaderProvider, BlockOrigin, CachedTransactionOutputProvider,
     DuplexTransactionOutputProvider, NoopStore, SharedStore, TransactionOutputProvider,
 };
-use verify_chain::ChainVerifier;
-use verify_header::HeaderVerifier;
-use verify_transaction::MemoryPoolTransactionVerifier;
-use {VerificationLevel, Verify};
+use crate::verify_chain::ChainVerifier;
+use crate::verify_header::HeaderVerifier;
+use crate::verify_transaction::MemoryPoolTransactionVerifier;
+use crate::{VerificationLevel, Verify};
 
 pub struct BackwardsCompatibleChainVerifier {
     store: SharedStore,
@@ -193,7 +193,7 @@ impl BackwardsCompatibleChainVerifier {
             &self.consensus,
         );
         let tx_verifier = MemoryPoolTransactionVerifier::new(&transaction, &self.consensus);
-        try!(tx_verifier.check());
+        r#try!(tx_verifier.check());
 
         let canon_tx = CanonTransaction::new(&transaction);
         // now let's do full verification
@@ -238,7 +238,7 @@ mod tests {
     use script;
     use std::sync::Arc;
     use storage::Error as DBError;
-    use {Error, TransactionError, VerificationLevel, Verify};
+    use crate::{Error, TransactionError, VerificationLevel, Verify};
 
     #[test]
     fn verify_orphan() {

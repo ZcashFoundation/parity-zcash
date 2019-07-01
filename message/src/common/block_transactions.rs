@@ -1,5 +1,5 @@
 use chain::Transaction;
-use hash::H256;
+use crate::hash::H256;
 
 #[derive(Debug, PartialEq, Serializable, Deserializable)]
 pub struct BlockTransactions {

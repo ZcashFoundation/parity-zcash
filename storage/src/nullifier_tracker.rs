@@ -1,4 +1,4 @@
-use EpochRef;
+use crate::EpochRef;
 
 /// Trait to query existing nullifier.
 pub trait NullifierTracker: Sync {

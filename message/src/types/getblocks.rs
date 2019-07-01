@@ -1,7 +1,7 @@
-use hash::H256;
-use ser::{Reader, Stream};
+use crate::hash::H256;
+use crate::ser::{Reader, Stream};
 use std::io;
-use {MessageResult, Payload};
+use crate::{MessageResult, Payload};
 
 pub const GETBLOCKS_MAX_RESPONSE_HASHES: usize = 500;
 
@@ -26,9 +26,9 @@ impl Payload for GetBlocks {
         T: io::Read,
     {
         let get_blocks = GetBlocks {
-            version: try!(reader.read()),
-            block_locator_hashes: try!(reader.read_list_max(500)),
-            hash_stop: try!(reader.read()),
+            version: r#try!(reader.read()),
+            block_locator_hashes: r#try!(reader.read_list_max(500)),
+            hash_stop: r#try!(reader.read()),
         };
 
         Ok(get_blocks)

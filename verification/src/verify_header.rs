@@ -1,10 +1,10 @@
 use chain::IndexedBlockHeader;
-use constants::BLOCK_MAX_FUTURE;
-use equihash::verify_block_equihash_solution;
-use error::Error;
+use crate::constants::BLOCK_MAX_FUTURE;
+use crate::equihash::verify_block_equihash_solution;
+use crate::error::Error;
 use network::ConsensusParams;
 use primitives::compact::Compact;
-use work::is_valid_proof_of_work;
+use crate::work::is_valid_proof_of_work;
 
 pub struct HeaderVerifier<'a> {
     pub version: HeaderVersion<'a>,
@@ -133,7 +133,7 @@ mod tests {
     extern crate test_data;
 
     use super::HeaderVersion;
-    use error::Error;
+    use crate::error::Error;
     use network::{ConsensusParams, Network};
 
     #[test]

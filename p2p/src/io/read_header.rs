@@ -37,7 +37,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::read_header;
-    use bytes::Bytes;
+    use crate::bytes::Bytes;
     use futures::Future;
     use message::{Error, MessageHeader};
     use network::Network;

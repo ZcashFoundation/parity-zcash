@@ -21,16 +21,16 @@ mod signature;
 
 pub use primitives::{bytes, hash};
 
-pub use address::{Address, Type};
-pub use display::DisplayLayout;
-pub use error::Error;
-pub use keypair::KeyPair;
-pub use network::Network;
-pub use private::Private;
-pub use public::Public;
-pub use signature::{CompactSignature, Signature};
+pub use crate::address::{Address, Type};
+pub use crate::display::DisplayLayout;
+pub use crate::error::Error;
+pub use crate::keypair::KeyPair;
+pub use crate::network::Network;
+pub use crate::private::Private;
+pub use crate::public::Public;
+pub use crate::signature::{CompactSignature, Signature};
 
-use hash::{H160, H256};
+use crate::hash::{H160, H256};
 
 /// 20 bytes long hash derived from public `ripemd160(sha256(public))`
 pub type AddressHash = H160;

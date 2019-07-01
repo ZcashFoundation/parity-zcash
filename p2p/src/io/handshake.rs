@@ -1,5 +1,5 @@
 use futures::{Async, Future, Poll};
-use io::{read_message, write_message, ReadMessage, WriteMessage};
+use crate::io::{read_message, write_message, ReadMessage, WriteMessage};
 use message::types::{Verack, Version};
 use message::{Error, Message, MessageResult};
 use network::Magic;
@@ -239,13 +239,13 @@ where
 #[cfg(test)]
 mod tests {
     use super::{accept_handshake, handshake, HandshakeResult};
-    use bytes::Bytes;
+    use crate::bytes::Bytes;
     use futures::{Future, Poll};
     use message::types::version::{Version, V0, V106, V70001};
     use message::types::Verack;
     use message::{Error, Message};
     use network::Network;
-    use ser::Stream;
+    use crate::ser::Stream;
     use std::io;
     use tokio_io::{AsyncRead, AsyncWrite};
 

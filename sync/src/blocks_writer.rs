@@ -6,14 +6,14 @@ use primitives::hash::H256;
 use std::collections::VecDeque;
 use std::sync::Arc;
 use storage;
-use synchronization_chain::Chain;
-use synchronization_verifier::{
+use crate::synchronization_chain::Chain;
+use crate::synchronization_verifier::{
     BlockVerificationSink, HeadersVerificationSink, PartiallyVerifiedBlock, SyncVerifier,
     TransactionVerificationSink, VerificationSink, VerificationTask, Verifier,
 };
-use types::{PeerIndex, StorageRef};
-use utils::OrphanBlocksPool;
-use VerificationParameters;
+use crate::types::{PeerIndex, StorageRef};
+use crate::utils::OrphanBlocksPool;
+use crate::VerificationParameters;
 
 /// Maximum number of orphaned in-memory blocks
 pub const MAX_ORPHANED_BLOCKS: usize = 1024;
@@ -179,7 +179,7 @@ mod tests {
     use network::{ConsensusParams, Network};
     use std::sync::Arc;
     use verification::VerificationLevel;
-    use VerificationParameters;
+    use crate::VerificationParameters;
 
     fn default_verification_params() -> VerificationParameters {
         VerificationParameters {

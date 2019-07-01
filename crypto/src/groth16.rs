@@ -1,6 +1,6 @@
 use std::fmt;
 
-use hex::ToHex;
+use crate::hex::ToHex;
 
 use bellman::groth16::Proof as BellmanProof;
 use pairing::bls12_381::Bls12;

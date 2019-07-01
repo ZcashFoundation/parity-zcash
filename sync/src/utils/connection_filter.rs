@@ -3,8 +3,8 @@ use chain::{IndexedBlock, IndexedTransaction};
 use message::types;
 use primitives::bytes::Bytes;
 use primitives::hash::H256;
-use synchronization_peers::MerkleBlockArtefacts;
-use utils::{
+use crate::synchronization_peers::MerkleBlockArtefacts;
+use crate::utils::{
     build_partial_merkle_tree, BloomFilter, FeeRateFilter, KnownHashFilter, KnownHashType,
 };
 
@@ -138,7 +138,7 @@ pub mod tests {
     use message::types;
     use primitives::bytes::Bytes;
     use std::iter::repeat;
-    use utils::KnownHashType;
+    use crate::utils::KnownHashType;
 
     #[test]
     fn filter_default_accepts_block() {

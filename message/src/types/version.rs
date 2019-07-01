@@ -1,9 +1,9 @@
-use bytes::Bytes;
-use common::{NetAddress, Services};
-use ser::{Deserializable, Error as ReaderError, Reader, Serializable, Stream};
-use serialization::deserialize_payload;
+use crate::bytes::Bytes;
+use crate::common::{NetAddress, Services};
+use crate::ser::{Deserializable, Error as ReaderError, Reader, Serializable, Stream};
+use crate::serialization::deserialize_payload;
 use std::io;
-use {MessageResult, Payload};
+use crate::{MessageResult, Payload};
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Version {
@@ -32,17 +32,17 @@ impl Payload for Version {
     where
         T: io::Read,
     {
-        let simple: V0 = try!(reader.read());
+        let simple: V0 = r#try!(reader.read());
 
         if simple.version < 106 {
             return Ok(Version::V0(simple));
         }
 
-        let v106: V106 = try!(reader.read());
+        let v106: V106 = r#try!(reader.read());
         if simple.version < 70001 {
             Ok(Version::V106(simple, v106))
         } else {
-            let v70001: V70001 = try!(reader.read());
+            let v70001: V70001 = r#try!(reader.read());
             Ok(Version::V70001(simple, v106, v70001))
         }
     }
@@ -140,10 +140,10 @@ impl Deserializable for V0 {
         T: io::Read,
     {
         let result = V0 {
-            version: try!(reader.read()),
-            services: try!(reader.read()),
-            timestamp: try!(reader.read()),
-            receiver: try!(reader.read()),
+            version: r#try!(reader.read()),
+            services: r#try!(reader.read()),
+            timestamp: r#try!(reader.read()),
+            receiver: r#try!(reader.read()),
         };
 
         Ok(result)
@@ -166,10 +166,10 @@ impl Deserializable for V106 {
         T: io::Read,
     {
         let result = V106 {
-            from: try!(reader.read()),
-            nonce: try!(reader.read()),
-            user_agent: try!(reader.read()),
-            start_height: try!(reader.read()),
+            from: r#try!(reader.read()),
+            nonce: r#try!(reader.read()),
+            user_agent: r#try!(reader.read()),
+            start_height: r#try!(reader.read()),
         };
 
         Ok(result)
@@ -188,7 +188,7 @@ impl Deserializable for V70001 {
         T: io::Read,
     {
         let result = V70001 {
-            relay: try!(reader.read()),
+            relay: r#try!(reader.read()),
         };
 
         Ok(result)
@@ -205,8 +205,8 @@ impl From<&'static str> for Version {
 #[cfg(test)]
 mod test {
     use super::{Version, V0, V106};
-    use bytes::Bytes;
-    use serialization::{deserialize_payload, serialize_payload};
+    use crate::bytes::Bytes;
+    use crate::serialization::{deserialize_payload, serialize_payload};
 
     #[test]
     fn test_version_serialize() {

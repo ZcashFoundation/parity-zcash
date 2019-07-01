@@ -1,7 +1,7 @@
 use chain::BlockHeader;
-use ser::{CompactInteger, Deserializable, Error as ReaderError, Reader, Serializable, Stream};
+use crate::ser::{CompactInteger, Deserializable, Error as ReaderError, Reader, Serializable, Stream};
 use std::io;
-use {MessageResult, Payload};
+use crate::{MessageResult, Payload};
 
 pub const HEADERS_MAX_HEADERS_LEN: usize = 160;
 
@@ -51,7 +51,7 @@ impl Payload for Headers {
     where
         T: io::Read,
     {
-        let headers_with_txn_count: Vec<HeaderWithTxnCount> = try!(reader.read_list());
+        let headers_with_txn_count: Vec<HeaderWithTxnCount> = r#try!(reader.read_list());
         let headers = Headers {
             headers: headers_with_txn_count.into_iter().map(Into::into).collect(),
         };
@@ -81,10 +81,10 @@ impl Deserializable for HeaderWithTxnCount {
         T: io::Read,
     {
         let header = HeaderWithTxnCount {
-            header: try!(reader.read()),
+            header: r#try!(reader.read()),
         };
 
-        let txn_count: CompactInteger = try!(reader.read());
+        let txn_count: CompactInteger = r#try!(reader.read());
         if txn_count != 0u32.into() {
             return Err(ReaderError::MalformedData);
         }

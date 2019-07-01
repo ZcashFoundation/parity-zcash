@@ -6,8 +6,8 @@ use primitives::hash::H256;
 use std::collections::{HashSet, VecDeque};
 use std::fmt;
 use storage;
-use types::{BlockHeight, MemoryPoolRef, StorageRef};
-use utils::{BestHeadersChain, BestHeadersChainInformation, HashPosition, HashQueueChain};
+use crate::types::{BlockHeight, MemoryPoolRef, StorageRef};
+use crate::utils::{BestHeadersChain, BestHeadersChainInformation, HashPosition, HashQueueChain};
 
 /// Index of 'verifying' queue
 const VERIFYING_QUEUE: usize = 0;
@@ -803,7 +803,7 @@ impl storage::TransactionOutputProvider for Chain {
 
 impl storage::BlockHeaderProvider for Chain {
     fn block_header_bytes(&self, block_ref: storage::BlockRef) -> Option<Bytes> {
-        use ser::serialize;
+        use crate::ser::serialize;
         self.block_header(block_ref).map(|h| serialize(&h.raw))
     }
 
@@ -827,16 +827,16 @@ impl fmt::Debug for Information {
 
 impl fmt::Debug for Chain {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        try!(writeln!(f, "chain: ["));
+        r#try!(writeln!(f, "chain: ["));
         {
             let mut num = self.best_storage_block.number;
-            try!(writeln!(
+            r#try!(writeln!(
                 f,
                 "\tworse(stored): {} {:?}",
                 0,
                 self.storage.block_hash(0)
             ));
-            try!(writeln!(
+            r#try!(writeln!(
                 f,
                 "\tbest(stored): {} {:?}",
                 num,
@@ -851,7 +851,7 @@ impl fmt::Debug for Chain {
             for (state, queue) in queues {
                 let queue_len = self.hash_chain.len_of(queue);
                 if queue_len != 0 {
-                    try!(writeln!(
+                    r#try!(writeln!(
                         f,
                         "\tworse({}): {} {:?}",
                         state,
@@ -860,7 +860,7 @@ impl fmt::Debug for Chain {
                     ));
                     num += queue_len;
                     if let Some(pre_best) = self.hash_chain.pre_back_at(queue) {
-                        try!(writeln!(
+                        r#try!(writeln!(
                             f,
                             "\tpre-best({}): {} {:?}",
                             state,
@@ -868,7 +868,7 @@ impl fmt::Debug for Chain {
                             pre_best
                         ));
                     }
-                    try!(writeln!(
+                    r#try!(writeln!(
                         f,
                         "\tbest({}): {} {:?}",
                         state,
@@ -893,7 +893,7 @@ mod tests {
     use parking_lot::RwLock;
     use primitives::hash::H256;
     use std::sync::Arc;
-    use utils::HashPosition;
+    use crate::utils::HashPosition;
 
     #[test]
     fn chain_empty() {

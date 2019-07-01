@@ -1,7 +1,7 @@
-use bytes::Bytes;
-use ser::{Deserializable, Error as ReaderError, Reader, Serializable, Stream};
+use crate::bytes::Bytes;
+use crate::ser::{Deserializable, Error as ReaderError, Reader, Serializable, Stream};
 use std::io;
-use {MessageResult, Payload};
+use crate::{MessageResult, Payload};
 
 pub const FILTERLOAD_MAX_FILTER_LEN: usize = 36_000;
 pub const FILTERLOAD_MAX_HASH_FUNCS: usize = 50;
@@ -42,10 +42,10 @@ impl Payload for FilterLoad {
         T: io::Read,
     {
         let filterload = FilterLoad {
-            filter: try!(reader.read()),
-            hash_functions: try!(reader.read()),
-            tweak: try!(reader.read()),
-            flags: try!(reader.read()),
+            filter: r#try!(reader.read()),
+            hash_functions: r#try!(reader.read()),
+            tweak: r#try!(reader.read()),
+            flags: r#try!(reader.read()),
         };
 
         Ok(filterload)
@@ -89,7 +89,7 @@ impl Deserializable for FilterFlags {
     where
         T: io::Read,
     {
-        let t: u8 = try!(reader.read());
+        let t: u8 = r#try!(reader.read());
         FilterFlags::from_u8(t).ok_or(ReaderError::MalformedData)
     }
 }

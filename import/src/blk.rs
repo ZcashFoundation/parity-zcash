@@ -1,6 +1,6 @@
-use block::Block;
-use fs::read_blk_dir;
-use ser::{deserialize_iterator, Error as ReaderError, ReadIterator};
+use crate::block::Block;
+use crate::fs::read_blk_dir;
+use crate::ser::{deserialize_iterator, Error as ReaderError, ReadIterator};
 use std::collections::BTreeSet;
 use std::{fs, io, path};
 
@@ -9,7 +9,7 @@ where
     P: AsRef<path::Path>,
 {
     trace!("Opening blk file: {:?}", path.as_ref());
-    let file = try!(fs::File::open(path));
+    let file = r#try!(fs::File::open(path));
     let blk_file = BlkFile {
         reader: deserialize_iterator(file),
     };

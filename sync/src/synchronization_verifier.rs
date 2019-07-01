@@ -8,13 +8,13 @@ use std::sync::mpsc::{channel, Receiver, Sender};
 use std::sync::Arc;
 use std::thread;
 use time::get_time;
-use types::{BlockHeight, MemoryPoolRef, PeerIndex, StorageRef};
-use utils::MemoryPoolTransactionOutputProvider;
+use crate::types::{BlockHeight, MemoryPoolRef, PeerIndex, StorageRef};
+use crate::utils::MemoryPoolTransactionOutputProvider;
 use verification::{
     BackwardsCompatibleChainVerifier as ChainVerifier, Error as VerificationError,
     VerificationLevel, Verify as VerificationVerify,
 };
-use VerificationParameters;
+use crate::VerificationParameters;
 
 //// Block that is (possibly) partially verified.
 #[derive(Debug)]
@@ -441,14 +441,14 @@ pub mod tests {
     use std::collections::{HashMap, HashSet};
     use std::sync::atomic::Ordering;
     use std::sync::Arc;
-    use synchronization_client_core::CoreVerificationSink;
-    use synchronization_executor::tests::DummyTaskExecutor;
-    use types::{BlockHeight, MemoryPoolRef, PeerIndex, StorageRef};
+    use crate::synchronization_client_core::CoreVerificationSink;
+    use crate::synchronization_executor::tests::DummyTaskExecutor;
+    use crate::types::{BlockHeight, MemoryPoolRef, PeerIndex, StorageRef};
     use verification::{
         BackwardsCompatibleChainVerifier as ChainVerifier, Error as VerificationError,
         TransactionError, VerificationLevel,
     };
-    use VerificationParameters;
+    use crate::VerificationParameters;
 
     #[derive(Default)]
     pub struct DummyVerifier {

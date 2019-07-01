@@ -1,4 +1,4 @@
-use hex::ToHex;
+use crate::hex::ToHex;
 use std::fmt;
 
 ///

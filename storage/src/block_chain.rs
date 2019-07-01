@@ -1,6 +1,6 @@
 use chain::{IndexedBlock, IndexedBlockHeader};
-use hash::H256;
-use {BlockOrigin, Error, SideChainOrigin, Store};
+use crate::hash::H256;
+use crate::{BlockOrigin, Error, SideChainOrigin, Store};
 
 pub trait ForkChain {
     /// Returns forks underlaying store.

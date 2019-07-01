@@ -2,25 +2,25 @@ use abstract_ns::Resolver;
 use futures::stream::Stream;
 use futures::{failed, finished, Future};
 use futures_cpupool::{Builder as CpuPoolBuilder, CpuPool};
-use io::DeadlineStatus;
+use crate::io::DeadlineStatus;
 use message::common::Services;
 use message::types::addr::AddressEntry;
 use message::{Message, MessageResult, Payload};
-use net::{
+use crate::net::{
     accept_connection, connect, Channel, Config as NetConfig, ConnectionCounter, Connections,
 };
 use ns_dns_tokio::DnsResolver;
 use parking_lot::RwLock;
-use protocol::{InboundSyncConnectionRef, LocalSyncNodeRef, OutboundSyncConnectionRef};
-use session::{NormalSessionFactory, SeednodeSessionFactory, SessionFactory};
+use crate::protocol::{InboundSyncConnectionRef, LocalSyncNodeRef, OutboundSyncConnectionRef};
+use crate::session::{NormalSessionFactory, SeednodeSessionFactory, SessionFactory};
 use std::net::SocketAddr;
 use std::sync::Arc;
 use std::{error, io, net, time};
 use tokio_core::net::{TcpListener, TcpStream};
 use tokio_core::reactor::{Handle, Interval, Remote, Timeout};
 use tokio_io::IoFuture;
-use util::{Direction, Node, NodeTable, NodeTableError};
-use {Config, PeerId};
+use crate::util::{Direction, Node, NodeTable, NodeTableError};
+use crate::{Config, PeerId};
 
 pub type BoxedEmptyFuture = Box<Future<Item = (), Error = ()> + Send>;
 
@@ -56,7 +56,7 @@ impl Context {
                 config.inbound_connections,
                 config.outbound_connections,
             ),
-            node_table: RwLock::new(try!(NodeTable::from_file(
+            node_table: RwLock::new(r#try!(NodeTable::from_file(
                 config.preferable_services,
                 &config.node_table_path
             ))),
@@ -358,7 +358,7 @@ impl Context {
         config: NetConfig,
     ) -> Result<BoxedEmptyFuture, io::Error> {
         trace!("Starting tcp server");
-        let server = try!(TcpListener::bind(&config.local_address, handle));
+        let server = r#try!(TcpListener::bind(&config.local_address, handle));
         let server = Box::new(
             server
                 .incoming()
@@ -572,7 +572,7 @@ impl P2P {
             .pool_size(config.threads)
             .create();
 
-        let context = try!(Context::new(
+        let context = r#try!(Context::new(
             local_sync_node,
             pool.clone(),
             handle.remote().clone(),
@@ -594,13 +594,13 @@ impl P2P {
             self.connect::<NormalSessionFactory>(*peer);
         }
 
-        let resolver = try!(DnsResolver::system_config(&self.event_loop_handle));
+        let resolver = r#try!(DnsResolver::system_config(&self.event_loop_handle));
         for seed in &self.config.seeds {
             self.connect_to_seednode(&resolver, seed);
         }
 
         Context::autoconnect(self.context.clone(), &self.event_loop_handle);
-        try!(self.listen());
+        r#try!(self.listen());
         Ok(())
     }
 
@@ -644,7 +644,7 @@ impl P2P {
     }
 
     fn listen(&self) -> Result<(), Box<error::Error>> {
-        let server = try!(Context::listen(
+        let server = r#try!(Context::listen(
             self.context.clone(),
             &self.event_loop_handle,
             self.config.connection.clone()

@@ -1,6 +1,6 @@
 //! Fixed-size hashes
 
-use hex::{FromHex, FromHexError, ToHex};
+use crate::hex::{FromHex, FromHexError, ToHex};
 use std::hash::{Hash, Hasher};
 use std::{cmp, fmt, ops, str};
 
@@ -68,7 +68,7 @@ macro_rules! impl_hash {
             type Err = FromHexError;
 
             fn from_str(s: &str) -> Result<Self, Self::Err> {
-                let vec: Vec<u8> = try!(s.from_hex());
+                let vec: Vec<u8> = r#try!(s.from_hex());
                 match vec.len() {
                     $size => {
                         let mut result = [0u8; $size];

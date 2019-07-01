@@ -1,18 +1,18 @@
-use bytes::Bytes;
+use crate::bytes::Bytes;
 use chain::{IndexedBlock, IndexedBlockHeader, IndexedTransaction, OutPoint, TransactionOutput};
-use hash::H256;
-use kv::{
+use crate::hash::H256;
+use crate::kv::{
     AutoFlushingOverlayDatabase, CacheDatabase, DatabaseConfig, DiskDatabase, Key, KeyState,
     KeyValue, KeyValueDatabase, MemoryDatabase, OverlayDatabase, Transaction as DBTransaction,
     Value,
 };
-use kv::{
+use crate::kv::{
     COL_BLOCK_HASHES, COL_BLOCK_HEADERS, COL_BLOCK_NUMBERS, COL_BLOCK_TRANSACTIONS, COL_COUNT,
     COL_SAPLING_NULLIFIERS, COL_SPROUT_BLOCK_ROOTS, COL_SPROUT_NULLIFIERS, COL_TRANSACTIONS,
     COL_TRANSACTIONS_META, COL_TREE_STATES,
 };
 use parking_lot::RwLock;
-use ser::{deserialize, serialize, List};
+use crate::ser::{deserialize, serialize, List};
 use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
@@ -68,7 +68,7 @@ mod cache {
     pub const CACHE_TREE_STATES: u32 = 10;
     pub const CACHE_SPROUT_BLOCK_ROOTS: u32 = 5;
 
-    pub fn set(cfg: &mut ::kv::DatabaseConfig, total: usize, col: u32, distr: u32) {
+    pub fn set(cfg: &mut crate::kv::DatabaseConfig, total: usize, col: u32, distr: u32) {
         cfg.set_cache(
             Some(col),
             (total as f32 * distr as f32 / 100f32).round() as usize,

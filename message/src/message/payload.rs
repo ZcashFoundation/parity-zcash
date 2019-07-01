@@ -1,6 +1,6 @@
-use ser::{Reader, Stream};
+use crate::ser::{Reader, Stream};
 use std::io;
-use MessageResult;
+use crate::MessageResult;
 
 pub trait Payload: Send + 'static {
     fn version() -> u32;

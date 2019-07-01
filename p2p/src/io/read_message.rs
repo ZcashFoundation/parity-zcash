@@ -1,5 +1,5 @@
 use futures::{Async, Future, Poll};
-use io::{read_header, read_payload, ReadHeader, ReadPayload};
+use crate::io::{read_header, read_payload, ReadHeader, ReadPayload};
 use message::{Error, MessageResult, Payload};
 use network::Magic;
 use std::io;
@@ -70,7 +70,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::read_message;
-    use bytes::Bytes;
+    use crate::bytes::Bytes;
     use futures::Future;
     use message::types::{Ping, Pong};
     use message::Error;

@@ -1,5 +1,5 @@
 use keys::Address;
-use {crypto, Deployment, Magic, Network};
+use crate::{crypto, Deployment, Magic, Network};
 
 lazy_static! {
     static ref SAPLING_SPEND_VK: crypto::Groth16VerifyingKey =

@@ -1,4 +1,4 @@
-use io::SharedTcpStream;
+use crate::io::SharedTcpStream;
 use message::common::Services;
 use message::types;
 use network::Magic;

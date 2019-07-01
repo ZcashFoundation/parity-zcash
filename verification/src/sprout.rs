@@ -1,5 +1,5 @@
 use chain::{JoinSplit, JoinSplitDescription, JoinSplitProof};
-use crypto::{curve::bls, curve::bn, pghr13_verify, Pghr13Proof};
+use crate::crypto::{curve::bls, curve::bn, pghr13_verify, Pghr13Proof};
 
 /// Join split verification error kind
 #[derive(Debug)]
@@ -18,7 +18,7 @@ pub fn compute_hsig(
     nullifiers: &[[u8; 32]; 2],
     pub_key_hash: &[u8; 32],
 ) -> [u8; 32] {
-    use crypto::blake2::Params;
+    use crate::crypto::blake2::Params;
 
     let res = Params::new()
         .hash_length(32)
@@ -143,7 +143,7 @@ impl Input {
     }
 
     pub fn into_bls_frs(self) -> Vec<bls::Fr> {
-        use crypto::pairing::{Field, PrimeField};
+        use crate::crypto::pairing::{Field, PrimeField};
 
         let mut frs = Vec::new();
 
@@ -169,11 +169,11 @@ mod tests {
 
     use super::{compute_hsig, verify};
     use chain::{JoinSplit, JoinSplitDescription, JoinSplitProof};
-    use crypto;
-    use crypto::load_joinsplit_groth16_verifying_key;
+    use crate::crypto;
+    use crate::crypto::load_joinsplit_groth16_verifying_key;
 
     fn hash(s: &'static str) -> [u8; 32] {
-        use hex::FromHex;
+        use crate::hex::FromHex;
         let mut bytes: Vec<u8> = s
             .from_hex()
             .expect(&format!("hash '{}' is not actually a hash somehow", s));
@@ -185,7 +185,7 @@ mod tests {
     }
 
     fn hash2(s: &'static str) -> [u8; 32] {
-        use hex::FromHex;
+        use crate::hex::FromHex;
         let bytes: Vec<u8> = s
             .from_hex()
             .expect(&format!("hash '{}' is not actually a hash somehow", s));
@@ -196,8 +196,8 @@ mod tests {
     }
 
     fn dummy_groth16_key() -> crypto::Groth16VerifyingKey {
-        use crypto::bellman::groth16::{prepare_verifying_key, VerifyingKey};
-        use crypto::pairing::{
+        use crate::crypto::bellman::groth16::{prepare_verifying_key, VerifyingKey};
+        use crate::crypto::pairing::{
             bls12_381::{G1Affine, G2Affine},
             CurveAffine,
         };
@@ -314,7 +314,7 @@ mod tests {
     }
 
     fn pgh13_proof(hex: &'static str) -> JoinSplitProof {
-        use hex::FromHex;
+        use crate::hex::FromHex;
 
         assert_eq!(hex.len(), 296 * 2);
 
@@ -326,7 +326,7 @@ mod tests {
     }
 
     fn groth16_proof(hex: &'static str) -> JoinSplitProof {
-        use hex::FromHex;
+        use crate::hex::FromHex;
 
         assert_eq!(hex.len(), 192 * 2);
 
