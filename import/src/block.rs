@@ -1,7 +1,7 @@
-use chain::IndexedBlock;
 use hash::H32;
 use ser::{Deserializable, Error as ReaderError, Reader};
 use std::io;
+use zebra_chain::IndexedBlock;
 
 #[derive(Debug, PartialEq)]
 pub struct Block {

@@ -5,11 +5,8 @@
 //! transactions.
 //! It also guarantees that ancestor-descendant relation won't break during ordered removal (ancestors always removed
 //! before descendants). Removal using `remove_by_hash` can break this rule.
-use chain::{IndexedTransaction, OutPoint, Transaction, TransactionOutput};
 use fee::MemoryPoolFeeCalculator;
 use heapsize::HeapSizeOf;
-use primitives::bytes::Bytes;
-use primitives::hash::H256;
 use ser::{serialize, Serializable};
 use std::cmp::Ordering;
 use std::collections::BTreeSet;
@@ -17,7 +14,10 @@ use std::collections::HashMap;
 use std::collections::HashSet;
 use std::collections::VecDeque;
 use std::hash::{Hash, Hasher};
-use storage::{TransactionOutputProvider, TransactionProvider};
+use zebra_chain::{IndexedTransaction, OutPoint, Transaction, TransactionOutput};
+use zebra_primitives::bytes::Bytes;
+use zebra_primitives::hash::H256;
+use zebra_storage::{TransactionOutputProvider, TransactionProvider};
 
 /// Transactions ordering strategy
 #[cfg_attr(feature = "cargo-clippy", allow(enum_variant_names))]
@@ -1070,13 +1070,13 @@ impl<'a> Iterator for MemoryPoolIterator<'a> {
 
 #[cfg(test)]
 pub mod tests {
-    extern crate test_data;
+    extern crate zebra_test_data;
 
-    use self::test_data::{ChainBuilder, TransactionBuilder};
+    use self::zebra_test_data::{ChainBuilder, TransactionBuilder};
     use super::{DoubleSpendCheckResult, MemoryPool, OrderingStrategy};
-    use chain::{OutPoint, Transaction};
     use fee::NonZeroFeeCalculator;
     use heapsize::HeapSizeOf;
+    use zebra_chain::{OutPoint, Transaction};
 
     fn to_memory_pool(chain: &mut ChainBuilder) -> MemoryPool {
         let mut pool = MemoryPool::new();

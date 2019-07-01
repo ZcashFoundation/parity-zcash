@@ -5,13 +5,13 @@ extern crate parking_lot;
 #[macro_use]
 extern crate display_derive;
 
-extern crate bitcrypto as crypto;
-extern crate chain;
-extern crate primitives;
-extern crate serialization as ser;
+extern crate zebra_chain;
+extern crate zebra_crypto;
+extern crate zebra_primitives;
+extern crate zebra_serialization as ser;
 #[macro_use]
 extern crate lazy_static;
-extern crate network;
+extern crate zebra_network;
 
 mod best_block;
 mod block_ancestors;
@@ -30,7 +30,7 @@ mod transaction_provider;
 mod tree_state;
 mod tree_state_provider;
 
-pub use primitives::{bytes, hash};
+pub use zebra_primitives::{bytes, hash};
 
 pub use best_block::BestBlock;
 pub use block_ancestors::BlockAncestors;

@@ -6,11 +6,11 @@
 //! https://en.bitcoin.it/wiki/Address
 
 use base58::{FromBase58, ToBase58};
-use crypto::checksum;
 use network::Network;
 use std::fmt;
 use std::ops::Deref;
 use std::str::FromStr;
+use zebra_crypto::checksum;
 use {AddressHash, DisplayLayout, Error};
 
 /// There are two transparent address formats currently in use.

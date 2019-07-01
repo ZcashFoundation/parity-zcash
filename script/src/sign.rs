@@ -2,13 +2,13 @@
 
 use byteorder::{ByteOrder, LittleEndian};
 use bytes::Bytes;
-use chain::{
+use hash::H256;
+use ser::Stream;
+use zebra_chain::{
     JoinSplit, OutPoint, Sapling, Transaction, TransactionInput, TransactionOutput,
     SAPLING_TX_VERSION_GROUP_ID,
 };
-use crypto::{blake2b_personal, dhash256};
-use hash::H256;
-use ser::Stream;
+use zebra_crypto::{blake2b_personal, dhash256};
 use Script;
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -516,13 +516,13 @@ fn compute_hash_sapling_outputs(
 mod tests {
     use super::{Sighash, SighashBase, TransactionInputSigner, UnsignedTransactionInput};
     use bytes::Bytes;
-    use chain::{OutPoint, Transaction, TransactionOutput};
     use hash::H256;
     use hex::FromHex;
-    use keys::{Address, KeyPair, Private};
     use script::Script;
     use ser::deserialize;
     use serde_json::{from_slice, Value};
+    use zebra_chain::{OutPoint, Transaction, TransactionOutput};
+    use zebra_keys::{Address, KeyPair, Private};
     use {verify_script, TransactionSignatureChecker, VerificationFlags};
 
     #[test]

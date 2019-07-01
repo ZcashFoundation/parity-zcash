@@ -1,5 +1,5 @@
 [package]
-name = "db"
+name = "zebra-db"
 version = "0.1.0"
 license = "GPL-3.0"
 authors = ["Zcash Foundation <zebra@zfnd.org>"]
@@ -11,11 +11,11 @@ parking_lot = "0.8"
 log = "0.4"
 bit-vec = "0.4"
 lru-cache = "0.1"
-primitives = { path = "../primitives" }
-serialization = { path = "../serialization" }
-chain = { path = "../chain" }
-storage = { path = "../storage" }
+zebra-primitives = { path = "../primitives" }
+zebra-serialization = { path = "../serialization" }
+zebra-chain = { path = "../chain" }
+zebra-storage = { path = "../storage" }
 
 [dev-dependencies]
 tempdir = "0.3"
-test-data = { path = "../test-data" }
+zebra-test-data = { path = "../test-data" }

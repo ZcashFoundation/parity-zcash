@@ -63,18 +63,18 @@ extern crate rustc_hex as hex;
 #[macro_use]
 extern crate bitflags;
 
-extern crate bitcrypto as crypto;
 extern crate bitvec;
-extern crate chain;
-extern crate keys;
-extern crate network;
-extern crate primitives;
-extern crate script;
-extern crate serialization as ser;
-extern crate storage;
+extern crate zebra_chain;
+extern crate zebra_crypto;
+extern crate zebra_keys;
+extern crate zebra_network;
+extern crate zebra_primitives;
+extern crate zebra_script;
+extern crate zebra_serialization as ser;
+extern crate zebra_storage;
 
 #[cfg(test)]
-extern crate db;
+extern crate zebra_db;
 
 #[cfg(test)]
 #[macro_use]
@@ -109,7 +109,7 @@ mod chain_verifier;
 
 mod tree_cache;
 
-pub use primitives::{bigint, compact, hash};
+pub use zebra_primitives::{bigint, compact, hash};
 
 pub use accept_block::BlockAcceptor;
 pub use accept_chain::ChainAcceptor;
@@ -148,5 +148,9 @@ bitflags! {
 
 /// Interface for block verification
 pub trait Verify: Send + Sync {
-    fn verify(&self, level: VerificationLevel, block: &chain::IndexedBlock) -> Result<(), Error>;
+    fn verify(
+        &self,
+        level: VerificationLevel,
+        block: &zebra_chain::IndexedBlock,
+    ) -> Result<(), Error>;
 }

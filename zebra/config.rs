@@ -1,17 +1,17 @@
 use clap;
-use keys::Address;
-use message::Services;
-use network::{ConsensusParams, Network};
-use p2p::InternetProtocol;
-use primitives::hash::H256;
 use rpc::HttpConfiguration as RpcHttpConfig;
 use rpc_apis::ApiSet;
 use seednodes::{zcash_seednodes, zcash_testnet_seednodes};
 use std::net;
-use storage;
-use sync::VerificationParameters;
 use util::open_db;
-use verification::VerificationLevel;
+use zebra_keys::Address;
+use zebra_message::Services;
+use zebra_network::{ConsensusParams, Network};
+use zebra_p2p::InternetProtocol;
+use zebra_primitives::hash::H256;
+use zebra_storage;
+use zebra_sync::VerificationParameters;
+use zebra_verification::VerificationLevel;
 use {REGTEST_USER_AGENT, USER_AGENT};
 
 pub struct Config {
@@ -33,7 +33,7 @@ pub struct Config {
     pub rpc_config: RpcHttpConfig,
     pub block_notify_command: Option<String>,
     pub verification_params: VerificationParameters,
-    pub db: storage::SharedStore,
+    pub db: zebra_storage::SharedStore,
     pub miner_address: Option<Address>,
 }
 

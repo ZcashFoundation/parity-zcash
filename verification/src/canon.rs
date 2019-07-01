@@ -1,6 +1,6 @@
-use chain::{IndexedBlock, IndexedBlockHeader, IndexedTransaction};
-use primitives::hash::H256;
 use std::ops;
+use zebra_chain::{IndexedBlock, IndexedBlockHeader, IndexedTransaction};
+use zebra_primitives::hash::H256;
 
 /// Blocks whose parents are known to be in the chain
 #[derive(Clone, Copy)]
@@ -85,7 +85,7 @@ impl<'a> CanonTransaction<'a> {
         }
     }
 
-    pub fn join_split(&self) -> Option<&'a chain::JoinSplit> {
+    pub fn join_split(&self) -> Option<&'a zebra_chain::JoinSplit> {
         self.transaction.raw.join_split.as_ref()
     }
 }

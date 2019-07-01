@@ -1,7 +1,7 @@
-use keys::Address;
 use serde::de::{Unexpected, Visitor};
 use serde::{Deserializer, Serialize, Serializer};
 use std::fmt;
+use zebra_keys::Address;
 
 pub fn serialize<S>(address: &Address, serializer: S) -> Result<S::Ok, S::Error>
 where
@@ -39,9 +39,9 @@ impl<'b> Visitor<'b> for AddressVisitor {
 
 pub mod vec {
     use super::AddressVisitor;
-    use keys::Address;
     use serde::de::Visitor;
     use serde::{Deserialize, Deserializer, Serialize, Serializer};
+    use zebra_keys::Address;
 
     pub fn serialize<S>(addresses: &Vec<Address>, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -67,9 +67,9 @@ pub mod vec {
 
 #[cfg(test)]
 mod tests {
-    use keys::Address;
     use serde_json;
     use v1::types;
+    use zebra_keys::Address;
 
     #[derive(Debug, PartialEq, Serialize, Deserialize)]
     struct TestStruct {

@@ -1,10 +1,10 @@
-use chain::IndexedBlock;
 use error::Error;
-use network::ConsensusParams;
 use rayon::prelude::{IndexedParallelIterator, IntoParallelRefIterator, ParallelIterator};
 use verify_block::BlockVerifier;
 use verify_header::HeaderVerifier;
 use verify_transaction::TransactionVerifier;
+use zebra_chain::IndexedBlock;
+use zebra_network::ConsensusParams;
 use VerificationLevel;
 
 pub struct ChainVerifier<'a> {

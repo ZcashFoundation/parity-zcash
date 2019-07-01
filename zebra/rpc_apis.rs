@@ -1,7 +1,7 @@
-use ethcore_rpc::MetaIoHandler;
 use rpc::Dependencies;
 use std::collections::HashSet;
 use std::str::FromStr;
+use zebra_rpc::MetaIoHandler;
 
 #[derive(Debug, PartialEq, Eq, Hash, Copy, Clone)]
 pub enum Api {
@@ -57,7 +57,7 @@ pub fn setup_rpc(
     apis: ApiSet,
     deps: Dependencies,
 ) -> MetaIoHandler<()> {
-    use ethcore_rpc::v1::*;
+    use zebra_rpc::v1::*;
 
     for api in apis.list_apis() {
         match api {

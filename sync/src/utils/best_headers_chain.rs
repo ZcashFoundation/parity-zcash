@@ -1,7 +1,7 @@
 use super::{HashPosition, HashQueue};
-use chain::IndexedBlockHeader;
-use primitives::hash::H256;
 use std::collections::HashMap;
+use zebra_chain::IndexedBlockHeader;
+use zebra_primitives::hash::H256;
 
 /// Best headers chain information
 #[derive(Debug)]
@@ -143,10 +143,10 @@ impl BestHeadersChain {
 
 #[cfg(test)]
 mod tests {
-    extern crate test_data;
+    extern crate zebra_test_data;
 
     use super::BestHeadersChain;
-    use primitives::hash::H256;
+    use zebra_primitives::hash::H256;
 
     #[test]
     fn best_chain_empty() {
@@ -160,11 +160,11 @@ mod tests {
 
     #[test]
     fn best_chain_insert() {
-        let mut chain = BestHeadersChain::new(test_data::genesis().hash());
-        let b1 = test_data::block_h1().block_header;
-        let b2 = test_data::block_h2().block_header;
-        let b181 = test_data::block_h181().block_header;
-        let b182 = test_data::block_h182().block_header;
+        let mut chain = BestHeadersChain::new(zebra_test_data::genesis().hash());
+        let b1 = zebra_test_data::block_h1().block_header;
+        let b2 = zebra_test_data::block_h2().block_header;
+        let b181 = zebra_test_data::block_h181().block_header;
+        let b182 = zebra_test_data::block_h182().block_header;
         chain.insert(b1.into());
         chain.insert(b181.clone().into());
         assert_eq!(chain.information().best, 1);
@@ -188,26 +188,26 @@ mod tests {
 
     #[test]
     fn best_chain_remove() {
-        let b0 = test_data::block_builder().header().build().build();
-        let b1 = test_data::block_builder()
+        let b0 = zebra_test_data::block_builder().header().build().build();
+        let b1 = zebra_test_data::block_builder()
             .header()
             .parent(b0.hash())
             .build()
             .build()
             .block_header;
-        let b2 = test_data::block_builder()
+        let b2 = zebra_test_data::block_builder()
             .header()
             .parent(b1.hash())
             .build()
             .build()
             .block_header;
-        let b3 = test_data::block_builder()
+        let b3 = zebra_test_data::block_builder()
             .header()
             .parent(b2.hash())
             .build()
             .build()
             .block_header;
-        let b4 = test_data::block_builder()
+        let b4 = zebra_test_data::block_builder()
             .header()
             .parent(b3.hash())
             .build()
@@ -245,11 +245,11 @@ mod tests {
 
     #[test]
     fn best_chain_insert_to_db_no_reorg() {
-        let mut chain = BestHeadersChain::new(test_data::genesis().hash());
-        let b1 = test_data::block_h1().block_header;
+        let mut chain = BestHeadersChain::new(zebra_test_data::genesis().hash());
+        let b1 = zebra_test_data::block_h1().block_header;
         chain.insert(b1.clone().into());
         assert_eq!(chain.at(0), Some(b1.clone().into()));
-        let b2 = test_data::block_h2().block_header;
+        let b2 = zebra_test_data::block_h2().block_header;
         chain.insert(b2.clone().into());
         assert_eq!(chain.at(0), Some(b1.clone().into()));
         assert_eq!(chain.at(1), Some(b2.clone().into()));
@@ -265,8 +265,8 @@ mod tests {
 
     #[test]
     fn insert_to_best_chain_returns_true_if_header_is_in_chain() {
-        let b0 = test_data::block_builder().header().build().build();
-        let b1 = test_data::block_builder()
+        let b0 = zebra_test_data::block_builder().header().build().build();
+        let b1 = zebra_test_data::block_builder()
             .header()
             .parent(b0.hash())
             .build()

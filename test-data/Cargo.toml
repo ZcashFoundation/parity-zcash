@@ -1,5 +1,5 @@
 [package]
-name = "test-data"
+name = "zebra-test-data"
 version = "0.1.0"
 license = "GPL-3.0"
 authors = ["Zcash Foundation <zebra@zfnd.org>"]
@@ -7,8 +7,8 @@ authors = ["Zcash Foundation <zebra@zfnd.org>"]
 [dependencies]
 time = "0.1"
 
-chain = { path = "../chain" }
-network = { path = "../network" }
-primitives = { path = "../primitives" }
-serialization = { path = "../serialization" }
-script = { path = "../script" }
+zebra-chain = { path = "../chain" }
+zebra-network = { path = "../network" }
+zebra-primitives = { path = "../primitives" }
+zebra-serialization = { path = "../serialization" }
+zebra-script = { path = "../script" }

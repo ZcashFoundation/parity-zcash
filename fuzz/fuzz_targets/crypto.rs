@@ -1,4 +1,4 @@
-extern crate bitcrypto as crypto;
+extern crate zebra_crypto;
 
 fn target(data: &[u8]) {
     crypto::ripemd160(data);

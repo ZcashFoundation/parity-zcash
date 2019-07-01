@@ -1,6 +1,6 @@
 use super::super::types::{BlockHeight, StorageRef};
-use p2p::InboundSyncConnectionState;
 use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
+use zebra_p2p::InboundSyncConnectionState;
 
 // AtomicU32 is unstable => using AtomicUsize here
 

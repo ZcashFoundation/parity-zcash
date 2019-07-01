@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
-use chain::hash::H256;
 use error::TransactionError;
-use storage::{SaplingTreeState, SproutTreeState, TreeStateProvider};
+use zebra_chain::hash::H256;
+use zebra_storage::{SaplingTreeState, SproutTreeState, TreeStateProvider};
 
 #[derive(Clone)]
 pub struct TreeCache<'a> {

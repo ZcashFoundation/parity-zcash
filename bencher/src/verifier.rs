@@ -1,10 +1,12 @@
 use byteorder::{ByteOrder, LittleEndian};
-use chain::IndexedBlock;
-use db::BlockChainDatabase;
-use network::{ConsensusParams, Network};
 use std::sync::Arc;
-use test_data;
-use verification::{BackwardsCompatibleChainVerifier as ChainVerifier, VerificationLevel, Verify};
+use zebra_chain::IndexedBlock;
+use zebra_db::BlockChainDatabase;
+use zebra_network::{ConsensusParams, Network};
+use zebra_test_data;
+use zebra_verification::{
+    BackwardsCompatibleChainVerifier as ChainVerifier, VerificationLevel, Verify,
+};
 
 use super::Benchmark;
 
@@ -26,7 +28,7 @@ pub fn main(benchmark: &mut Benchmark) {
     );
 
     // test setup
-    let genesis = test_data::genesis();
+    let genesis = zebra_test_data::genesis();
     let consensus = ConsensusParams::new(Network::Unitest);
 
     let mut rolling_hash = genesis.hash();
@@ -35,7 +37,7 @@ pub fn main(benchmark: &mut Benchmark) {
     for x in 0..BLOCKS_INITIAL {
         let mut coinbase_nonce = [0u8; 8];
         LittleEndian::write_u64(&mut coinbase_nonce[..], x as u64);
-        let next_block = test_data::block_builder()
+        let next_block = zebra_test_data::block_builder()
             .transaction()
             .lock_time(x as u32)
             .input()
@@ -69,7 +71,7 @@ pub fn main(benchmark: &mut Benchmark) {
     for b in 0..BLOCKS {
         let mut coinbase_nonce = [0u8; 8];
         LittleEndian::write_u64(&mut coinbase_nonce[..], (b + BLOCKS_INITIAL) as u64);
-        let mut builder = test_data::block_builder()
+        let mut builder = zebra_test_data::block_builder()
             .transaction()
             .lock_time(b as u32)
             .input()

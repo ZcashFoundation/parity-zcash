@@ -1,7 +1,7 @@
 //! Script builder
 
 use bytes::Bytes;
-use keys::AddressHash;
+use zebra_keys::AddressHash;
 use {Num, Opcode, Script};
 
 /// Script builder

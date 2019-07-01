@@ -1,11 +1,11 @@
 use bytes::Bytes;
-use message::types::{Addr, GetAddr};
-use message::{deserialize_payload, Command, Error, Payload};
 use net::PeerContext;
 use protocol::Protocol;
 use std::sync::Arc;
 use std::time::Duration;
 use util::Direction;
+use zebra_message::types::{Addr, GetAddr};
+use zebra_message::{deserialize_payload, Command, Error, Payload};
 
 pub struct AddrProtocol {
     /// Context

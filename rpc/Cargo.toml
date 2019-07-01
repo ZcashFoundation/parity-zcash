@@ -1,5 +1,5 @@
 [package]
-name = "rpc"
+name = "zebra-rpc"
 version = "0.1.0"
 license = "GPL-3.0"
 authors = ["Zcash Foundation <zebra@zfnd.org>"]
@@ -19,18 +19,18 @@ jsonrpc-derive = "10.0"
 jsonrpc-pubsub = "10.0"
 jsonrpc-http-server = "10.0"
 
-sync = { path = "../sync" }
-serialization = { path = "../serialization" }
-chain = { path = "../chain" }
-primitives = { path = "../primitives" }
-p2p = { path = "../p2p" }
-network = { path = "../network" }
-storage = { path = "../storage" }
-db = { path = "../db" }
-miner = { path = "../miner" }
-verification = { path = "../verification" }
-script = { path = "../script" }
-keys = { path = "../keys" }
+zebra-sync = { path = "../sync" }
+zebra-serialization = { path = "../serialization" }
+zebra-chain = { path = "../chain" }
+zebra-primitives = { path = "../primitives" }
+zebra-p2p = { path = "../p2p" }
+zebra-network = { path = "../network" }
+zebra-storage = { path = "../storage" }
+zebra-db = { path = "../db" }
+zebra-miner = { path = "../miner" }
+zebra-verification = { path = "../verification" }
+zebra-script = { path = "../script" }
+zebra-keys = { path = "../keys" }
 
 [dev-dependencies]
-test-data = { path = "../test-data" }
+zebra-test-data = { path = "../test-data" }

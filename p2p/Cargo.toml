@@ -1,5 +1,5 @@
 [package]
-name = "p2p"
+name = "zebra-p2p"
 version = "0.1.0"
 license = "GPL-3.0"
 authors = ["Zcash Foundation <zebra@zfnd.org>"]
@@ -17,8 +17,8 @@ abstract-ns = "0.3"
 ns-dns-tokio = "0.3"
 csv = "1"
 
-primitives = { path = "../primitives" }
-bitcrypto = { path = "../crypto" }
-message = { path = "../message" }
-serialization = { path = "../serialization" }
-network = { path = "../network" }
+zebra-primitives = { path = "../primitives" }
+zebra-crypto = { path = "../crypto" }
+zebra-message = { path = "../message" }
+zebra-serialization = { path = "../serialization" }
+zebra-network = { path = "../network" }

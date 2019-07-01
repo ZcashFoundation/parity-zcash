@@ -1,11 +1,11 @@
 use linked_hash_map::LinkedHashMap;
-use primitives::hash::H256;
 use std::cmp::Ordering;
 use std::collections::{HashMap, HashSet};
 use std::fmt;
 use time::precise_time_s;
 use types::PeerIndex;
 use utils::AverageSpeedMeter;
+use zebra_primitives::hash::H256;
 
 /// Max peer failures # before excluding from sync process
 const MAX_PEER_FAILURES: usize = 4;
@@ -427,8 +427,8 @@ impl fmt::Debug for Information {
 #[cfg(test)]
 mod tests {
     use super::{PeersTasks, MAX_BLOCKS_FAILURES, MAX_PEER_FAILURES};
-    use primitives::hash::H256;
     use types::PeerIndex;
+    use zebra_primitives::hash::H256;
 
     #[test]
     fn peers_empty_on_start() {

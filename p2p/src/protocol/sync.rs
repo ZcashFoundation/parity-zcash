@@ -1,8 +1,8 @@
 use bytes::Bytes;
-use message::{deserialize_payload, types, Command, Error, Payload, Services};
 use net::PeerContext;
 use protocol::Protocol;
 use std::sync::Arc;
+use zebra_message::{deserialize_payload, types, Command, Error, Payload, Services};
 
 pub type InboundSyncConnectionRef = Box<InboundSyncConnection>;
 pub type OutboundSyncConnectionRef = Arc<OutboundSyncConnection>;

@@ -1,9 +1,9 @@
 use futures::{Async, Future, Poll};
-use message::{MessageHeader, MessageResult};
-use network::Magic;
 use std::io;
 use tokio_io::io::{read_exact, ReadExact};
 use tokio_io::AsyncRead;
+use zebra_message::{MessageHeader, MessageResult};
+use zebra_network::Magic;
 
 pub fn read_header<A>(a: A, magic: Magic) -> ReadHeader<A>
 where
@@ -39,8 +39,8 @@ mod tests {
     use super::read_header;
     use bytes::Bytes;
     use futures::Future;
-    use message::{Error, MessageHeader};
-    use network::Network;
+    use zebra_message::{Error, MessageHeader};
+    use zebra_network::Network;
 
     #[test]
     fn test_read_header() {

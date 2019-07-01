@@ -1,5 +1,5 @@
 [package]
-name = "bitcrypto"
+name = "zebra-crypto"
 version = "0.1.0"
 license = "GPL-3.0"
 authors = ["Zcash Foundation <zebra@zfnd.org>"]
@@ -12,7 +12,6 @@ bn = { git = "https://github.com/paritytech/bn" }
 ed25519-dalek = "1.0.0-pre.1"
 lazy_static = "1.3.0"
 pairing = "0.14.2"
-primitives = { path = "../primitives" }
 rust-crypto = { git = "https://github.com/nikvolf/rust-crypto", branch = "no-pad" }
 rustc-hex = "2"
 sapling-crypto = { git = "https://github.com/zcash-hackworks/sapling-crypto.git", rev = "21084bde2019c04bd34208e63c3560fe2c02fb0e" }
@@ -20,3 +19,4 @@ serde = "1.0"
 serde_derive = "1.0"
 serde_json = "1.0"
 siphasher = "0.3.0"
+zebra-primitives = { path = "../primitives" }

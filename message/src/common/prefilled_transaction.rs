@@ -1,6 +1,6 @@
-use chain::Transaction;
 use ser::{CompactInteger, Deserializable, Error as ReaderError, Reader, Serializable, Stream};
 use std::io;
+use zebra_chain::Transaction;
 
 #[derive(Debug, PartialEq)]
 pub struct PrefilledTransaction {

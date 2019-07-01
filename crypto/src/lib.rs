@@ -2,11 +2,11 @@ extern crate blake2_rfc;
 extern crate bn;
 extern crate crypto as rcrypto;
 extern crate ed25519_dalek as ed25519;
-extern crate primitives;
 extern crate rustc_hex as hex;
 extern crate serde;
 extern crate serde_json;
 extern crate siphasher;
+extern crate zebra_primitives;
 
 pub extern crate bellman;
 pub extern crate blake2b_simd as blake2;
@@ -30,12 +30,12 @@ lazy_static! {
         { sapling_crypto::jubjub::JubjubBls12::new() };
 }
 
-use primitives::hash::{H160, H256, H32};
 use rcrypto::ripemd160::Ripemd160;
 use rcrypto::sha1::Sha1;
 use rcrypto::sha2::Sha256;
 use siphasher::sip::SipHasher24;
 use std::hash::Hasher;
+use zebra_primitives::hash::{H160, H256, H32};
 
 pub use json::groth16::{
     load_joinsplit_groth16_verifying_key, load_sapling_output_verifying_key,
@@ -344,8 +344,8 @@ mod tests {
         checksum, dhash160, dhash256, pedersen_hash, ripemd160, sha1, sha256, sha256_compress,
         siphash24,
     };
-    use primitives::bytes::Bytes;
-    use primitives::hash::H256;
+    use zebra_primitives::bytes::Bytes;
+    use zebra_primitives::hash::H256;
 
     #[test]
     fn test_ripemd160() {

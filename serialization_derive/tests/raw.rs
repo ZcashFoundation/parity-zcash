@@ -1,8 +1,8 @@
-extern crate serialization;
+extern crate zebra_serialization;
 #[macro_use]
-extern crate serialization_derive;
+extern crate zebra_serialization_derive;
 
-use serialization::{deserialize, serialize};
+use zebra_serialization::{deserialize, serialize};
 
 #[derive(Debug, PartialEq, Serializable, Deserializable)]
 struct Foo {

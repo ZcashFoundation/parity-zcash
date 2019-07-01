@@ -6,20 +6,20 @@ extern crate app_dirs;
 extern crate env_logger;
 extern crate libc;
 
-extern crate chain;
-extern crate db;
-extern crate import;
-extern crate keys;
-extern crate logs;
-extern crate message;
-extern crate network;
-extern crate p2p;
-extern crate primitives;
-extern crate rpc as ethcore_rpc;
-extern crate script;
-extern crate storage;
-extern crate sync;
-extern crate verification;
+extern crate zebra_chain;
+extern crate zebra_db;
+extern crate zebra_import;
+extern crate zebra_keys;
+extern crate zebra_logs;
+extern crate zebra_message;
+extern crate zebra_network;
+extern crate zebra_p2p;
+extern crate zebra_primitives;
+extern crate zebra_rpc;
+extern crate zebra_script;
+extern crate zebra_storage;
+extern crate zebra_sync;
+extern crate zebra_verification;
 
 mod commands;
 mod config;
@@ -58,9 +58,9 @@ fn run() -> Result<(), String> {
 
     if !cfg.quiet {
         if cfg!(windows) {
-            logs::init(LOG_INFO, logs::DateLogFormatter);
+            zebra_logs::init(LOG_INFO, zebra_logs::DateLogFormatter);
         } else {
-            logs::init(LOG_INFO, logs::DateAndColorLogFormatter);
+            zebra_logs::init(LOG_INFO, zebra_logs::DateAndColorLogFormatter);
         }
     } else {
         env_logger::init();

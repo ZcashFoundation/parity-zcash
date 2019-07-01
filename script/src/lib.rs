@@ -1,10 +1,10 @@
-extern crate bitcrypto as crypto;
 extern crate byteorder;
-extern crate chain;
-extern crate keys;
 extern crate log;
-extern crate primitives;
-extern crate serialization as ser;
+extern crate zebra_chain;
+extern crate zebra_crypto;
+extern crate zebra_keys;
+extern crate zebra_primitives;
+extern crate zebra_serialization as ser;
 
 #[cfg(test)]
 extern crate rustc_hex as hex;
@@ -22,7 +22,7 @@ mod sign;
 mod stack;
 mod verify;
 
-pub use primitives::{bytes, hash};
+pub use zebra_primitives::{bytes, hash};
 
 pub use self::builder::Builder;
 pub use self::error::Error;

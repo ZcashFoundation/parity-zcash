@@ -3,8 +3,8 @@ use std::collections::HashMap;
 use std::time::Instant;
 use util::interval::{Interval, RealInterval};
 
-use message::types::{Ping, Pong};
-use message::{Command, Payload};
+use zebra_message::types::{Ping, Pong};
+use zebra_message::{Command, Payload};
 
 // delay somewhere near communication timeout
 const ENORMOUS_PING_DELAY: f64 = 10f64;

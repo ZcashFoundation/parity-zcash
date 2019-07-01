@@ -1,7 +1,7 @@
-use message::common::Services;
 use net::Config as NetConfig;
 use std::{net, path};
 use util::InternetProtocol;
+use zebra_message::common::Services;
 
 #[derive(Debug, Clone)]
 pub struct Config {

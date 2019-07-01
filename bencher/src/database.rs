@@ -1,7 +1,7 @@
-use chain::IndexedBlock;
-use db::BlockChainDatabase;
-use storage::{BlockOrigin, BlockProvider, BlockRef, ForkChain};
-use test_data;
+use zebra_chain::IndexedBlock;
+use zebra_db::BlockChainDatabase;
+use zebra_storage::{BlockOrigin, BlockProvider, BlockRef, ForkChain};
+use zebra_test_data;
 
 use super::Benchmark;
 
@@ -12,7 +12,7 @@ pub fn fetch(benchmark: &mut Benchmark) {
     benchmark.samples(BLOCKS);
 
     // test setup
-    let genesis: IndexedBlock = test_data::genesis().into();
+    let genesis: IndexedBlock = zebra_test_data::genesis().into();
     let store = BlockChainDatabase::init_test_chain(vec![genesis.clone()]);
 
     let mut rolling_hash = genesis.hash().clone();
@@ -20,7 +20,7 @@ pub fn fetch(benchmark: &mut Benchmark) {
     let mut hashes = Vec::new();
 
     for x in 0..BLOCKS {
-        let next_block = test_data::block_builder()
+        let next_block = zebra_test_data::block_builder()
             .transaction()
             .coinbase()
             .lock_time(x as u32)
@@ -60,7 +60,7 @@ pub fn write(benchmark: &mut Benchmark) {
     benchmark.samples(BLOCKS);
 
     // setup
-    let genesis: IndexedBlock = test_data::genesis().into();
+    let genesis: IndexedBlock = zebra_test_data::genesis().into();
     let store = BlockChainDatabase::init_test_chain(vec![genesis.clone()]);
 
     let mut rolling_hash = genesis.hash().clone();
@@ -68,7 +68,7 @@ pub fn write(benchmark: &mut Benchmark) {
     let mut blocks: Vec<IndexedBlock> = Vec::new();
 
     for x in 0..BLOCKS {
-        let next_block = test_data::block_builder()
+        let next_block = zebra_test_data::block_builder()
             .transaction()
             .coinbase()
             .lock_time(x as u32)
@@ -101,7 +101,7 @@ pub fn reorg_short(benchmark: &mut Benchmark) {
     benchmark.samples(BLOCKS);
 
     // setup
-    let genesis: IndexedBlock = test_data::genesis().into();
+    let genesis: IndexedBlock = zebra_test_data::genesis().into();
     let store = BlockChainDatabase::init_test_chain(vec![genesis.clone()]);
 
     let mut rolling_hash = genesis.hash().clone();
@@ -111,7 +111,7 @@ pub fn reorg_short(benchmark: &mut Benchmark) {
     for x in 0..BLOCKS {
         let base = rolling_hash.clone();
 
-        let next_block = test_data::block_builder()
+        let next_block = zebra_test_data::block_builder()
             .transaction()
             .coinbase()
             .lock_time(x as u32)
@@ -127,7 +127,7 @@ pub fn reorg_short(benchmark: &mut Benchmark) {
         rolling_hash = next_block.hash();
         blocks.push(next_block);
 
-        let next_block_side = test_data::block_builder()
+        let next_block_side = zebra_test_data::block_builder()
             .transaction()
             .coinbase()
             .lock_time(x as u32)
@@ -143,7 +143,7 @@ pub fn reorg_short(benchmark: &mut Benchmark) {
         let next_base = next_block_side.hash();
         blocks.push(next_block_side);
 
-        let next_block_side_continue = test_data::block_builder()
+        let next_block_side_continue = zebra_test_data::block_builder()
             .transaction()
             .coinbase()
             .lock_time(x as u32)
@@ -158,7 +158,7 @@ pub fn reorg_short(benchmark: &mut Benchmark) {
             .build();
         blocks.push(next_block_side_continue);
 
-        let next_block_continue = test_data::block_builder()
+        let next_block_continue = zebra_test_data::block_builder()
             .transaction()
             .coinbase()
             .lock_time(x as u32)
@@ -224,7 +224,7 @@ pub fn write_heavy(benchmark: &mut Benchmark) {
     benchmark.samples(BLOCKS);
 
     // test setup
-    let genesis: IndexedBlock = test_data::genesis().into();
+    let genesis: IndexedBlock = zebra_test_data::genesis().into();
     let store = BlockChainDatabase::init_test_chain(vec![genesis.clone()]);
 
     let mut rolling_hash = genesis.hash().clone();
@@ -232,7 +232,7 @@ pub fn write_heavy(benchmark: &mut Benchmark) {
     let mut hashes = Vec::new();
 
     for x in 0..BLOCKS_INITIAL {
-        let next_block = test_data::block_builder()
+        let next_block = zebra_test_data::block_builder()
             .transaction()
             .coinbase()
             .lock_time(x as u32)
@@ -251,7 +251,10 @@ pub fn write_heavy(benchmark: &mut Benchmark) {
     }
 
     for b in 0..BLOCKS {
-        let mut builder = test_data::block_builder().transaction().coinbase().build();
+        let mut builder = zebra_test_data::block_builder()
+            .transaction()
+            .coinbase()
+            .build();
 
         for t in 0..TRANSACTIONS {
             builder = builder

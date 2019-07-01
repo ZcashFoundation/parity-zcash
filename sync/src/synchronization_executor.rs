@@ -1,11 +1,11 @@
-use chain::{IndexedBlock, IndexedTransaction};
-use message::common::InventoryVector;
-use message::types;
-use primitives::hash::H256;
 use std::sync::Arc;
 use synchronization_peers::{BlockAnnouncementType, TransactionAnnouncementType};
 use types::{PeerIndex, PeersRef, RequestId};
 use utils::KnownHashType;
+use zebra_chain::{IndexedBlock, IndexedTransaction};
+use zebra_message::common::InventoryVector;
+use zebra_message::types;
+use zebra_primitives::hash::H256;
 
 /// Synchronization task executor
 pub trait TaskExecutor: Send + Sync + 'static {
@@ -215,19 +215,19 @@ impl TaskExecutor for LocalSynchronizationTaskExecutor {
 
 #[cfg(test)]
 pub mod tests {
-    extern crate test_data;
+    extern crate zebra_test_data;
 
     use super::*;
-    use chain::Transaction;
     use inbound_connection::tests::DummyOutboundSyncConnection;
     use local_node::tests::{default_filterload, make_filteradd};
-    use message::{types, Services};
     use parking_lot::{Condvar, Mutex};
     use std::sync::Arc;
     use std::time;
     use synchronization_peers::{
         BlockAnnouncementType, PeersContainer, PeersFilters, PeersImpl, PeersOptions,
     };
+    use zebra_chain::Transaction;
+    use zebra_message::{types, Services};
 
     pub struct DummyTaskExecutor {
         tasks: Mutex<Vec<Task>>,
@@ -284,7 +284,7 @@ pub mod tests {
         peers.insert(2, Services::default(), c2.clone());
         peers.set_block_announcement_type(2, BlockAnnouncementType::SendHeaders);
 
-        executor.execute(Task::RelayNewBlock(test_data::genesis().into()));
+        executor.execute(Task::RelayNewBlock(zebra_test_data::genesis().into()));
         assert_eq!(
             *c1.messages
                 .lock()
@@ -303,9 +303,9 @@ pub mod tests {
         let peers = Arc::new(PeersImpl::default());
         let executor = LocalSynchronizationTaskExecutor::new(peers.clone());
 
-        let tx1: Transaction = test_data::TransactionBuilder::with_output(10).into();
-        let tx2: Transaction = test_data::TransactionBuilder::with_output(20).into();
-        let tx3: Transaction = test_data::TransactionBuilder::with_output(30).into();
+        let tx1: Transaction = zebra_test_data::TransactionBuilder::with_output(10).into();
+        let tx2: Transaction = zebra_test_data::TransactionBuilder::with_output(20).into();
+        let tx3: Transaction = zebra_test_data::TransactionBuilder::with_output(30).into();
         let tx1_hash = tx1.hash();
         let tx2_hash = tx2.hash();
         let tx3_hash = tx3.hash();
@@ -415,7 +415,7 @@ pub mod tests {
         peers.insert(4, Services::default(), c4.clone());
 
         executor.execute(Task::RelayNewTransaction(
-            test_data::genesis().transactions[0].clone().into(),
+            zebra_test_data::genesis().transactions[0].clone().into(),
             3500,
         ));
 

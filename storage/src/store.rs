@@ -1,5 +1,5 @@
-use chain::IndexedBlockHeader;
 use std::sync::Arc;
+use zebra_chain::IndexedBlockHeader;
 use {
     BestBlock, BlockChain, BlockHeaderProvider, BlockProvider, Forkable, NullifierTracker,
     TransactionMetaProvider, TransactionOutputProvider, TransactionProvider, TreeStateProvider,

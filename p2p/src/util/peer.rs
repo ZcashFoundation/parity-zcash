@@ -1,6 +1,6 @@
-use message::types;
-use network::Magic;
 use std::net::SocketAddr;
+use zebra_message::types;
+use zebra_network::Magic;
 
 pub type PeerId = usize;
 

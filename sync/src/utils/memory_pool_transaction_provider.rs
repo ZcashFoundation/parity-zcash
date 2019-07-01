@@ -1,9 +1,9 @@
 use super::super::types::{MemoryPoolRef, StorageRef};
-use chain::{OutPoint, Transaction, TransactionOutput};
-use miner::{DoubleSpendCheckResult, HashedOutPoint, NonFinalDoubleSpendSet};
 use std::collections::HashMap;
-use storage::TransactionOutputProvider;
-use verification::TransactionError;
+use zebra_chain::{OutPoint, Transaction, TransactionOutput};
+use zebra_miner::{DoubleSpendCheckResult, HashedOutPoint, NonFinalDoubleSpendSet};
+use zebra_storage::TransactionOutputProvider;
+use zebra_verification::TransactionError;
 
 /// Transaction output observer, which looks into both storage && into memory pool.
 /// It also allows to replace non-final transactions in the memory pool.
@@ -119,21 +119,21 @@ impl TransactionOutputProvider for MemoryPoolTransactionOutputProvider {
 
 #[cfg(test)]
 mod tests {
-    extern crate test_data;
+    extern crate zebra_test_data;
 
     use super::MemoryPoolTransactionOutputProvider;
-    use chain::OutPoint;
-    use db::BlockChainDatabase;
-    use miner::{MemoryPool, NonZeroFeeCalculator};
     use parking_lot::RwLock;
     use std::sync::Arc;
-    use storage::TransactionOutputProvider;
+    use zebra_chain::OutPoint;
+    use zebra_db::BlockChainDatabase;
+    use zebra_miner::{MemoryPool, NonZeroFeeCalculator};
+    use zebra_storage::TransactionOutputProvider;
 
     #[test]
     fn when_transaction_depends_on_removed_nonfinal_transaction() {
-        let dchain = &mut test_data::ChainBuilder::new();
+        let dchain = &mut zebra_test_data::ChainBuilder::new();
 
-        test_data::TransactionBuilder::with_output(10)
+        zebra_test_data::TransactionBuilder::with_output(10)
             .store(dchain) // t0
             .reset()
             .set_input(&dchain.at(0), 0)
@@ -150,7 +150,7 @@ mod tests {
             .store(dchain); // good replacement: t0[0] -> t3
 
         let storage = Arc::new(BlockChainDatabase::init_test_chain(vec![
-            test_data::genesis().into(),
+            zebra_test_data::genesis().into(),
         ]));
         let memory_pool = Arc::new(RwLock::new(MemoryPool::new()));
         {

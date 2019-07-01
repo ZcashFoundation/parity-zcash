@@ -3,7 +3,6 @@
 
 use bytes::Bytes;
 use constants::{LOCKTIME_THRESHOLD, SEQUENCE_FINAL};
-use crypto::dhash256;
 use hash::H256;
 use heapsize::HeapSizeOf;
 use hex::FromHex;
@@ -12,6 +11,7 @@ use sapling::Sapling;
 use ser::{deserialize, serialize};
 use ser::{Deserializable, Error, Reader, Serializable, Stream};
 use std::io;
+use zebra_crypto::dhash256;
 
 /// Original bitcoin transaction version.
 pub const BTC_TX_VERSION: i32 = 1;

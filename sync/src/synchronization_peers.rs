@@ -1,11 +1,11 @@
-use chain::{IndexedBlock, IndexedTransaction};
-use message::{types, Services};
-use p2p::OutboundSyncConnectionRef;
 use parking_lot::RwLock;
-use primitives::hash::H256;
 use std::collections::HashMap;
 use types::PeerIndex;
 use utils::{ConnectionFilter, KnownHashType};
+use zebra_chain::{IndexedBlock, IndexedTransaction};
+use zebra_message::{types, Services};
+use zebra_p2p::OutboundSyncConnectionRef;
+use zebra_primitives::hash::H256;
 
 /// Block announcement type
 #[derive(Debug, Clone, Copy)]

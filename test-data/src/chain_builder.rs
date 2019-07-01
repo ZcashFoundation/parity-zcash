@@ -1,10 +1,10 @@
-use chain::{
+use ser::Serializable;
+use zebra_chain::{
     IndexedTransaction, JoinSplit, OutPoint, Sapling, Transaction, TransactionInput,
     TransactionOutput,
 };
-use primitives::bytes::Bytes;
-use primitives::hash::H256;
-use ser::Serializable;
+use zebra_primitives::bytes::Bytes;
+use zebra_primitives::hash::H256;
 
 #[derive(Debug, Default, Clone)]
 pub struct ChainBuilder {

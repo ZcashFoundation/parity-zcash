@@ -1,16 +1,16 @@
 extern crate byteorder;
 extern crate heapsize;
 
-extern crate bitcrypto as crypto;
-extern crate chain;
-extern crate db;
-extern crate keys;
-extern crate network;
-extern crate primitives;
-extern crate script;
-extern crate serialization as ser;
-extern crate storage;
-extern crate verification;
+extern crate zebra_chain;
+extern crate zebra_crypto;
+extern crate zebra_db;
+extern crate zebra_keys;
+extern crate zebra_network;
+extern crate zebra_primitives;
+extern crate zebra_script;
+extern crate zebra_serialization as ser;
+extern crate zebra_storage;
+extern crate zebra_verification;
 
 mod block_assembler;
 mod fee;

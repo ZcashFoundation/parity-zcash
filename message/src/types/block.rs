@@ -1,6 +1,6 @@
-use chain::Block as ChainBlock;
 use ser::{Reader, Stream};
 use std::io;
+use zebra_chain::Block as ChainBlock;
 use {MessageResult, Payload};
 
 #[derive(Debug, PartialEq)]

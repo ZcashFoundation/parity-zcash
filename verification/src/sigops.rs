@@ -1,6 +1,6 @@
-use chain::Transaction;
-use script::Script;
-use storage::TransactionOutputProvider;
+use zebra_chain::Transaction;
+use zebra_script::Script;
+use zebra_storage::TransactionOutputProvider;
 
 /// Counts signature operations in given transaction
 /// bip16_active flag indicates if we should also count signature operations

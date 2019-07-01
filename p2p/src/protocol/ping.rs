@@ -1,12 +1,12 @@
 use bytes::Bytes;
-use message::common::Command;
-use message::types::{Ping, Pong};
-use message::{deserialize_payload, Error, Payload};
 use net::PeerContext;
 use protocol::Protocol;
 use std::sync::Arc;
 use time;
 use util::nonce::{NonceGenerator, RandomNonce};
+use zebra_message::common::Command;
+use zebra_message::types::{Ping, Pong};
+use zebra_message::{deserialize_payload, Error, Payload};
 
 /// Time that must pass since last message from this peer, before we send ping request
 const PING_INTERVAL_S: f64 = 60f64;

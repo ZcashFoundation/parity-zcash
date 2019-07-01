@@ -1,10 +1,10 @@
-extern crate bitcrypto as crypto;
 extern crate heapsize;
-extern crate primitives;
 extern crate rustc_hex as hex;
-extern crate serialization as ser;
+extern crate zebra_crypto;
+extern crate zebra_primitives;
+extern crate zebra_serialization as ser;
 #[macro_use]
-extern crate serialization_derive;
+extern crate zebra_serialization_derive;
 
 pub mod constants;
 
@@ -22,7 +22,7 @@ mod indexed_transaction;
 /// `IndexedBlock` extension
 mod read_and_hash;
 
-pub use primitives::{bigint, bytes, compact, hash};
+pub use zebra_primitives::{bigint, bytes, compact, hash};
 
 pub use transaction::{
     BTC_TX_VERSION, OVERWINTER_TX_VERSION, SAPLING_TX_VERSION, SPROUT_TX_VERSION,

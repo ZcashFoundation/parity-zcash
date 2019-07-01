@@ -1,6 +1,6 @@
-use chain::BlockHeader;
-use primitives::hash::H256;
-use storage::{BlockAncestors, BlockHeaderProvider};
+use zebra_chain::BlockHeader;
+use zebra_primitives::hash::H256;
+use zebra_storage::{BlockAncestors, BlockHeaderProvider};
 
 /// Returns median timestamp, of given header ancestors.
 /// The header should be later expected to have higher timestamp

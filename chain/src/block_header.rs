@@ -1,12 +1,12 @@
 use compact::Compact;
-use crypto::dhash256;
 use hash::H256;
 use hex::FromHex;
-use primitives::bytes::Bytes;
 use ser::Stream;
 use ser::{deserialize, serialize};
 use solution::EquihashSolution;
 use std::fmt;
+use zebra_crypto::dhash256;
+use zebra_primitives::bytes::Bytes;
 
 #[derive(PartialEq, Clone, Serializable, Deserializable)]
 pub struct BlockHeader {

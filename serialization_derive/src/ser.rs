@@ -38,8 +38,8 @@ pub fn impl_serializable(ast: &syn::DeriveInput) -> quote::Tokens {
 
     let dummy_const = syn::Ident::new(format!("_IMPL_SERIALIZABLE_FOR_{}", name));
     let impl_block = quote! {
-        impl serialization::Serializable for #name {
-            fn serialize(&self, stream: &mut serialization::Stream) {
+        impl zebra_serialization::Serializable for #name {
+            fn serialize(&self, stream: &mut zebra_serialization::Stream) {
                 #(#stmts)*
             }
 
@@ -52,7 +52,7 @@ pub fn impl_serializable(ast: &syn::DeriveInput) -> quote::Tokens {
     quote! {
         #[allow(non_upper_case_globals, unused_attributes, unused_qualifications)]
         const #dummy_const: () = {
-            extern crate serialization;
+            extern crate zebra_serialization;
             #impl_block
         };
     }
@@ -78,7 +78,7 @@ fn serialize_field_size(index: usize, field: &syn::Field) -> quote::Tokens {
                 .expect("there must be at least 1 segment")
                 .ident;
             if &ident.to_string() == "Vec" {
-                quote! { serialization::serialized_list_size(&#id) }
+                quote! { zebra_serialization::serialized_list_size(&#id) }
             } else {
                 quote! { #id.serialized_size() }
             }

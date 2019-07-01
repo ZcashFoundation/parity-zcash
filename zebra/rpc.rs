@@ -1,19 +1,19 @@
-use ethcore_rpc::{start_http, Compatibility, MetaIoHandler, Server};
-use keys::Address;
-use network::ConsensusParams;
-use p2p;
 use rpc_apis::{self, ApiSet};
 use std::io;
 use std::net::SocketAddr;
 use std::sync::Arc;
-use storage;
-use sync;
+use zebra_keys::Address;
+use zebra_network::ConsensusParams;
+use zebra_p2p;
+use zebra_rpc::{start_http, Compatibility, MetaIoHandler, Server};
+use zebra_storage;
+use zebra_sync;
 
 pub struct Dependencies {
     pub consensus: ConsensusParams,
-    pub local_sync_node: sync::LocalNodeRef,
-    pub storage: storage::SharedStore,
-    pub p2p_context: Arc<p2p::Context>,
+    pub local_sync_node: zebra_sync::LocalNodeRef,
+    pub storage: zebra_storage::SharedStore,
+    pub p2p_context: Arc<zebra_p2p::Context>,
     pub miner_address: Option<Address>,
 }
 

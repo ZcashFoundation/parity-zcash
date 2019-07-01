@@ -1,5 +1,5 @@
 [package]
-name = "storage"
+name = "zebra-storage"
 version = "0.1.0"
 license = "GPL-3.0"
 authors = ["Zcash Foundation <zebra@zfnd.org>"]
@@ -9,10 +9,10 @@ elastic-array = "0.10"
 parking_lot = "0.8"
 bit-vec = "0.4"
 lru-cache = "0.1"
-primitives = { path = "../primitives" }
-serialization = { path = "../serialization" }
-chain = { path = "../chain" }
 display_derive = "0.0.0"
-bitcrypto = { path = "../crypto" }
 lazy_static = "*"
-network = { path = "../network" }
+zebra-primitives = { path = "../primitives" }
+zebra-serialization = { path = "../serialization" }
+zebra-chain = { path = "../chain" }
+zebra-crypto = { path = "../crypto" }
+zebra-network = { path = "../network" }

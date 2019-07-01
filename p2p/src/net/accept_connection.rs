@@ -1,12 +1,12 @@
 use futures::{Future, Poll};
 use io::{accept_handshake, deadline, AcceptHandshake, Deadline};
-use message::MessageResult;
 use net::{Config, Connection};
-use network::Magic;
 use std::time::Duration;
 use std::{io, net};
 use tokio_core::net::TcpStream;
 use tokio_core::reactor::Handle;
+use zebra_message::MessageResult;
+use zebra_network::Magic;
 
 pub fn accept_connection(
     stream: TcpStream,

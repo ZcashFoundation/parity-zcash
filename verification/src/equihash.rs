@@ -1,5 +1,5 @@
-use chain::BlockHeader;
-use crypto::Blake2b;
+use zebra_chain::BlockHeader;
+use zebra_crypto::Blake2b;
 
 /// Verify equihash solution of the block header.
 pub fn verify_block_equihash_solution(params: (u32, u32), header: &BlockHeader) -> bool {
@@ -337,7 +337,7 @@ mod on_chain_equihash {
 mod tests {
     use super::*;
 
-    use primitives::bigint::U256;
+    use zebra_primitives::bigint::U256;
 
     struct TestEquihash;
 
@@ -462,7 +462,7 @@ mod tests {
 
     #[test]
     fn test_equihash_on_real_block() {
-        let block = test_data::block_h170();
+        let block = zebra_test_data::block_h170();
         assert!(verify_block_equihash_solution(
             (200, 9),
             &block.block_header

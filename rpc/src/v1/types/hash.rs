@@ -1,12 +1,12 @@
 use hex::{FromHex, ToHex};
-use primitives::hash::H160 as GlobalH160;
-use primitives::hash::H256 as GlobalH256;
 use serde;
 use serde::de::Unexpected;
 use std::cmp::Ordering;
 use std::fmt;
 use std::hash::{Hash, Hasher};
 use std::str::FromStr;
+use zebra_primitives::hash::H160 as GlobalH160;
+use zebra_primitives::hash::H256 as GlobalH256;
 
 macro_rules! impl_hash {
     ($name: ident, $other: ident, $size: expr) => {
@@ -162,8 +162,8 @@ impl H256 {
 #[cfg(test)]
 mod tests {
     use super::H256;
-    use primitives::hash::H256 as GlobalH256;
     use std::str::FromStr;
+    use zebra_primitives::hash::H256 as GlobalH256;
 
     #[test]
     fn hash_debug() {

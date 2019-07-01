@@ -2,15 +2,15 @@ use canon::CanonBlock;
 use deployments::BlockDeployments;
 use error::Error;
 use fee::checked_transaction_fee;
-use keys::Address;
-use network::ConsensusParams;
-use script::{self, Builder};
 use sigops::transaction_sigops;
-use storage::{
+use timestamp::median_timestamp;
+use zebra_keys::Address;
+use zebra_network::ConsensusParams;
+use zebra_script::{self, Builder};
+use zebra_storage::{
     BlockHeaderProvider, DuplexTransactionOutputProvider, SaplingTreeState,
     TransactionOutputProvider, TreeStateProvider,
 };
-use timestamp::median_timestamp;
 
 /// Flexible verification of ordered block
 pub struct BlockAcceptor<'a> {
@@ -240,7 +240,7 @@ impl<'a> BlockCoinbaseScript<'a> {
             return Ok(());
         }
 
-        let prefix = script::Builder::default()
+        let prefix = zebra_script::Builder::default()
             .push_i64(self.height.into())
             .into_script();
 
@@ -355,14 +355,14 @@ impl<'a> BlockSaplingRoot<'a> {
 
 #[cfg(test)]
 mod tests {
-    extern crate test_data;
+    extern crate zebra_test_data;
 
     use super::{BlockCoinbaseMinerReward, BlockCoinbaseScript, BlockSaplingRoot};
-    use chain::{OutPoint, TransactionOutput};
-    use db::BlockChainDatabase;
-    use network::{ConsensusParams, Network};
     use std::collections::HashMap;
-    use storage::{SaplingTreeState, TransactionOutputProvider};
+    use zebra_chain::{OutPoint, TransactionOutput};
+    use zebra_db::BlockChainDatabase;
+    use zebra_network::{ConsensusParams, Network};
+    use zebra_storage::{SaplingTreeState, TransactionOutputProvider};
     use {CanonBlock, Error};
 
     #[test]
@@ -371,7 +371,7 @@ mod tests {
         // https://blockchain.info/rawtx/7cf05175ce9c8dbfff9aafa8263edc613fc08f876e476553009afcf7e3868a0c?format=hex
         let tx = "01000000010000000000000000000000000000000000000000000000000000000000000000ffffffff3f033d0a070004b663ec58049cba630608733867a0787a02000a425720537570706f727420384d200a666973686572206a696e78696e092f425720506f6f6c2fffffffff01903d9d4e000000001976a914721afdf638d570285d02d3076d8be6a03ee0794d88ac00000000".into();
         let block_number = 461373;
-        let block = test_data::block_builder()
+        let block = zebra_test_data::block_builder()
             .with_transaction(tx)
             .header()
             .build()
@@ -400,10 +400,14 @@ mod tests {
 
     #[test]
     fn test_block_sapling_root() {
-        let storage = BlockChainDatabase::init_test_chain(vec![test_data::genesis().into()]);
+        let storage = BlockChainDatabase::init_test_chain(vec![zebra_test_data::genesis().into()]);
 
         // when sapling is inactive
-        let block = test_data::block_builder().header().build().build().into();
+        let block = zebra_test_data::block_builder()
+            .header()
+            .build()
+            .build()
+            .into();
         assert_eq!(
             BlockSaplingRoot {
                 block: CanonBlock::new(&block),
@@ -415,7 +419,7 @@ mod tests {
         );
 
         // when sapling is active and root matches
-        let block = test_data::block_builder()
+        let block = zebra_test_data::block_builder()
             .header()
             .final_sapling_root(SaplingTreeState::empty_root())
             .build()
@@ -432,7 +436,11 @@ mod tests {
         );
 
         // when sapling is active and root mismatches
-        let block = test_data::block_builder().header().build().build().into();
+        let block = zebra_test_data::block_builder()
+            .header()
+            .build()
+            .build()
+            .into();
         assert_eq!(
             BlockSaplingRoot {
                 block: CanonBlock::new(&block),
@@ -465,7 +473,7 @@ mod tests {
             }
         }
 
-        let (block, donors) = test_data::block_h419221_with_donors();
+        let (block, donors) = zebra_test_data::block_h419221_with_donors();
         let store = Store(
             donors
                 .into_iter()

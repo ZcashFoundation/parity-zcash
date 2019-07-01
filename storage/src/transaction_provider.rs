@@ -1,8 +1,8 @@
 use bytes::Bytes;
-use chain::{IndexedTransaction, OutPoint, TransactionOutput};
 use hash::H256;
 use parking_lot::RwLock;
 use std::collections::HashMap;
+use zebra_chain::{IndexedTransaction, OutPoint, TransactionOutput};
 use TransactionMeta;
 
 /// Should be used to obtain all transactions from canon chain and forks.

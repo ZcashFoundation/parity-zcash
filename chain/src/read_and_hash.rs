@@ -1,7 +1,7 @@
-use crypto::{DHash256, Digest};
 use hash::H256;
 use ser::{Deserializable, Error as ReaderError, Reader};
 use std::io;
+use zebra_crypto::{DHash256, Digest};
 
 pub struct HashedData<T> {
     pub size: usize,

@@ -7,25 +7,25 @@ description = "A consensus-compatible Zcash node client written in Rust."
 
 [dependencies]
 app_dirs = { git = "https://github.com/paritytech/app-dirs-rs" }
-chain = { path = "chain" }
 clap = { version = "2", features = ["yaml"] }
-db = { path = "db" }
 env_logger = "0.5"
-import = { path = "import" }
-keys = { path = "keys" }
 libc = "0.2"
 log = "0.4"
-logs = { path = "logs" }
-message = { path = "message" }
-network = { path = "network" }
-miner = { path = "miner" }
-p2p = { path = "p2p" }
-primitives = { path = "primitives" }
-rpc = { path = "rpc" }
-script = { path = "script" }
-storage = { path = "storage" }
-sync = { path = "sync" }
-verification = { path = "verification" }
+zebra-db = { path = "db" }
+zebra-chain = { path = "chain" }
+zebra-import = { path = "import" }
+zebra-keys = { path = "keys" }
+zebra-logs = { path = "logs" }
+zebra-message = { path = "message" }
+zebra-network = { path = "network" }
+zebra-miner = { path = "miner" }
+zebra-p2p = { path = "p2p" }
+zebra-primitives = { path = "primitives" }
+zebra-rpc = { path = "rpc" }
+zebra-script = { path = "script" }
+zebra-storage = { path = "storage" }
+zebra-sync = { path = "sync" }
+zebra-verification = { path = "verification" }
 
 [profile.dev]
 debug = true
@@ -45,7 +45,7 @@ name = "zebra"
 [workspace]
 members = [
 	"bencher",
-	"./crypto",
+	"crypto",
 	"chain",
 	"db",
 	"import",

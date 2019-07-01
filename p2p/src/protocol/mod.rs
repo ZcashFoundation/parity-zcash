@@ -3,8 +3,8 @@ mod ping;
 mod sync;
 
 use bytes::Bytes;
-use message::common::Command;
-use message::Error;
+use zebra_message::common::Command;
+use zebra_message::Error;
 
 pub use self::addr::{AddrProtocol, SeednodeProtocol};
 pub use self::ping::PingProtocol;

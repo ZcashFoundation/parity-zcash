@@ -1,8 +1,8 @@
-use chain::{IndexedBlock, IndexedBlockHeader, IndexedTransaction};
-use message::types;
-use p2p::{InboundSyncConnection, InboundSyncConnectionRef, InboundSyncConnectionStateRef};
 use types::{LocalNodeRef, PeerIndex, PeersRef, RequestId};
 use utils::KnownHashType;
+use zebra_chain::{IndexedBlock, IndexedBlockHeader, IndexedTransaction};
+use zebra_message::types;
+use zebra_p2p::{InboundSyncConnection, InboundSyncConnectionRef, InboundSyncConnectionStateRef};
 
 /// Inbound synchronization connection
 pub struct InboundConnection {
@@ -198,12 +198,12 @@ impl InboundSyncConnection for InboundConnection {
 
 #[cfg(test)]
 pub mod tests {
-    use message::types;
-    use p2p::OutboundSyncConnection;
     use parking_lot::Mutex;
     use std::collections::HashMap;
     use std::sync::Arc;
     use types::RequestId;
+    use zebra_message::types;
+    use zebra_p2p::OutboundSyncConnection;
 
     pub struct DummyOutboundSyncConnection {
         pub messages: Mutex<HashMap<String, usize>>,

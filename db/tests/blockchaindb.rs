@@ -1,19 +1,19 @@
-extern crate chain;
-extern crate db;
-extern crate storage;
-extern crate test_data;
+extern crate zebra_chain;
+extern crate zebra_db;
+extern crate zebra_storage;
+extern crate zebra_test_data;
 
-use chain::IndexedBlock;
-use db::kv::{MemoryDatabase, SharedMemoryDatabase};
-use db::BlockChainDatabase;
-use storage::{BlockProvider, ForkChain, SideChainOrigin};
+use zebra_chain::IndexedBlock;
+use zebra_db::kv::{MemoryDatabase, SharedMemoryDatabase};
+use zebra_db::BlockChainDatabase;
+use zebra_storage::{BlockProvider, ForkChain, SideChainOrigin};
 
 #[test]
 fn insert_block() {
     let store = BlockChainDatabase::open(MemoryDatabase::default());
-    let b0: IndexedBlock = test_data::block_h0().into();
-    let b1: IndexedBlock = test_data::block_h1().into();
-    let b2: IndexedBlock = test_data::block_h2().into();
+    let b0: IndexedBlock = zebra_test_data::block_h0().into();
+    let b1: IndexedBlock = zebra_test_data::block_h1().into();
+    let b2: IndexedBlock = zebra_test_data::block_h2().into();
 
     store.insert(b0.clone()).unwrap();
     store.insert(b1.clone()).unwrap();
@@ -51,9 +51,9 @@ fn insert_block() {
 #[test]
 fn reopen_db() {
     let shared_database = SharedMemoryDatabase::default();
-    let b0: IndexedBlock = test_data::block_h0().into();
-    let b1: IndexedBlock = test_data::block_h1().into();
-    let b2: IndexedBlock = test_data::block_h2().into();
+    let b0: IndexedBlock = zebra_test_data::block_h0().into();
+    let b1: IndexedBlock = zebra_test_data::block_h1().into();
+    let b2: IndexedBlock = zebra_test_data::block_h2().into();
 
     {
         let store = BlockChainDatabase::open(shared_database.clone());
@@ -78,9 +78,9 @@ fn reopen_db() {
 #[test]
 fn switch_to_simple_fork() {
     let store = BlockChainDatabase::open(MemoryDatabase::default());
-    let b0: IndexedBlock = test_data::block_h0().into();
-    let b1: IndexedBlock = test_data::block_h1().into();
-    let b2: IndexedBlock = test_data::block_h2().into();
+    let b0: IndexedBlock = zebra_test_data::block_h0().into();
+    let b1: IndexedBlock = zebra_test_data::block_h1().into();
+    let b2: IndexedBlock = zebra_test_data::block_h2().into();
 
     store.insert(b0.clone()).unwrap();
     store.insert(b1.clone()).unwrap();

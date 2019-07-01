@@ -1,16 +1,16 @@
 use super::SyncListener;
 use futures::Future;
 use local_node::LocalNode;
-use miner::MemoryPool;
 use parking_lot::{Mutex, RwLock};
 use std::sync::Arc;
-use storage;
 use synchronization_client::SynchronizationClient;
 use synchronization_executor::LocalSynchronizationTaskExecutor;
 use synchronization_peers::Peers;
 use synchronization_server::ServerImpl;
 use synchronization_verifier::AsyncVerifier;
 use utils::SynchronizationState;
+use zebra_miner::MemoryPool;
+use zebra_storage;
 
 pub use utils::BlockHeight;
 
@@ -24,7 +24,7 @@ pub type PeerIndex = usize;
 pub type EmptyBoxFuture = Box<Future<Item = (), Error = ()> + Send>;
 
 /// Reference to storage
-pub type StorageRef = storage::SharedStore;
+pub type StorageRef = zebra_storage::SharedStore;
 
 /// Reference to memory pool
 pub type MemoryPoolRef = Arc<RwLock<MemoryPool>>;

@@ -1,10 +1,10 @@
 use futures::{Async, Future, Poll};
 use io::{read_header, read_payload, ReadHeader, ReadPayload};
-use message::{Error, MessageResult, Payload};
-use network::Magic;
 use std::io;
 use std::marker::PhantomData;
 use tokio_io::AsyncRead;
+use zebra_message::{Error, MessageResult, Payload};
+use zebra_network::Magic;
 
 pub fn read_message<M, A>(a: A, magic: Magic, version: u32) -> ReadMessage<M, A>
 where
@@ -72,9 +72,9 @@ mod tests {
     use super::read_message;
     use bytes::Bytes;
     use futures::Future;
-    use message::types::{Ping, Pong};
-    use message::Error;
-    use network::Network;
+    use zebra_message::types::{Ping, Pong};
+    use zebra_message::Error;
+    use zebra_network::Network;
 
     #[test]
     fn test_read_message() {

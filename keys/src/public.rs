@@ -1,4 +1,3 @@
-use crypto::dhash160;
 use hash::{H264, H520};
 use hex::ToHex;
 use secp256k1::key;
@@ -7,6 +6,7 @@ use secp256k1::{
     Signature as SecpSignature,
 };
 use std::{fmt, ops};
+use zebra_crypto::dhash160;
 use {AddressHash, CompactSignature, Error, Message, Signature, SECP256K1};
 
 /// Secret public key

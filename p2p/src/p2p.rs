@@ -3,9 +3,6 @@ use futures::stream::Stream;
 use futures::{failed, finished, Future};
 use futures_cpupool::{Builder as CpuPoolBuilder, CpuPool};
 use io::DeadlineStatus;
-use message::common::Services;
-use message::types::addr::AddressEntry;
-use message::{Message, MessageResult, Payload};
 use net::{
     accept_connection, connect, Channel, Config as NetConfig, ConnectionCounter, Connections,
 };
@@ -20,6 +17,9 @@ use tokio_core::net::{TcpListener, TcpStream};
 use tokio_core::reactor::{Handle, Interval, Remote, Timeout};
 use tokio_io::IoFuture;
 use util::{Direction, Node, NodeTable, NodeTableError};
+use zebra_message::common::Services;
+use zebra_message::types::addr::AddressEntry;
+use zebra_message::{Message, MessageResult, Payload};
 use {Config, PeerId};
 
 pub type BoxedEmptyFuture = Box<Future<Item = (), Error = ()> + Send>;

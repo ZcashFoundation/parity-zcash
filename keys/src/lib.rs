@@ -5,9 +5,9 @@ extern crate rustc_hex as hex;
 #[macro_use]
 extern crate lazy_static;
 extern crate base58;
-extern crate bitcrypto as crypto;
-extern crate primitives;
 extern crate secp256k1;
+extern crate zebra_crypto;
+extern crate zebra_primitives;
 
 mod address;
 mod display;
@@ -19,7 +19,7 @@ mod private;
 mod public;
 mod signature;
 
-pub use primitives::{bytes, hash};
+pub use zebra_primitives::{bytes, hash};
 
 pub use address::{Address, Type};
 pub use display::DisplayLayout;

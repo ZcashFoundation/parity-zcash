@@ -1,8 +1,8 @@
 use futures::{Future, Poll};
-use message::Message;
 use std::io;
 use tokio_io::io::{write_all, WriteAll};
 use tokio_io::AsyncWrite;
+use zebra_message::Message;
 
 pub fn write_message<M, A>(a: A, message: Message<M>) -> WriteMessage<M, A>
 where

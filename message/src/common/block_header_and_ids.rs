@@ -1,5 +1,5 @@
-use chain::{BlockHeader, ShortTransactionID};
 use common::PrefilledTransaction;
+use zebra_chain::{BlockHeader, ShortTransactionID};
 
 #[derive(Debug, PartialEq, Serializable, Deserializable)]
 pub struct BlockHeaderAndIDs {

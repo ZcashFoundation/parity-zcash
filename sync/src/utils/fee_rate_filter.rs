@@ -1,4 +1,4 @@
-use message::types;
+use zebra_message::types;
 
 /// Connection fee rate filter
 #[derive(Debug, Default)]
@@ -24,7 +24,7 @@ impl FeeRateFilter {
 #[cfg(test)]
 mod tests {
     use super::FeeRateFilter;
-    use message::types;
+    use zebra_message::types;
 
     #[test]
     fn fee_rate_filter_empty() {
