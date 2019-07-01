@@ -48,6 +48,7 @@ members = [
 	"crypto",
 	"chain",
 	"db",
+	"fuzz",
 	"import",
 	"keys",
 	"logs",
