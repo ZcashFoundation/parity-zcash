@@ -1,5 +1,6 @@
 extern crate bitcrypto as crypto;
 
+#[allow(dead_code)]
 fn target(data: &[u8]) {
     crypto::ripemd160(data);
     crypto::sha1(data);
@@ -7,7 +8,14 @@ fn target(data: &[u8]) {
     crypto::dhash160(data);
     crypto::dhash256(data);
     crypto::checksum(data);
-};
+}
+
+#[cfg(feature = "libfuzzer_fuzz")]
+#[macro_use] extern crate libfuzzer_sys;
+#[cfg(feature = "libfuzzer_fuzz")]
+fuzz_target!(|data: &[u8]| {
+    target(&data);
+});
 
 #[cfg(feature = "afl")]
 #[macro_use] extern crate afl;
@@ -15,7 +23,7 @@ fn target(data: &[u8]) {
 fn main() {
     fuzz!(|data| {
         target(&data);
-    });
+    })
 }
 
 #[cfg(feature = "honggfuzz")]
@@ -25,6 +33,6 @@ fn main() {
     loop {
         fuzz!(|data| {
             target(data);
-        });
+        })
     }
 }
