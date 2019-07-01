@@ -54,7 +54,7 @@ fn main() {
 fn run() -> Result<(), String> {
     let yaml = load_yaml!("cli.yml");
     let matches = clap::App::from_yaml(yaml).get_matches();
-    let cfg = try!(config::parse(&matches));
+    let cfg = r#try!(config::parse(&matches));
 
     if !cfg.quiet {
         if cfg!(windows) {

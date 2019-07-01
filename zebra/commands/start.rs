@@ -8,8 +8,8 @@ use std::thread;
 use sync::{
     create_local_sync_node, create_sync_connection_factory, create_sync_peers, SyncListener,
 };
-use util::{init_db, node_table_path};
-use {config, p2p, ZCASH_PROTOCOL_MINIMUM, ZCASH_PROTOCOL_VERSION};
+use crate::util::{init_db, node_table_path};
+use crate::{config, p2p, ZCASH_PROTOCOL_MINIMUM, ZCASH_PROTOCOL_VERSION};
 
 enum BlockNotifierTask {
     NewBlock(H256),
@@ -127,7 +127,7 @@ pub fn start(cfg: config::Config) -> Result<(), String> {
         local_sync_node.install_sync_listener(Box::new(BlockNotifier::new(block_notify_command)));
     }
 
-    let p2p = try!(
+    let p2p = r#try!(
         p2p::P2P::new(p2p_cfg, sync_connection_factory, el.handle()).map_err(|x| x.to_string())
     );
     let rpc_deps = rpc::Dependencies {
@@ -137,9 +137,9 @@ pub fn start(cfg: config::Config) -> Result<(), String> {
         p2p_context: p2p.context().clone(),
         miner_address: cfg.miner_address,
     };
-    let _rpc_server = try!(rpc::new_http(cfg.rpc_config, rpc_deps));
+    let _rpc_server = r#try!(rpc::new_http(cfg.rpc_config, rpc_deps));
 
-    try!(p2p.run().map_err(|_| "Failed to start p2p module"));
+    r#try!(p2p.run().map_err(|_| "Failed to start p2p module"));
     el.run(p2p::forever()).unwrap();
     Ok(())
 }

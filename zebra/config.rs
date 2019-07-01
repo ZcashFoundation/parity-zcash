@@ -4,15 +4,15 @@ use message::Services;
 use network::{ConsensusParams, Network};
 use p2p::InternetProtocol;
 use primitives::hash::H256;
-use rpc::HttpConfiguration as RpcHttpConfig;
-use rpc_apis::ApiSet;
-use seednodes::{zcash_seednodes, zcash_testnet_seednodes};
+use crate::rpc::HttpConfiguration as RpcHttpConfig;
+use crate::rpc_apis::ApiSet;
+use crate::seednodes::{zcash_seednodes, zcash_testnet_seednodes};
 use std::net;
 use storage;
 use sync::VerificationParameters;
-use util::open_db;
+use crate::util::open_db;
 use verification::VerificationLevel;
-use {REGTEST_USER_AGENT, USER_AGENT};
+use crate::{REGTEST_USER_AGENT, USER_AGENT};
 
 pub struct Config {
     pub network: Network,

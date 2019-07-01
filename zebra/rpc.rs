@@ -1,8 +1,8 @@
-use ethcore_rpc::{start_http, Compatibility, MetaIoHandler, Server};
+use crate::ethcore_rpc::{start_http, Compatibility, MetaIoHandler, Server};
 use keys::Address;
 use network::ConsensusParams;
 use p2p;
-use rpc_apis::{self, ApiSet};
+use crate::rpc_apis::{self, ApiSet};
 use std::io;
 use std::net::SocketAddr;
 use std::sync::Arc;
@@ -46,10 +46,10 @@ pub fn new_http(conf: HttpConfiguration, deps: Dependencies) -> Result<Option<Se
     }
 
     let url = format!("{}:{}", conf.interface, conf.port);
-    let addr = try!(url
+    let addr = r#try!(url
         .parse()
         .map_err(|_| format!("Invalid JSONRPC listen host/port given: {}", url)));
-    Ok(Some(try!(setup_http_rpc_server(
+    Ok(Some(r#try!(setup_http_rpc_server(
         &addr, conf.cors, conf.hosts, conf.apis, deps
     ))))
 }

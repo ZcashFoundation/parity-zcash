@@ -1,10 +1,10 @@
 use clap::ArgMatches;
-use config::Config;
+use crate::config::Config;
 use sync::{create_sync_blocks_writer, Error};
-use util::init_db;
+use crate::util::init_db;
 
 pub fn import(cfg: Config, matches: &ArgMatches) -> Result<(), String> {
-    try!(init_db(&cfg));
+    r#try!(init_db(&cfg));
 
     let blk_path = matches
         .value_of("PATH")
