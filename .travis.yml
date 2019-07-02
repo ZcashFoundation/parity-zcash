@@ -8,6 +8,7 @@ branches:
 
 rust:
   - stable
+  - nightly
 
 matrix:
   allow_failures:
@@ -29,6 +30,6 @@ cache:
   - "$HOME/.cargo"
 
 script:
-- cargo check --verbose --all
-- cargo test --verbose --all
-- cargo build --verbose --all
+- cargo check --all
+- cargo test --all
+- cargo build --all
