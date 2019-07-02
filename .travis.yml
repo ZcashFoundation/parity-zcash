@@ -8,7 +8,6 @@ branches:
 
 rust:
   - stable
-  - nightly
 
 matrix:
   allow_failures:
