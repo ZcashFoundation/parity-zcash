@@ -1,7 +1,8 @@
 [package]
-name = "sync"
+name = "zebra-sync"
 version = "0.1.0"
-authors = ["Ethcore <admin@ethcore.io>"]
+license = "GPL-3.0"
+authors = ["Zcash Foundation <zebra@zfnd.org>"]
 
 [dependencies]
 parking_lot = "0.8"
@@ -14,21 +15,21 @@ murmur3 = "0.4"
 rand = "0.4"
 byteorder = "1.0"
 
-chain = { path = "../chain" }
-bitcrypto = { path = "../crypto" }
-storage = { path = "../storage" }
-db = { path = "../db" }
-keys = { path = "../keys" }
-message = { path = "../message" }
-miner = { path = "../miner" }
-p2p = { path = "../p2p" }
-primitives = { path = "../primitives" }
-script = { path = "../script" }
-serialization = { path = "../serialization" }
-verification = { path = "../verification" }
-network = { path = "../network" }
+zebra-chain = { path = "../chain" }
+zebra-crypto = { path = "../crypto" }
+zebra-storage = { path = "../storage" }
+zebra-db = { path = "../db" }
+zebra-keys = { path = "../keys" }
+zebra-message = { path = "../message" }
+zebra-miner = { path = "../miner" }
+zebra-p2p = { path = "../p2p" }
+zebra-primitives = { path = "../primitives" }
+zebra-script = { path = "../script" }
+zebra-serialization = { path = "../serialization" }
+zebra-verification = { path = "../verification" }
+zebra-network = { path = "../network" }
 
 [dev-dependencies]
-test-data = { path = "../test-data" }
-miner = { path = "../miner", features = ["test-helpers"] }
-chain = { path = "../chain", features = ["test-helpers"] }
+zebra-test-data = { path = "../test-data" }
+zebra-miner = { path = "../miner", features = ["test-helpers"] }
+zebra-chain = { path = "../chain", features = ["test-helpers"] }

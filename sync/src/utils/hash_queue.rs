@@ -1,7 +1,7 @@
-use primitives::hash::H256;
 use std::collections::{HashSet, VecDeque};
 use std::iter::repeat;
 use std::ops::Index;
+use zebra_primitives::hash::H256;
 
 /// Block position
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
@@ -314,7 +314,7 @@ impl Index<u32> for HashQueueChain {
 #[cfg(test)]
 mod tests {
     use super::{HashPosition, HashQueue, HashQueueChain};
-    use primitives::hash::H256;
+    use zebra_primitives::hash::H256;
 
     #[test]
     fn hash_queue_empty() {

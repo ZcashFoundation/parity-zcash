@@ -1,5 +1,4 @@
 use bytes::Bytes;
-use chain::{IndexedBlock, IndexedBlockHeader, IndexedTransaction, OutPoint, TransactionOutput};
 use hash::H256;
 use kv::{
     AutoFlushingOverlayDatabase, CacheDatabase, DatabaseConfig, DiskDatabase, Key, KeyState,
@@ -16,7 +15,10 @@ use ser::{deserialize, serialize, List};
 use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
-use storage::{
+use zebra_chain::{
+    IndexedBlock, IndexedBlockHeader, IndexedTransaction, OutPoint, TransactionOutput,
+};
+use zebra_storage::{
     BestBlock, BlockChain, BlockHeaderProvider, BlockOrigin, BlockProvider, BlockRef, CanonStore,
     EpochRef, EpochTag, Error, ForkChain, Forkable, NullifierTracker, SaplingTreeState,
     SideChainOrigin, SproutTreeState, Store, TransactionMeta, TransactionMetaProvider,

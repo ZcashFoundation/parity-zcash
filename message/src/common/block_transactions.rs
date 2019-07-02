@@ -1,5 +1,5 @@
-use chain::Transaction;
 use hash::H256;
+use zebra_chain::Transaction;
 
 #[derive(Debug, PartialEq, Serializable, Deserializable)]
 pub struct BlockTransactions {

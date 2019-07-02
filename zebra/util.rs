@@ -1,18 +1,20 @@
 use app_dirs::{app_dir, AppDataType};
 use config::Config;
-use db;
 use std::fs::create_dir_all;
 use std::path::PathBuf;
 use std::sync::Arc;
-use {storage, APP_INFO};
+use zebra_db;
+use zebra_storage;
+use APP_INFO;
 
-pub fn open_db(data_dir: &Option<String>, db_cache: usize) -> storage::SharedStore {
+pub fn open_db(data_dir: &Option<String>, db_cache: usize) -> zebra_storage::SharedStore {
     let db_path = match *data_dir {
         Some(ref data_dir) => custom_path(&data_dir, "db"),
         None => app_dir(AppDataType::UserData, &APP_INFO, "db").expect("Failed to get app dir"),
     };
     Arc::new(
-        db::BlockChainDatabase::open_at_path(db_path, db_cache).expect("Failed to open database"),
+        zebra_db::BlockChainDatabase::open_at_path(db_path, db_cache)
+            .expect("Failed to open database"),
     )
 }
 

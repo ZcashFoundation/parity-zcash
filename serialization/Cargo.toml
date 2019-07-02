@@ -1,9 +1,10 @@
 [package]
-name = "serialization"
+name = "zebra-serialization"
 version = "0.1.0"
-authors = ["debris <marek.kotewicz@gmail.com>"]
+license = "GPL-3.0"
+authors = ["Zcash Foundation <zebra@zfnd.org>"]
 
 [dependencies]
 byteorder = "1.0"
-primitives = { path = "../primitives" }
 rustc-hex = "2"
+zebra-primitives = { path = "../primitives" }

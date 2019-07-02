@@ -1,5 +1,4 @@
 use parking_lot::{Condvar, Mutex};
-use primitives::hash::H256;
 use std::collections::HashSet;
 use std::sync::{Arc, Weak};
 use std::thread;
@@ -10,6 +9,7 @@ use synchronization_peers_tasks::{PeersTasks, TrustLevel};
 use time::precise_time_s;
 use types::PeersRef;
 use utils::{OrphanBlocksPool, OrphanTransactionsPool};
+use zebra_primitives::hash::H256;
 
 /// Management interval (in ms)
 const MANAGEMENT_INTERVAL_MS: u64 = 10 * 1000;
@@ -396,19 +396,19 @@ pub fn manage_orphaned_transactions(
 
 #[cfg(test)]
 mod tests {
-    extern crate test_data;
+    extern crate zebra_test_data;
 
     use super::{
         manage_orphaned_transactions, manage_synchronization_peers_blocks,
         manage_unknown_orphaned_blocks, ManageOrphanTransactionsConfig, ManagePeersConfig,
         ManageUnknownBlocksConfig,
     };
-    use primitives::hash::H256;
     use std::collections::HashSet;
     use std::sync::Arc;
     use synchronization_peers::PeersImpl;
     use synchronization_peers_tasks::{PeersTasks, TrustLevel};
     use utils::{OrphanBlocksPool, OrphanTransactionsPool};
+    use zebra_primitives::hash::H256;
 
     #[test]
     fn manage_good_peer() {
@@ -472,7 +472,7 @@ mod tests {
             max_number: 100,
         };
         let mut pool = OrphanBlocksPool::new();
-        let block = test_data::genesis();
+        let block = zebra_test_data::genesis();
         pool.insert_unknown_block(block.into());
         assert_eq!(manage_unknown_orphaned_blocks(&config, &mut pool), None);
         assert_eq!(pool.len(), 1);
@@ -487,7 +487,7 @@ mod tests {
             max_number: 100,
         };
         let mut pool = OrphanBlocksPool::new();
-        let block = test_data::genesis();
+        let block = zebra_test_data::genesis();
         let block_hash = block.hash();
         pool.insert_unknown_block(block.into());
         sleep(Duration::from_millis(1));
@@ -506,9 +506,9 @@ mod tests {
             max_number: 1,
         };
         let mut pool = OrphanBlocksPool::new();
-        let block1 = test_data::genesis();
+        let block1 = zebra_test_data::genesis();
         let block1_hash = block1.hash();
-        let block2 = test_data::block_h2();
+        let block2 = zebra_test_data::block_h2();
         pool.insert_unknown_block(block1.into());
         pool.insert_unknown_block(block2.into());
         assert_eq!(
@@ -525,7 +525,7 @@ mod tests {
             max_number: 100,
         };
         let mut pool = OrphanTransactionsPool::new();
-        let transaction = test_data::block_h522().transactions[3].clone();
+        let transaction = zebra_test_data::block_h522().transactions[3].clone();
         let unknown_inputs: HashSet<H256> = transaction
             .inputs
             .iter()
@@ -545,7 +545,7 @@ mod tests {
             max_number: 100,
         };
         let mut pool = OrphanTransactionsPool::new();
-        let transaction = test_data::block_h522().transactions[3].clone();
+        let transaction = zebra_test_data::block_h522().transactions[3].clone();
         let unknown_inputs: HashSet<H256> = transaction
             .inputs
             .iter()
@@ -569,14 +569,14 @@ mod tests {
             max_number: 1,
         };
         let mut pool = OrphanTransactionsPool::new();
-        let transaction1 = test_data::block_h522().transactions[3].clone();
+        let transaction1 = zebra_test_data::block_h522().transactions[3].clone();
         let unknown_inputs1: HashSet<H256> = transaction1
             .inputs
             .iter()
             .map(|i| i.previous_output.hash.clone())
             .collect();
         let transaction1_hash = transaction1.hash();
-        let transaction2 = test_data::block_h567().transactions[1].clone();
+        let transaction2 = zebra_test_data::block_h567().transactions[1].clone();
         let unknown_inputs2: HashSet<H256> = transaction2
             .inputs
             .iter()

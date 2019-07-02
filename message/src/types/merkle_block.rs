@@ -1,8 +1,8 @@
 use bytes::Bytes;
-use chain::BlockHeader;
 use hash::H256;
 use ser::{Reader, Stream};
 use std::io;
+use zebra_chain::BlockHeader;
 use {MessageResult, Payload};
 
 #[derive(Debug, PartialEq)]

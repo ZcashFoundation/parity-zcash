@@ -1,10 +1,10 @@
 use futures::{finished, lazy};
-use message::{Message, Payload};
 use net::PeerStats;
 use p2p::Context;
 use parking_lot::Mutex;
 use std::sync::Arc;
 use util::{ConfigurableSynchronizer, PeerInfo, ResponseQueue, Responses, Synchronizer};
+use zebra_message::{Message, Payload};
 
 pub struct PeerContext {
     context: Arc<Context>,

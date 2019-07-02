@@ -1,4 +1,4 @@
-use chain::IndexedBlockHeader;
+use zebra_chain::IndexedBlockHeader;
 use {BlockHeaderProvider, BlockRef};
 
 pub struct BlockIterator<'a> {

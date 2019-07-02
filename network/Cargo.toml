@@ -1,13 +1,14 @@
 [package]
-name = "network"
+name = "zebra-network"
 version = "0.1.0"
-authors = ["debris <marek.kotewicz@gmail.com>"]
+license = "GPL-3.0"
+authors = ["Zcash Foundation <zebra@zfnd.org>"]
 
 [dependencies]
 lazy_static = "1.3"
-chain = { path = "../chain" }
-keys = { path = "../keys" }
-primitives = { path = "../primitives" }
-serialization = { path = "../serialization" }
-bitcrypto = { path = "../crypto" }
 rustc-hex = "2"
+zebra-chain = { path = "../chain" }
+zebra-keys = { path = "../keys" }
+zebra-primitives = { path = "../primitives" }
+zebra-serialization = { path = "../serialization" }
+zebra-crypto = { path = "../crypto" }

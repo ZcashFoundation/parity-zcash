@@ -1,8 +1,8 @@
 use bytes::{Bytes, TaggedBytes};
 use common::Command;
-use network::Magic;
 use ser::Stream;
 use serialization::serialize_payload;
+use zebra_network::Magic;
 use {MessageHeader, MessageResult, Payload};
 
 pub fn to_raw_message(magic: Magic, command: Command, payload: &Bytes) -> Bytes {

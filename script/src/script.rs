@@ -1,8 +1,8 @@
 //! Serialized script, used inside transaction inputs and outputs.
 
 use bytes::Bytes;
-use keys::{self, AddressHash, Public};
 use std::{fmt, ops};
+use zebra_keys::{self, AddressHash, Public};
 use {Error, Opcode};
 
 /// Maximum number of bytes pushable to the stack
@@ -32,7 +32,7 @@ pub enum ScriptType {
 #[derive(PartialEq, Debug)]
 pub struct ScriptAddress {
     /// The type of the address.
-    pub kind: keys::Type,
+    pub kind: zebra_keys::Type,
     /// Public key hash.
     pub hash: AddressHash,
 }
@@ -41,7 +41,7 @@ impl ScriptAddress {
     /// Creates P2PKH-type ScriptAddress
     pub fn new_p2pkh(hash: AddressHash) -> Self {
         ScriptAddress {
-            kind: keys::Type::P2PKH,
+            kind: zebra_keys::Type::P2PKH,
             hash: hash,
         }
     }
@@ -49,7 +49,7 @@ impl ScriptAddress {
     /// Creates P2SH-type ScriptAddress
     pub fn new_p2sh(hash: AddressHash) -> Self {
         ScriptAddress {
-            kind: keys::Type::P2SH,
+            kind: zebra_keys::Type::P2SH,
             hash: hash,
         }
     }
@@ -327,7 +327,7 @@ impl Script {
         return 1;
     }
 
-    pub fn extract_destinations(&self) -> Result<Vec<ScriptAddress>, keys::Error> {
+    pub fn extract_destinations(&self) -> Result<Vec<ScriptAddress>, zebra_keys::Error> {
         match self.script_type() {
             ScriptType::NonStandard => Ok(vec![]),
             ScriptType::PubKey => {
@@ -488,7 +488,7 @@ impl fmt::Display for Script {
 #[cfg(test)]
 mod tests {
     use super::{Script, ScriptAddress, ScriptType, MAX_SCRIPT_ELEMENT_SIZE};
-    use keys::{Address, Public};
+    use zebra_keys::{Address, Public};
     use {Builder, Opcode};
 
     #[test]

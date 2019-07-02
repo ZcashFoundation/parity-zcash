@@ -3,17 +3,17 @@
 use accept_chain::ChainAcceptor;
 use accept_transaction::MemoryPoolTransactionAcceptor;
 use canon::{CanonBlock, CanonTransaction};
-use chain::{IndexedBlock, IndexedBlockHeader, IndexedTransaction};
 use deployments::{BlockDeployments, Deployments};
 use error::{Error, TransactionError};
-use network::ConsensusParams;
-use storage::{
-    BlockHeaderProvider, BlockOrigin, CachedTransactionOutputProvider,
-    DuplexTransactionOutputProvider, NoopStore, SharedStore, TransactionOutputProvider,
-};
 use verify_chain::ChainVerifier;
 use verify_header::HeaderVerifier;
 use verify_transaction::MemoryPoolTransactionVerifier;
+use zebra_chain::{IndexedBlock, IndexedBlockHeader, IndexedTransaction};
+use zebra_network::ConsensusParams;
+use zebra_storage::{
+    BlockHeaderProvider, BlockOrigin, CachedTransactionOutputProvider,
+    DuplexTransactionOutputProvider, NoopStore, SharedStore, TransactionOutputProvider,
+};
 use {VerificationLevel, Verify};
 
 pub struct BackwardsCompatibleChainVerifier {
@@ -229,23 +229,23 @@ impl Verify for BackwardsCompatibleChainVerifier {
 
 #[cfg(test)]
 mod tests {
-    extern crate test_data;
+    extern crate zebra_test_data;
 
     use super::BackwardsCompatibleChainVerifier as ChainVerifier;
-    use chain::IndexedBlock;
-    use db::BlockChainDatabase;
-    use network::{ConsensusParams, Network};
-    use script;
     use std::sync::Arc;
-    use storage::Error as DBError;
+    use zebra_chain::IndexedBlock;
+    use zebra_db::BlockChainDatabase;
+    use zebra_network::{ConsensusParams, Network};
+    use zebra_script;
+    use zebra_storage::Error as DBError;
     use {Error, TransactionError, VerificationLevel, Verify};
 
     #[test]
     fn verify_orphan() {
         let storage = Arc::new(BlockChainDatabase::init_test_chain(vec![
-            test_data::genesis().into(),
+            zebra_test_data::genesis().into(),
         ]));
-        let b2 = test_data::block_h2().into();
+        let b2 = zebra_test_data::block_h2().into();
         let verifier = ChainVerifier::new(storage, ConsensusParams::new(Network::Unitest));
         assert_eq!(
             Err(Error::Database(DBError::UnknownParent)),
@@ -256,9 +256,9 @@ mod tests {
     #[test]
     fn verify_smoky() {
         let storage = Arc::new(BlockChainDatabase::init_test_chain(vec![
-            test_data::genesis().into(),
+            zebra_test_data::genesis().into(),
         ]));
-        let b1 = test_data::block_h1();
+        let b1 = zebra_test_data::block_h1();
         let verifier = ChainVerifier::new(storage, ConsensusParams::new(Network::Mainnet));
         assert_eq!(verifier.verify(VerificationLevel::FULL, &b1.into()), Ok(()));
     }
@@ -266,10 +266,10 @@ mod tests {
     #[test]
     fn first_tx() {
         let storage = BlockChainDatabase::init_test_chain(vec![
-            test_data::block_h0().into(),
-            test_data::block_h1().into(),
+            zebra_test_data::block_h0().into(),
+            zebra_test_data::block_h1().into(),
         ]);
-        let b1 = test_data::block_h2();
+        let b1 = zebra_test_data::block_h2();
         let verifier =
             ChainVerifier::new(Arc::new(storage), ConsensusParams::new(Network::Mainnet));
         assert_eq!(verifier.verify(VerificationLevel::FULL, &b1.into()), Ok(()));
@@ -278,7 +278,7 @@ mod tests {
     #[test]
     fn coinbase_maturity() {
         let consensus = ConsensusParams::new(Network::Unitest);
-        let genesis = test_data::block_builder()
+        let genesis = zebra_test_data::block_builder()
             .transaction()
             .coinbase()
             .output()
@@ -292,7 +292,7 @@ mod tests {
         let storage = BlockChainDatabase::init_test_chain(vec![genesis.clone().into()]);
         let genesis_coinbase = genesis.transactions()[0].hash();
 
-        let block = test_data::block_builder()
+        let block = zebra_test_data::block_builder()
             .transaction()
             .coinbase()
             .founder_reward(&consensus, 1)
@@ -327,7 +327,7 @@ mod tests {
     fn non_coinbase_happy() {
         let consensus = ConsensusParams::new(Network::Unitest);
 
-        let genesis = test_data::block_builder()
+        let genesis = zebra_test_data::block_builder()
             .transaction()
             .coinbase()
             .output()
@@ -346,7 +346,7 @@ mod tests {
         let storage = BlockChainDatabase::init_test_chain(vec![genesis.clone().into()]);
         let reference_tx = genesis.transactions()[1].hash();
 
-        let block = test_data::block_builder()
+        let block = zebra_test_data::block_builder()
             .transaction()
             .coinbase()
             .founder_reward(&consensus, 1)
@@ -378,7 +378,7 @@ mod tests {
     fn transaction_references_same_block_happy() {
         let consensus = ConsensusParams::new(Network::Unitest);
 
-        let genesis = test_data::block_builder()
+        let genesis = zebra_test_data::block_builder()
             .transaction()
             .coinbase()
             .output()
@@ -397,7 +397,7 @@ mod tests {
         let storage = BlockChainDatabase::init_test_chain(vec![genesis.clone().into()]);
         let first_tx_hash = genesis.transactions()[1].hash();
 
-        let block = test_data::block_builder()
+        let block = zebra_test_data::block_builder()
             .transaction()
             .coinbase()
             .founder_reward(&consensus, 1)
@@ -434,7 +434,7 @@ mod tests {
 
     #[test]
     fn transaction_references_same_block_overspend() {
-        let genesis = test_data::block_builder()
+        let genesis = zebra_test_data::block_builder()
             .transaction()
             .coinbase()
             .output()
@@ -453,7 +453,7 @@ mod tests {
         let storage = BlockChainDatabase::init_test_chain(vec![genesis.clone().into()]);
         let first_tx_hash = genesis.transactions()[1].hash();
 
-        let block = test_data::block_builder()
+        let block = zebra_test_data::block_builder()
             .transaction()
             .coinbase()
             .output()
@@ -499,7 +499,7 @@ mod tests {
     #[test]
     #[ignore]
     fn coinbase_happy() {
-        let genesis = test_data::block_builder()
+        let genesis = zebra_test_data::block_builder()
             .transaction()
             .coinbase()
             .output()
@@ -515,7 +515,7 @@ mod tests {
 
         // waiting 100 blocks for genesis coinbase to become valid
         for _ in 0..100 {
-            let block: IndexedBlock = test_data::block_builder()
+            let block: IndexedBlock = zebra_test_data::block_builder()
                 .transaction()
                 .coinbase()
                 .build()
@@ -533,7 +533,7 @@ mod tests {
 
         let best_hash = storage.best_block().hash;
 
-        let block = test_data::block_builder()
+        let block = zebra_test_data::block_builder()
             .transaction()
             .coinbase()
             .build()
@@ -556,7 +556,7 @@ mod tests {
 
     #[test]
     fn absoulte_sigops_overflow_block() {
-        let genesis = test_data::block_builder()
+        let genesis = zebra_test_data::block_builder()
             .transaction()
             .coinbase()
             .build()
@@ -572,17 +572,17 @@ mod tests {
         let storage = BlockChainDatabase::init_test_chain(vec![genesis.clone().into()]);
         let reference_tx = genesis.transactions()[1].hash();
 
-        let mut builder_tx1 = script::Builder::default();
+        let mut builder_tx1 = zebra_script::Builder::default();
         for _ in 0..81000 {
-            builder_tx1 = builder_tx1.push_opcode(script::Opcode::OP_CHECKSIG)
+            builder_tx1 = builder_tx1.push_opcode(zebra_script::Opcode::OP_CHECKSIG)
         }
 
-        let mut builder_tx2 = script::Builder::default();
+        let mut builder_tx2 = zebra_script::Builder::default();
         for _ in 0..81001 {
-            builder_tx2 = builder_tx2.push_opcode(script::Opcode::OP_CHECKSIG)
+            builder_tx2 = builder_tx2.push_opcode(zebra_script::Opcode::OP_CHECKSIG)
         }
 
-        let block: IndexedBlock = test_data::block_builder()
+        let block: IndexedBlock = zebra_test_data::block_builder()
             .transaction()
             .coinbase()
             .build()
@@ -615,7 +615,7 @@ mod tests {
 
     #[test]
     fn coinbase_overspend() {
-        let genesis = test_data::block_builder()
+        let genesis = zebra_test_data::block_builder()
             .transaction()
             .coinbase()
             .build()
@@ -624,7 +624,7 @@ mod tests {
             .build();
         let storage = BlockChainDatabase::init_test_chain(vec![genesis.clone().into()]);
 
-        let block: IndexedBlock = test_data::block_builder()
+        let block: IndexedBlock = zebra_test_data::block_builder()
             .transaction()
             .coinbase()
             .output()

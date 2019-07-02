@@ -1,26 +1,26 @@
 use canon::CanonTransaction;
-use chain::{
+use constants::COINBASE_MATURITY;
+use deployments::BlockDeployments;
+use error::TransactionError;
+use sapling::accept_sapling;
+use ser::Serializable;
+use sigops::transaction_sigops;
+use tree_cache::TreeCache;
+use zebra_chain::{
     OVERWINTER_TX_VERSION, OVERWINTER_TX_VERSION_GROUP_ID, SAPLING_TX_VERSION,
     SAPLING_TX_VERSION_GROUP_ID,
 };
-use constants::COINBASE_MATURITY;
-use crypto::Groth16VerifyingKey;
-use deployments::BlockDeployments;
-use error::TransactionError;
-use network::ConsensusParams;
-use primitives::hash::H256;
-use sapling::accept_sapling;
-use script::{
+use zebra_crypto::Groth16VerifyingKey;
+use zebra_network::ConsensusParams;
+use zebra_primitives::hash::H256;
+use zebra_script::{
     verify_script, Script, SighashBase, TransactionInputSigner, TransactionSignatureChecker,
     VerificationFlags,
 };
-use ser::Serializable;
-use sigops::transaction_sigops;
-use storage::{
+use zebra_storage::{
     DuplexTransactionOutputProvider, EpochRef, EpochTag, NullifierTracker, TransactionMetaProvider,
     TransactionOutputProvider, TreeStateProvider,
 };
-use tree_cache::TreeCache;
 use {checked_transaction_fee, VerificationLevel};
 
 pub struct TransactionAcceptor<'a> {
@@ -727,7 +727,7 @@ impl<'a> JoinSplitVerification<'a> {
 
     pub fn check(&self, sighash: H256) -> Result<(), TransactionError> {
         if let Some(ref join_split) = self.transaction.raw.join_split {
-            ::crypto::verify_ed25519(
+            ::zebra_crypto::verify_ed25519(
                 &sighash[..],
                 &join_split.pubkey.into(),
                 &join_split.sig.into(),
@@ -826,13 +826,13 @@ impl<'a> SaplingVerification<'a> {
 
 #[cfg(test)]
 mod tests {
-    extern crate test_data;
+    extern crate zebra_test_data;
 
     use super::*;
-    use chain::{Sapling, Transaction, BTC_TX_VERSION};
-    use db::BlockChainDatabase;
-    use network::{ConsensusParams, Network};
-    use script::{
+    use zebra_chain::{Sapling, Transaction, BTC_TX_VERSION};
+    use zebra_db::BlockChainDatabase;
+    use zebra_network::{ConsensusParams, Network};
+    use zebra_script::{
         verify_script, Script, TransactionInputSigner, TransactionSignatureChecker,
         VerificationFlags,
     };
@@ -870,16 +870,16 @@ mod tests {
 
     #[test]
     fn sapling_nullifiers_works() {
-        let storage = BlockChainDatabase::init_test_chain(vec![test_data::genesis().into()]);
+        let storage = BlockChainDatabase::init_test_chain(vec![zebra_test_data::genesis().into()]);
 
-        let tx: Transaction = test_data::TransactionBuilder::with_sapling(Sapling {
+        let tx: Transaction = zebra_test_data::TransactionBuilder::with_sapling(Sapling {
             spends: vec![Default::default()],
             ..Default::default()
         })
         .into();
-        let block = test_data::block_builder()
+        let block = zebra_test_data::block_builder()
             .header()
-            .parent(test_data::genesis().hash())
+            .parent(zebra_test_data::genesis().hash())
             .build()
             .transaction()
             .coinbase()
@@ -911,7 +911,7 @@ mod tests {
         let consensus = ConsensusParams::new(Network::Mainnet);
 
         // when overwinter isn't active, expiry height is ignored
-        let tx = test_data::TransactionBuilder::overwintered()
+        let tx = zebra_test_data::TransactionBuilder::overwintered()
             .set_expiry_height(1)
             .into();
         assert_eq!(
@@ -925,7 +925,7 @@ mod tests {
         );
 
         // when overwinter is active && we check coinbase tx, expiry height is ignored
-        let tx = test_data::TransactionBuilder::coinbase()
+        let tx = zebra_test_data::TransactionBuilder::coinbase()
             .set_overwintered(true)
             .set_expiry_height(1)
             .into();
@@ -940,7 +940,7 @@ mod tests {
         );
 
         // when overwinter is active && expiry height check passes
-        let tx = test_data::TransactionBuilder::overwintered()
+        let tx = zebra_test_data::TransactionBuilder::overwintered()
             .set_expiry_height(consensus.overwinter_height + 100)
             .into();
         assert_eq!(
@@ -954,7 +954,7 @@ mod tests {
         );
 
         // when overwinter is active && expiry height check fails
-        let tx = test_data::TransactionBuilder::overwintered()
+        let tx = zebra_test_data::TransactionBuilder::overwintered()
             .set_expiry_height(consensus.overwinter_height + 1)
             .into();
         assert_eq!(
@@ -973,7 +973,7 @@ mod tests {
         let consensus = ConsensusParams::new(Network::Mainnet);
 
         // when overwinter is active, but transaction isn't overwintered
-        let tx = test_data::TransactionBuilder::default().into();
+        let tx = zebra_test_data::TransactionBuilder::default().into();
         assert_eq!(
             TransactionVersion::new(
                 CanonTransaction::new(&tx),
@@ -985,7 +985,7 @@ mod tests {
         );
 
         // when overwinter isn't active, but transaction is overwintered
-        let tx = test_data::TransactionBuilder::overwintered().into();
+        let tx = zebra_test_data::TransactionBuilder::overwintered().into();
         assert_eq!(
             TransactionVersion::new(
                 CanonTransaction::new(&tx),
@@ -997,7 +997,7 @@ mod tests {
         );
 
         // when sapling is active, but version group id isn't set to sapling
-        let tx = test_data::TransactionBuilder::overwintered().into();
+        let tx = zebra_test_data::TransactionBuilder::overwintered().into();
         assert_eq!(
             TransactionVersion::new(
                 CanonTransaction::new(&tx),
@@ -1009,7 +1009,7 @@ mod tests {
         );
 
         // when overwinter is active, but version group id isn't set to overwinter
-        let tx = test_data::TransactionBuilder::overwintered().into();
+        let tx = zebra_test_data::TransactionBuilder::overwintered().into();
         assert_eq!(
             TransactionVersion::new(
                 CanonTransaction::new(&tx),
@@ -1021,7 +1021,7 @@ mod tests {
         );
 
         // when sapling is active, but version is post-sapling
-        let tx = test_data::TransactionBuilder::overwintered()
+        let tx = zebra_test_data::TransactionBuilder::overwintered()
             .set_version_group_id(SAPLING_TX_VERSION_GROUP_ID)
             .set_version(SAPLING_TX_VERSION + 1)
             .into();
@@ -1036,7 +1036,7 @@ mod tests {
         );
 
         // when overwinter is active, but version is post-overwinter
-        let tx = test_data::TransactionBuilder::overwintered()
+        let tx = zebra_test_data::TransactionBuilder::overwintered()
             .set_version_group_id(OVERWINTER_TX_VERSION_GROUP_ID)
             .set_version(OVERWINTER_TX_VERSION + 1)
             .into();
@@ -1051,7 +1051,7 @@ mod tests {
         );
 
         // sprout tx passes check
-        let tx = test_data::TransactionBuilder::default()
+        let tx = zebra_test_data::TransactionBuilder::default()
             .set_version(BTC_TX_VERSION)
             .into();
         assert_eq!(
@@ -1065,7 +1065,7 @@ mod tests {
         );
 
         // overwinter tx passes check
-        let tx = test_data::TransactionBuilder::overwintered()
+        let tx = zebra_test_data::TransactionBuilder::overwintered()
             .set_version(OVERWINTER_TX_VERSION)
             .set_version_group_id(OVERWINTER_TX_VERSION_GROUP_ID)
             .into();
@@ -1080,7 +1080,7 @@ mod tests {
         );
 
         // sapling tx passes check
-        let tx = test_data::TransactionBuilder::overwintered()
+        let tx = zebra_test_data::TransactionBuilder::overwintered()
             .set_version(SAPLING_TX_VERSION)
             .set_version_group_id(SAPLING_TX_VERSION_GROUP_ID)
             .into();

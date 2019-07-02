@@ -1,9 +1,9 @@
 use bytes::Bytes;
-use chain::constants::SEQUENCE_LOCKTIME_DISABLE_FLAG;
-use crypto::{dhash160, dhash256, ripemd160, sha1, sha256};
-use keys::{Public, Signature};
 use sign::Sighash;
 use std::{cmp, mem};
+use zebra_chain::constants::SEQUENCE_LOCKTIME_DISABLE_FLAG;
+use zebra_crypto::{dhash160, dhash256, ripemd160, sha1, sha256};
+use zebra_keys::{Public, Signature};
 use {script, Error, Num, Opcode, Script, SignatureChecker, Stack, VerificationFlags};
 
 /// Helper function.
@@ -892,7 +892,7 @@ pub fn eval_script(
 mod tests {
     use super::{eval_script, is_public_key, verify_script};
     use bytes::Bytes;
-    use chain::Transaction;
+    use zebra_chain::Transaction;
     use {
         Builder, Error, NoopSignatureChecker, Num, Opcode, Script, Stack, TransactionInputSigner,
         TransactionSignatureChecker, VerificationFlags,

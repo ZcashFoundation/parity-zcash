@@ -1,10 +1,10 @@
 use hash::H256;
-use network::{ConsensusParams, Deployment};
 use parking_lot::Mutex;
 use std::collections::hash_map::Entry;
 use std::collections::HashMap;
-use storage::{BlockAncestors, BlockHeaderProvider, BlockIterator, BlockRef};
 use timestamp::median_timestamp;
+use zebra_network::{ConsensusParams, Deployment};
+use zebra_storage::{BlockAncestors, BlockHeaderProvider, BlockIterator, BlockRef};
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 enum ThresholdState {
@@ -309,13 +309,13 @@ impl<'a> Iterator for ThresholdIterator<'a> {
 #[cfg(test)]
 mod tests {
     use super::{first_of_the_period, threshold_state, DeploymentStateCache, ThresholdState};
-    use chain::{BlockHeader, IndexedBlockHeader};
     use hash::H256;
-    use network::Deployment;
-    use primitives::bytes::Bytes;
     use std::collections::HashMap;
     use std::sync::atomic::{AtomicUsize, Ordering};
-    use storage::{BlockHeaderProvider, BlockRef};
+    use zebra_chain::{BlockHeader, IndexedBlockHeader};
+    use zebra_network::Deployment;
+    use zebra_primitives::bytes::Bytes;
+    use zebra_storage::{BlockHeaderProvider, BlockRef};
 
     const MINER_CONFIRMATION_WINDOW: u32 = 1000;
     const RULE_CHANGE_ACTIVATION_THRESHOLD: u32 = 900;

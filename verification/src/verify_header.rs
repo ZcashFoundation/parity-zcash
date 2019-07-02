@@ -1,10 +1,10 @@
-use chain::IndexedBlockHeader;
 use constants::BLOCK_MAX_FUTURE;
 use equihash::verify_block_equihash_solution;
 use error::Error;
-use network::ConsensusParams;
-use primitives::compact::Compact;
 use work::is_valid_proof_of_work;
+use zebra_chain::IndexedBlockHeader;
+use zebra_network::ConsensusParams;
+use zebra_primitives::compact::Compact;
 
 pub struct HeaderVerifier<'a> {
     pub version: HeaderVersion<'a>,
@@ -130,11 +130,11 @@ impl<'a> HeaderEquihashSolution<'a> {
 
 #[cfg(test)]
 mod tests {
-    extern crate test_data;
+    extern crate zebra_test_data;
 
     use super::HeaderVersion;
     use error::Error;
-    use network::{ConsensusParams, Network};
+    use zebra_network::{ConsensusParams, Network};
 
     #[test]
     fn header_version_works() {
@@ -142,7 +142,7 @@ mod tests {
 
         assert_eq!(
             HeaderVersion::new(
-                &test_data::block_builder()
+                &zebra_test_data::block_builder()
                     .header()
                     .version(consensus.min_block_version() - 1)
                     .build()
@@ -156,7 +156,7 @@ mod tests {
         );
         assert_eq!(
             HeaderVersion::new(
-                &test_data::block_builder()
+                &zebra_test_data::block_builder()
                     .header()
                     .version(consensus.min_block_version())
                     .build()
@@ -170,7 +170,7 @@ mod tests {
         );
         assert_eq!(
             HeaderVersion::new(
-                &test_data::block_builder()
+                &zebra_test_data::block_builder()
                     .header()
                     .version(consensus.min_block_version() + 1)
                     .build()

@@ -1,9 +1,9 @@
-use chain::IndexedBlock;
 use error::{Error, TransactionError};
-use network::ConsensusParams;
 use sigops::transaction_sigops;
 use std::collections::HashSet;
-use storage::NoopStore;
+use zebra_chain::IndexedBlock;
+use zebra_network::ConsensusParams;
+use zebra_storage::NoopStore;
 
 pub struct BlockVerifier<'a> {
     pub empty: BlockEmpty<'a>,

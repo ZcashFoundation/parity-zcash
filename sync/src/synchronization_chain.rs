@@ -1,13 +1,15 @@
-use chain::{IndexedBlock, IndexedBlockHeader, IndexedTransaction, OutPoint, TransactionOutput};
 use linked_hash_map::LinkedHashMap;
-use miner::{FeeCalculator, MemoryPoolInformation, MemoryPoolOrderingStrategy};
-use primitives::bytes::Bytes;
-use primitives::hash::H256;
 use std::collections::{HashSet, VecDeque};
 use std::fmt;
-use storage;
 use types::{BlockHeight, MemoryPoolRef, StorageRef};
 use utils::{BestHeadersChain, BestHeadersChainInformation, HashPosition, HashQueueChain};
+use zebra_chain::{
+    IndexedBlock, IndexedBlockHeader, IndexedTransaction, OutPoint, TransactionOutput,
+};
+use zebra_miner::{FeeCalculator, MemoryPoolInformation, MemoryPoolOrderingStrategy};
+use zebra_primitives::bytes::Bytes;
+use zebra_primitives::hash::H256;
+use zebra_storage;
 
 /// Index of 'verifying' queue
 const VERIFYING_QUEUE: usize = 0;
@@ -112,7 +114,7 @@ pub struct Chain {
     /// Genesis block hash (stored for optimizations)
     genesis_block_hash: H256,
     /// Best storage block (stored for optimizations)
-    best_storage_block: storage::BestBlock,
+    best_storage_block: zebra_storage::BestBlock,
     /// Local blocks storage
     storage: StorageRef,
     /// The set of headers we currently verifying.
@@ -215,9 +217,9 @@ impl Chain {
     }
 
     /// Get best block
-    pub fn best_block(&self) -> storage::BestBlock {
+    pub fn best_block(&self) -> zebra_storage::BestBlock {
         match self.hash_chain.back() {
-            Some(hash) => storage::BestBlock {
+            Some(hash) => zebra_storage::BestBlock {
                 number: self.best_storage_block.number + self.hash_chain.len(),
                 hash: hash.clone(),
             },
@@ -226,17 +228,17 @@ impl Chain {
     }
 
     /// Get best storage block
-    pub fn best_storage_block(&self) -> storage::BestBlock {
+    pub fn best_storage_block(&self) -> zebra_storage::BestBlock {
         self.best_storage_block.clone()
     }
 
     /// Get best block header
-    pub fn best_block_header(&self) -> storage::BestBlock {
+    pub fn best_block_header(&self) -> zebra_storage::BestBlock {
         let headers_chain_information = self.headers_chain.information();
         if headers_chain_information.best == 0 {
             return self.best_storage_block();
         }
-        storage::BestBlock {
+        zebra_storage::BestBlock {
             number: self.best_storage_block.number + headers_chain_information.best,
             hash: self
                 .headers_chain
@@ -269,7 +271,8 @@ impl Chain {
     /// Get block header by number
     pub fn block_header_by_number(&self, number: BlockHeight) -> Option<IndexedBlockHeader> {
         if number <= self.best_storage_block.number {
-            self.storage.block_header(storage::BlockRef::Number(number))
+            self.storage
+                .block_header(zebra_storage::BlockRef::Number(number))
         } else {
             self.headers_chain
                 .at(number - self.best_storage_block.number)
@@ -280,7 +283,7 @@ impl Chain {
     pub fn block_header_by_hash(&self, hash: &H256) -> Option<IndexedBlockHeader> {
         if let Some(header) = self
             .storage
-            .block_header(storage::BlockRef::Hash(hash.clone()))
+            .block_header(zebra_storage::BlockRef::Hash(hash.clone()))
         {
             return Some(header);
         }
@@ -298,7 +301,7 @@ impl Chain {
             None => {
                 if self
                     .storage
-                    .contains_block(storage::BlockRef::Hash(hash.clone()))
+                    .contains_block(zebra_storage::BlockRef::Hash(hash.clone()))
                 {
                     BlockState::Stored
                 } else if self.dead_end_blocks.contains(hash) {
@@ -399,7 +402,7 @@ impl Chain {
     pub fn insert_best_block(
         &mut self,
         block: IndexedBlock,
-    ) -> Result<BlockInsertionResult, storage::Error> {
+    ) -> Result<BlockInsertionResult, zebra_storage::Error> {
         assert_eq!(
             Some(self.storage.best_block().hash),
             self.storage.block_hash(self.storage.best_block().number)
@@ -407,7 +410,7 @@ impl Chain {
         let block_origin = self.storage.block_origin(&block.header)?;
         trace!(target: "sync", "insert_best_block {:?} origin: {:?}", block.hash().reversed(), block_origin);
         match block_origin {
-            storage::BlockOrigin::KnownBlock => {
+            zebra_storage::BlockOrigin::KnownBlock => {
                 // there should be no known blocks at this point
                 unreachable!(
                     "Trying to re-insert known block: {}",
@@ -415,7 +418,7 @@ impl Chain {
                 );
             }
             // case 1: block has been added to the main branch
-            storage::BlockOrigin::CanonChain { .. } => {
+            zebra_storage::BlockOrigin::CanonChain { .. } => {
                 self.storage.insert(block.clone())?;
                 self.storage.canonize(block.hash())?;
 
@@ -449,7 +452,7 @@ impl Chain {
                 })
             }
             // case 2: block has been added to the side branch with reorganization to this branch
-            storage::BlockOrigin::SideChainBecomingCanonChain(origin) => {
+            zebra_storage::BlockOrigin::SideChainBecomingCanonChain(origin) => {
                 let fork = self.storage.fork(origin.clone())?;
                 fork.store().insert(block.clone())?;
                 fork.store().canonize(block.hash())?;
@@ -533,7 +536,7 @@ impl Chain {
                 Ok(result)
             }
             // case 3: block has been added to the side branch without reorganization to this branch
-            storage::BlockOrigin::SideChain(_origin) => {
+            zebra_storage::BlockOrigin::SideChain(_origin) => {
                 let block_hash = block.hash().clone();
                 self.storage.insert(block)?;
 
@@ -768,7 +771,7 @@ impl Chain {
     }
 }
 
-impl storage::TransactionProvider for Chain {
+impl zebra_storage::TransactionProvider for Chain {
     fn transaction_bytes(&self, hash: &H256) -> Option<Bytes> {
         self.memory_pool
             .read()
@@ -784,7 +787,7 @@ impl storage::TransactionProvider for Chain {
     }
 }
 
-impl storage::TransactionOutputProvider for Chain {
+impl zebra_storage::TransactionOutputProvider for Chain {
     fn transaction_output(
         &self,
         outpoint: &OutPoint,
@@ -801,16 +804,16 @@ impl storage::TransactionOutputProvider for Chain {
     }
 }
 
-impl storage::BlockHeaderProvider for Chain {
-    fn block_header_bytes(&self, block_ref: storage::BlockRef) -> Option<Bytes> {
+impl zebra_storage::BlockHeaderProvider for Chain {
+    fn block_header_bytes(&self, block_ref: zebra_storage::BlockRef) -> Option<Bytes> {
         use ser::serialize;
         self.block_header(block_ref).map(|h| serialize(&h.raw))
     }
 
-    fn block_header(&self, block_ref: storage::BlockRef) -> Option<IndexedBlockHeader> {
+    fn block_header(&self, block_ref: zebra_storage::BlockRef) -> Option<IndexedBlockHeader> {
         match block_ref {
-            storage::BlockRef::Hash(hash) => self.block_header_by_hash(&hash),
-            storage::BlockRef::Number(n) => self.block_header_by_number(n),
+            zebra_storage::BlockRef::Hash(hash) => self.block_header_by_hash(&hash),
+            zebra_storage::BlockRef::Number(n) => self.block_header_by_number(n),
         }
     }
 }
@@ -884,21 +887,21 @@ impl fmt::Debug for Chain {
 
 #[cfg(test)]
 mod tests {
-    extern crate test_data;
+    extern crate zebra_test_data;
 
     use super::{BlockInsertionResult, BlockState, Chain, TransactionState};
-    use chain::{IndexedBlockHeader, Transaction};
-    use db::BlockChainDatabase;
-    use miner::MemoryPool;
     use parking_lot::RwLock;
-    use primitives::hash::H256;
     use std::sync::Arc;
     use utils::HashPosition;
+    use zebra_chain::{IndexedBlockHeader, Transaction};
+    use zebra_db::BlockChainDatabase;
+    use zebra_miner::MemoryPool;
+    use zebra_primitives::hash::H256;
 
     #[test]
     fn chain_empty() {
         let db = Arc::new(BlockChainDatabase::init_test_chain(vec![
-            test_data::genesis().into(),
+            zebra_test_data::genesis().into(),
         ]));
         let db_best_block = db.best_block();
         let chain = Chain::new(db.clone(), Arc::new(RwLock::new(MemoryPool::new())));
@@ -918,12 +921,12 @@ mod tests {
     #[test]
     fn chain_block_path() {
         let db = Arc::new(BlockChainDatabase::init_test_chain(vec![
-            test_data::genesis().into(),
+            zebra_test_data::genesis().into(),
         ]));
         let mut chain = Chain::new(db.clone(), Arc::new(RwLock::new(MemoryPool::new())));
 
         // add 6 blocks to scheduled queue
-        let blocks = test_data::build_n_empty_blocks_from_genesis(6, 0);
+        let blocks = zebra_test_data::build_n_empty_blocks_from_genesis(6, 0);
         let headers: Vec<IndexedBlockHeader> =
             blocks.into_iter().map(|b| b.block_header.into()).collect();
         let hashes: Vec<_> = headers.iter().map(|h| h.hash.clone()).collect();
@@ -1009,7 +1012,7 @@ mod tests {
         );
         // insert new best block to the chain
         chain
-            .insert_best_block(test_data::block_h1().into())
+            .insert_best_block(zebra_test_data::block_h1().into())
             .expect("Db error");
         assert!(
             chain.information().scheduled == 3
@@ -1023,13 +1026,13 @@ mod tests {
     #[test]
     fn chain_block_locator_hashes() {
         let db = Arc::new(BlockChainDatabase::init_test_chain(vec![
-            test_data::genesis().into(),
+            zebra_test_data::genesis().into(),
         ]));
         let mut chain = Chain::new(db, Arc::new(RwLock::new(MemoryPool::new())));
         let genesis_hash = chain.best_block().hash;
         assert_eq!(chain.block_locator_hashes(), vec![genesis_hash.clone()]);
 
-        let block1 = test_data::block_h1();
+        let block1 = zebra_test_data::block_h1();
         let block1_hash = block1.hash();
 
         chain
@@ -1040,7 +1043,7 @@ mod tests {
             vec![block1_hash.clone(), genesis_hash.clone()]
         );
 
-        let block2 = test_data::block_h2();
+        let block2 = zebra_test_data::block_h2();
         let block2_hash = block2.hash();
 
         chain
@@ -1055,7 +1058,7 @@ mod tests {
             ]
         );
 
-        let blocks0 = test_data::build_n_empty_blocks_from_genesis(11, 0);
+        let blocks0 = zebra_test_data::build_n_empty_blocks_from_genesis(11, 0);
         let headers0: Vec<IndexedBlockHeader> =
             blocks0.into_iter().map(|b| b.block_header.into()).collect();
         let hashes0: Vec<_> = headers0.iter().map(|h| h.hash.clone()).collect();
@@ -1081,7 +1084,7 @@ mod tests {
             ]
         );
 
-        let blocks1 = test_data::build_n_empty_blocks_from(6, 0, &headers0[10].raw);
+        let blocks1 = zebra_test_data::build_n_empty_blocks_from(6, 0, &headers0[10].raw);
         let headers1: Vec<IndexedBlockHeader> =
             blocks1.into_iter().map(|b| b.block_header.into()).collect();
         let hashes1: Vec<_> = headers1.iter().map(|h| h.hash.clone()).collect();
@@ -1107,7 +1110,7 @@ mod tests {
             ]
         );
 
-        let blocks2 = test_data::build_n_empty_blocks_from(3, 0, &headers1[5].raw);
+        let blocks2 = zebra_test_data::build_n_empty_blocks_from(3, 0, &headers1[5].raw);
         let headers2: Vec<IndexedBlockHeader> =
             blocks2.into_iter().map(|b| b.block_header.into()).collect();
         let hashes2: Vec<_> = headers2.iter().map(|h| h.hash.clone()).collect();
@@ -1136,16 +1139,18 @@ mod tests {
     #[test]
     fn chain_transaction_state() {
         let db = Arc::new(BlockChainDatabase::init_test_chain(vec![
-            test_data::genesis().into(),
-            test_data::block_h1().into(),
+            zebra_test_data::genesis().into(),
+            zebra_test_data::block_h1().into(),
         ]));
         let mut chain = Chain::new(db, Arc::new(RwLock::new(MemoryPool::new())));
-        let genesis_block = test_data::genesis();
-        let block2 = test_data::block_h2();
-        let tx1: Transaction = test_data::TransactionBuilder::with_version(1).into();
-        let tx2: Transaction =
-            test_data::TransactionBuilder::with_input(&test_data::block_h1().transactions[0], 0)
-                .into();
+        let genesis_block = zebra_test_data::genesis();
+        let block2 = zebra_test_data::block_h2();
+        let tx1: Transaction = zebra_test_data::TransactionBuilder::with_version(1).into();
+        let tx2: Transaction = zebra_test_data::TransactionBuilder::with_input(
+            &zebra_test_data::block_h1().transactions[0],
+            0,
+        )
+        .into();
         let tx1_hash = tx1.hash();
         let tx2_hash = tx2.hash();
         chain.verify_transaction(tx1.into());
@@ -1171,7 +1176,7 @@ mod tests {
 
     #[test]
     fn chain_block_transaction_is_removed_from_on_block_insert() {
-        let b0 = test_data::block_builder()
+        let b0 = zebra_test_data::block_builder()
             .header()
             .build()
             .transaction()
@@ -1181,7 +1186,7 @@ mod tests {
             .build()
             .build()
             .build();
-        let b1 = test_data::block_builder()
+        let b1 = zebra_test_data::block_builder()
             .header()
             .parent(b0.hash())
             .build()
@@ -1221,8 +1226,8 @@ mod tests {
 
     #[test]
     fn chain_forget_verifying_transaction_with_children() {
-        let test_chain = &mut test_data::ChainBuilder::new();
-        test_data::TransactionBuilder::with_output(100)
+        let test_chain = &mut zebra_test_data::ChainBuilder::new();
+        zebra_test_data::TransactionBuilder::with_output(100)
             .store(test_chain) // t1
             .into_input(0)
             .add_output(200)
@@ -1235,7 +1240,7 @@ mod tests {
             .store(test_chain); // t4
 
         let db = Arc::new(BlockChainDatabase::init_test_chain(vec![
-            test_data::genesis().into(),
+            zebra_test_data::genesis().into(),
         ]));
         let mut chain = Chain::new(db, Arc::new(RwLock::new(MemoryPool::new())));
         chain.verify_transaction(test_chain.at(0).into());
@@ -1252,10 +1257,10 @@ mod tests {
 
     #[test]
     fn chain_transactions_hashes_with_state() {
-        let input_tx1 = test_data::block_h1().transactions[0].clone();
-        let input_tx2 = test_data::block_h2().transactions[0].clone();
-        let test_chain = &mut test_data::ChainBuilder::new();
-        test_data::TransactionBuilder::with_input(&input_tx1, 0)
+        let input_tx1 = zebra_test_data::block_h1().transactions[0].clone();
+        let input_tx2 = zebra_test_data::block_h2().transactions[0].clone();
+        let test_chain = &mut zebra_test_data::ChainBuilder::new();
+        zebra_test_data::TransactionBuilder::with_input(&input_tx1, 0)
             .add_output(1_000)
             .store(test_chain) // t1
             .into_input(0)
@@ -1269,9 +1274,9 @@ mod tests {
             .store(test_chain); // t4
 
         let db = Arc::new(BlockChainDatabase::init_test_chain(vec![
-            test_data::genesis().into(),
-            test_data::block_h1().into(),
-            test_data::block_h2().into(),
+            zebra_test_data::genesis().into(),
+            zebra_test_data::block_h1().into(),
+            zebra_test_data::block_h2().into(),
         ]));
         let mut chain = Chain::new(db, Arc::new(RwLock::new(MemoryPool::new())));
         chain.insert_verified_transaction(test_chain.at(0).into());
@@ -1288,7 +1293,7 @@ mod tests {
 
     #[test]
     fn memory_pool_transactions_are_reverified_after_reorganization() {
-        let b0 = test_data::block_builder()
+        let b0 = zebra_test_data::block_builder()
             .header()
             .build()
             .transaction()
@@ -1298,30 +1303,30 @@ mod tests {
             .build()
             .build()
             .build();
-        let b1 = test_data::block_builder()
+        let b1 = zebra_test_data::block_builder()
             .header()
             .nonce(1.into())
             .parent(b0.hash())
             .build()
             .build();
-        let b2 = test_data::block_builder()
+        let b2 = zebra_test_data::block_builder()
             .header()
             .nonce(2.into())
             .parent(b0.hash())
             .build()
             .build();
-        let b3 = test_data::block_builder()
+        let b3 = zebra_test_data::block_builder()
             .header()
             .parent(b2.hash())
             .build()
             .build();
 
         let input_tx = b0.transactions[0].clone();
-        let tx1: Transaction = test_data::TransactionBuilder::with_version(1)
+        let tx1: Transaction = zebra_test_data::TransactionBuilder::with_version(1)
             .set_input(&input_tx, 0)
             .into();
         let tx1_hash = tx1.hash();
-        let tx2: Transaction = test_data::TransactionBuilder::with_input(&input_tx, 0).into();
+        let tx2: Transaction = zebra_test_data::TransactionBuilder::with_input(&input_tx, 0).into();
         let tx2_hash = tx2.hash();
 
         let db = Arc::new(BlockChainDatabase::init_test_chain(vec![b0.into()]));
@@ -1352,14 +1357,14 @@ mod tests {
 
     #[test]
     fn fork_chain_block_transaction_is_removed_from_on_block_insert() {
-        let genesis = test_data::block_h1();
+        let genesis = zebra_test_data::block_h1();
         let input_tx = genesis.transactions[0].clone();
-        let b0 = test_data::block_builder()
+        let b0 = zebra_test_data::block_builder()
             .header()
             .parent(genesis.hash())
             .build()
             .build(); // genesis -> b0
-        let b1 = test_data::block_builder()
+        let b1 = zebra_test_data::block_builder()
             .header()
             .nonce(1.into())
             .parent(b0.hash())
@@ -1370,7 +1375,7 @@ mod tests {
             .build()
             .build()
             .build(); // genesis -> b0 -> b1[tx1]
-        let b2 = test_data::block_builder()
+        let b2 = zebra_test_data::block_builder()
             .header()
             .parent(b1.hash())
             .build()
@@ -1380,7 +1385,7 @@ mod tests {
             .build()
             .build()
             .build(); // genesis -> b0 -> b1[tx1] -> b2[tx2]
-        let b3 = test_data::block_builder()
+        let b3 = zebra_test_data::block_builder()
             .header()
             .nonce(2.into())
             .parent(b0.hash())
@@ -1395,7 +1400,7 @@ mod tests {
             .build()
             .build()
             .build(); // genesis -> b0 -> b3[tx3]
-        let b4 = test_data::block_builder()
+        let b4 = zebra_test_data::block_builder()
             .header()
             .parent(b3.hash())
             .build()
@@ -1409,7 +1414,7 @@ mod tests {
             .build()
             .build()
             .build(); // genesis -> b0 -> b3[tx3] -> b4[tx4]
-        let b5 = test_data::block_builder()
+        let b5 = zebra_test_data::block_builder()
             .header()
             .parent(b4.hash())
             .build()
@@ -1433,7 +1438,7 @@ mod tests {
         let tx5 = b5.transactions[0].clone();
 
         let db = Arc::new(BlockChainDatabase::init_test_chain(vec![
-            test_data::genesis().into(),
+            zebra_test_data::genesis().into(),
             genesis.into(),
         ]));
         let mut chain = Chain::new(db, Arc::new(RwLock::new(MemoryPool::new())));
@@ -1497,9 +1502,9 @@ mod tests {
     #[test]
     fn double_spend_transaction_is_removed_from_memory_pool_when_output_is_spent_in_block_transaction(
     ) {
-        let genesis = test_data::genesis();
+        let genesis = zebra_test_data::genesis();
         let tx0 = genesis.transactions[0].clone();
-        let b0 = test_data::block_builder()
+        let b0 = zebra_test_data::block_builder()
             .header()
             .nonce(1.into())
             .parent(genesis.hash())
@@ -1513,13 +1518,13 @@ mod tests {
             .build()
             .build(); // genesis -> b0[tx1]
                       // tx from b0 && tx2 are spending same output
-        let tx2: Transaction = test_data::TransactionBuilder::with_output(20)
+        let tx2: Transaction = zebra_test_data::TransactionBuilder::with_output(20)
             .add_input(&tx0, 0)
             .into();
 
         // insert tx2 to memory pool
         let db = Arc::new(BlockChainDatabase::init_test_chain(vec![
-            test_data::genesis().into(),
+            zebra_test_data::genesis().into(),
         ]));
         let mut chain = Chain::new(db, Arc::new(RwLock::new(MemoryPool::new())));
         chain.insert_verified_transaction(tx2.clone().into());
@@ -1531,9 +1536,9 @@ mod tests {
 
     #[test]
     fn update_memory_pool_transaction() {
-        use self::test_data::{ChainBuilder, TransactionBuilder};
+        use self::zebra_test_data::{ChainBuilder, TransactionBuilder};
 
-        let input_tx = test_data::block_h1().transactions[0].clone();
+        let input_tx = zebra_test_data::block_h1().transactions[0].clone();
         let data_chain = &mut ChainBuilder::new();
         TransactionBuilder::with_input(&input_tx, 0)
             .set_output(100)
@@ -1549,8 +1554,8 @@ mod tests {
             .store(data_chain); // transaction0 -> transaction2
 
         let db = Arc::new(BlockChainDatabase::init_test_chain(vec![
-            test_data::genesis().into(),
-            test_data::block_h1().into(),
+            zebra_test_data::genesis().into(),
+            zebra_test_data::block_h1().into(),
         ]));
         let mut chain = Chain::new(db, Arc::new(RwLock::new(MemoryPool::new())));
         chain.insert_verified_transaction(data_chain.at(0).into());

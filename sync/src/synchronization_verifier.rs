@@ -1,7 +1,4 @@
-use chain::{IndexedBlock, IndexedBlockHeader, IndexedTransaction};
-use network::ConsensusParams;
 use parking_lot::Mutex;
-use primitives::hash::H256;
 use std::collections::VecDeque;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::mpsc::{channel, Receiver, Sender};
@@ -10,7 +7,10 @@ use std::thread;
 use time::get_time;
 use types::{BlockHeight, MemoryPoolRef, PeerIndex, StorageRef};
 use utils::MemoryPoolTransactionOutputProvider;
-use verification::{
+use zebra_chain::{IndexedBlock, IndexedBlockHeader, IndexedTransaction};
+use zebra_network::ConsensusParams;
+use zebra_primitives::hash::H256;
+use zebra_verification::{
     BackwardsCompatibleChainVerifier as ChainVerifier, Error as VerificationError,
     VerificationLevel, Verify as VerificationVerify,
 };
@@ -427,24 +427,24 @@ where
 
 #[cfg(test)]
 pub mod tests {
-    extern crate test_data;
+    extern crate zebra_test_data;
 
     use super::{
         AsyncVerifier, BlockVerificationSink, ChainVerifierWrapper, HeadersVerificationSink,
         PartiallyVerifiedBlock, TransactionVerificationSink, VerificationTask, Verifier,
     };
-    use chain::{IndexedBlock, IndexedBlockHeader, IndexedTransaction};
-    use db::BlockChainDatabase;
-    use network::{ConsensusParams, Network};
-    use primitives::hash::H256;
-    use script::Error as ScriptError;
     use std::collections::{HashMap, HashSet};
     use std::sync::atomic::Ordering;
     use std::sync::Arc;
     use synchronization_client_core::CoreVerificationSink;
     use synchronization_executor::tests::DummyTaskExecutor;
     use types::{BlockHeight, MemoryPoolRef, PeerIndex, StorageRef};
-    use verification::{
+    use zebra_chain::{IndexedBlock, IndexedBlockHeader, IndexedTransaction};
+    use zebra_db::BlockChainDatabase;
+    use zebra_network::{ConsensusParams, Network};
+    use zebra_primitives::hash::H256;
+    use zebra_script::Error as ScriptError;
+    use zebra_verification::{
         BackwardsCompatibleChainVerifier as ChainVerifier, Error as VerificationError,
         TransactionError, VerificationLevel,
     };
@@ -551,7 +551,7 @@ pub mod tests {
     #[test]
     fn verifier_wrapper_switches_to_full_mode() {
         let storage: StorageRef = Arc::new(BlockChainDatabase::init_test_chain(vec![
-            test_data::genesis().into(),
+            zebra_test_data::genesis().into(),
         ]));
         let verifier = Arc::new(ChainVerifier::new(
             storage.clone(),
@@ -565,7 +565,7 @@ pub mod tests {
                 &storage,
                 VerificationParameters {
                     verification_level: VerificationLevel::NO_VERIFICATION,
-                    verification_edge: test_data::genesis().hash(),
+                    verification_edge: zebra_test_data::genesis().hash(),
                 }
             )
             .enforce_full_verification
@@ -579,14 +579,14 @@ pub mod tests {
             &storage,
             VerificationParameters {
                 verification_level: VerificationLevel::NO_VERIFICATION,
-                verification_edge: test_data::block_h1().hash(),
+                verification_edge: zebra_test_data::block_h1().hash(),
             },
         );
         assert_eq!(
             wrapper.enforce_full_verification.load(Ordering::Relaxed),
             false
         );
-        let block: IndexedBlock = test_data::block_h1().into();
+        let block: IndexedBlock = zebra_test_data::block_h1().into();
         let _ = wrapper.verify_block(&block.into());
         assert_eq!(
             wrapper.enforce_full_verification.load(Ordering::Relaxed),
@@ -597,10 +597,10 @@ pub mod tests {
     #[test]
     fn verification_level_header_accept_incorrect_transaction() {
         let consensus = ConsensusParams::new(Network::Unitest);
-        let mut blocks: Vec<IndexedBlock> = vec![test_data::genesis().into()];
+        let mut blocks: Vec<IndexedBlock> = vec![zebra_test_data::genesis().into()];
         let mut rolling_hash = blocks[0].hash().clone();
         for i in 1..101 {
-            let next_block = test_data::block_builder()
+            let next_block = zebra_test_data::block_builder()
                 .transaction()
                 .coinbase()
                 .founder_reward(&consensus, i)
@@ -626,7 +626,7 @@ pub mod tests {
             storage.clone(),
             ConsensusParams::new(Network::Unitest),
         ));
-        let bad_transaction_block: IndexedBlock = test_data::block_builder()
+        let bad_transaction_block: IndexedBlock = zebra_test_data::block_builder()
             .transaction()
             .coinbase()
             .founder_reward(&consensus, 101)
@@ -685,13 +685,17 @@ pub mod tests {
     #[test]
     fn verification_level_none_accept_incorrect_block() {
         let storage: StorageRef = Arc::new(BlockChainDatabase::init_test_chain(vec![
-            test_data::genesis().into(),
+            zebra_test_data::genesis().into(),
         ]));
         let verifier = Arc::new(ChainVerifier::new(
             storage.clone(),
             ConsensusParams::new(Network::Unitest),
         ));
-        let bad_block: IndexedBlock = test_data::block_builder().header().build().build().into();
+        let bad_block: IndexedBlock = zebra_test_data::block_builder()
+            .header()
+            .build()
+            .build()
+            .into();
 
         // Ok(()) when nothing is verified
         let wrapper = ChainVerifierWrapper::new(

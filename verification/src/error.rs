@@ -1,7 +1,7 @@
 use compact::Compact;
 use hash::H256;
-use script::Error as SignatureError;
-use storage::Error as DBError;
+use zebra_script::Error as SignatureError;
+use zebra_storage::Error as DBError;
 
 #[derive(Debug, PartialEq)]
 /// All possible verification errors
@@ -141,7 +141,7 @@ pub enum TransactionError {
     /// Join split is not supported in the transaction version.
     JoinSplitVersionInvalid,
     /// Invalid join split signature
-    JoinSplitSignature(::crypto::Error),
+    JoinSplitSignature(::zebra_crypto::Error),
     /// Transaction sapling verification has failed.
     InvalidSapling,
     /// Sapling nullifier already revealed earlier in the chain.

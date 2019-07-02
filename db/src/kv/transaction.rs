@@ -1,8 +1,8 @@
 use bytes::Bytes;
-use chain::{BlockHeader, Transaction as ChainTransaction};
 use hash::H256;
 use ser::{deserialize, serialize, List};
-use storage::{EpochRef, EpochTag, SaplingTreeState, SproutTreeState, TransactionMeta};
+use zebra_chain::{BlockHeader, Transaction as ChainTransaction};
+use zebra_storage::{EpochRef, EpochTag, SaplingTreeState, SproutTreeState, TransactionMeta};
 
 pub const COL_COUNT: u32 = 16;
 pub const COL_META: u32 = 0;

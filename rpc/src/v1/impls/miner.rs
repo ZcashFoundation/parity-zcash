@@ -1,26 +1,26 @@
 use jsonrpc_core::Error;
-use keys::Address;
-use miner;
-use sync;
 use v1::helpers::errors::execution;
 use v1::traits::Miner;
 use v1::types::{BlockTemplate, BlockTemplateRequest};
+use zebra_keys::Address;
+use zebra_miner;
+use zebra_sync;
 
 pub struct MinerClient<T: MinerClientCoreApi> {
     core: T,
 }
 
 pub trait MinerClientCoreApi: Send + Sync + 'static {
-    fn get_block_template(&self) -> Result<miner::BlockTemplate, String>;
+    fn get_block_template(&self) -> Result<zebra_miner::BlockTemplate, String>;
 }
 
 pub struct MinerClientCore {
-    local_sync_node: sync::LocalNodeRef,
+    local_sync_node: zebra_sync::LocalNodeRef,
     miner_address: Option<Address>,
 }
 
 impl MinerClientCore {
-    pub fn new(local_sync_node: sync::LocalNodeRef, miner_address: Option<Address>) -> Self {
+    pub fn new(local_sync_node: zebra_sync::LocalNodeRef, miner_address: Option<Address>) -> Self {
         MinerClientCore {
             local_sync_node: local_sync_node,
             miner_address: miner_address,
@@ -29,7 +29,7 @@ impl MinerClientCore {
 }
 
 impl MinerClientCoreApi for MinerClientCore {
-    fn get_block_template(&self) -> Result<miner::BlockTemplate, String> {
+    fn get_block_template(&self) -> Result<zebra_miner::BlockTemplate, String> {
         self.miner_address
             .as_ref()
             .ok_or_else(|| "miner address not set".into())
@@ -61,19 +61,19 @@ where
 #[cfg(test)]
 pub mod tests {
     use super::*;
-    use chain;
     use jsonrpc_core::IoHandler;
-    use miner;
-    use primitives::hash::H256;
     use v1::traits::Miner;
+    use zebra_chain;
+    use zebra_miner;
+    use zebra_primitives::hash::H256;
 
     #[derive(Default)]
     struct SuccessMinerClientCore;
 
     impl MinerClientCoreApi for SuccessMinerClientCore {
-        fn get_block_template(&self) -> Result<miner::BlockTemplate, String> {
-            let tx: chain::Transaction = "00000000013ba3edfd7a7b12b27ac72c3e67768f617fc81bc3888a51323a9fb8aa4b1e5e4a0000000000000000000101000000000000000000000000".into();
-            Ok(miner::BlockTemplate {
+        fn get_block_template(&self) -> Result<zebra_miner::BlockTemplate, String> {
+            let tx: zebra_chain::Transaction = "00000000013ba3edfd7a7b12b27ac72c3e67768f617fc81bc3888a51323a9fb8aa4b1e5e4a0000000000000000000101000000000000000000000000".into();
+            Ok(zebra_miner::BlockTemplate {
                 version: 777,
                 previous_header_hash: H256::from(1),
                 final_sapling_root_hash: H256::from(2),

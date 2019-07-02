@@ -1,12 +1,12 @@
 use bit_vec::BitVec;
-use chain::{IndexedBlock, IndexedTransaction};
-use message::types;
-use primitives::bytes::Bytes;
-use primitives::hash::H256;
 use synchronization_peers::MerkleBlockArtefacts;
 use utils::{
     build_partial_merkle_tree, BloomFilter, FeeRateFilter, KnownHashFilter, KnownHashType,
 };
+use zebra_chain::{IndexedBlock, IndexedTransaction};
+use zebra_message::types;
+use zebra_primitives::bytes::Bytes;
+use zebra_primitives::hash::H256;
 
 /// Filter, which controls data relayed over connection.
 #[derive(Debug, Default)]
@@ -131,24 +131,24 @@ impl ConnectionFilter {
 
 #[cfg(test)]
 pub mod tests {
-    extern crate test_data;
+    extern crate zebra_test_data;
 
     use super::ConnectionFilter;
-    use chain::IndexedTransaction;
-    use message::types;
-    use primitives::bytes::Bytes;
     use std::iter::repeat;
     use utils::KnownHashType;
+    use zebra_chain::IndexedTransaction;
+    use zebra_message::types;
+    use zebra_primitives::bytes::Bytes;
 
     #[test]
     fn filter_default_accepts_block() {
-        assert!(ConnectionFilter::default().filter_block(&test_data::genesis().hash()));
+        assert!(ConnectionFilter::default().filter_block(&zebra_test_data::genesis().hash()));
     }
 
     #[test]
     fn filter_default_accepts_transaction() {
         assert!(ConnectionFilter::default().filter_transaction(
-            &test_data::genesis().transactions[0].clone().into(),
+            &zebra_test_data::genesis().transactions[0].clone().into(),
             Some(0)
         ));
     }
@@ -156,41 +156,44 @@ pub mod tests {
     #[test]
     fn filter_rejects_block_known() {
         let mut filter = ConnectionFilter::default();
-        filter.hash_known_as(test_data::block_h1().hash(), KnownHashType::Block);
-        filter.hash_known_as(test_data::block_h2().hash(), KnownHashType::Block);
-        assert!(!filter.filter_block(&test_data::block_h1().hash()));
-        assert!(!filter.filter_block(&test_data::block_h2().hash()));
-        assert!(filter.filter_block(&test_data::genesis().hash()));
+        filter.hash_known_as(zebra_test_data::block_h1().hash(), KnownHashType::Block);
+        filter.hash_known_as(zebra_test_data::block_h2().hash(), KnownHashType::Block);
+        assert!(!filter.filter_block(&zebra_test_data::block_h1().hash()));
+        assert!(!filter.filter_block(&zebra_test_data::block_h2().hash()));
+        assert!(filter.filter_block(&zebra_test_data::genesis().hash()));
     }
 
     #[test]
     fn filter_rejects_transaction_known() {
         let mut filter = ConnectionFilter::default();
         filter.hash_known_as(
-            test_data::block_h1().transactions[0].hash(),
+            zebra_test_data::block_h1().transactions[0].hash(),
             KnownHashType::Transaction,
         );
-        assert!(
-            !filter.filter_transaction(&test_data::block_h1().transactions[0].clone().into(), None)
-        );
-        assert!(
-            filter.filter_transaction(&test_data::block_h2().transactions[0].clone().into(), None)
-        );
+        assert!(!filter.filter_transaction(
+            &zebra_test_data::block_h1().transactions[0].clone().into(),
+            None
+        ));
+        assert!(filter.filter_transaction(
+            &zebra_test_data::block_h2().transactions[0].clone().into(),
+            None
+        ));
     }
 
     #[test]
     fn filter_rejects_transaction_feerate() {
         let mut filter = ConnectionFilter::default();
         filter.set_fee_rate(types::FeeFilter::with_fee_rate(1000));
-        assert!(
-            filter.filter_transaction(&test_data::block_h1().transactions[0].clone().into(), None)
-        );
         assert!(filter.filter_transaction(
-            &test_data::block_h1().transactions[0].clone().into(),
+            &zebra_test_data::block_h1().transactions[0].clone().into(),
+            None
+        ));
+        assert!(filter.filter_transaction(
+            &zebra_test_data::block_h1().transactions[0].clone().into(),
             Some(1500)
         ));
         assert!(!filter.filter_transaction(
-            &test_data::block_h1().transactions[0].clone().into(),
+            &zebra_test_data::block_h1().transactions[0].clone().into(),
             Some(500)
         ));
     }
@@ -198,7 +201,7 @@ pub mod tests {
     #[test]
     fn filter_rejects_transaction_bloomfilter() {
         let mut filter = ConnectionFilter::default();
-        let tx: IndexedTransaction = test_data::block_h1().transactions[0].clone().into();
+        let tx: IndexedTransaction = zebra_test_data::block_h1().transactions[0].clone().into();
         filter.load(types::FilterLoad {
             filter: Bytes::from(repeat(0u8).take(1024).collect::<Vec<_>>()),
             hash_functions: 10,

@@ -1,7 +1,7 @@
 use super::hash::H256;
 use super::transaction::RawTransaction;
-use chain;
-use miner;
+use zebra_chain;
+use zebra_miner;
 
 /// Block template as described in:
 /// https://github.com/bitcoin/bips/blob/master/bip-0022.mediawiki
@@ -57,8 +57,8 @@ pub struct BlockTemplateTransaction {
     pub required: bool,
 }
 
-impl From<miner::BlockTemplate> for BlockTemplate {
-    fn from(block: miner::BlockTemplate) -> Self {
+impl From<zebra_miner::BlockTemplate> for BlockTemplate {
+    fn from(block: zebra_miner::BlockTemplate) -> Self {
         BlockTemplate {
             version: block.version,
             previousblockhash: block.previous_header_hash.reversed().into(),
@@ -74,8 +74,8 @@ impl From<miner::BlockTemplate> for BlockTemplate {
     }
 }
 
-impl From<chain::IndexedTransaction> for BlockTemplateTransaction {
-    fn from(transaction: chain::IndexedTransaction) -> Self {
+impl From<zebra_chain::IndexedTransaction> for BlockTemplateTransaction {
+    fn from(transaction: zebra_chain::IndexedTransaction) -> Self {
         use ser::serialize;
         let serialize = serialize(&transaction.raw);
         BlockTemplateTransaction {

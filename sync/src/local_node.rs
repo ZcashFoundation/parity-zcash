@@ -1,12 +1,5 @@
-use chain::{IndexedBlock, IndexedBlockHeader, IndexedTransaction};
 use futures::{finished, lazy};
-use keys::Address;
-use message::types;
-use miner::BlockAssembler;
-use miner::BlockTemplate;
-use network::ConsensusParams;
 use parking_lot::{Condvar, Mutex};
-use primitives::hash::H256;
 use std::sync::Arc;
 use synchronization_client::Client;
 use synchronization_peers::{BlockAnnouncementType, TransactionAnnouncementType};
@@ -17,6 +10,13 @@ use types::{
     BlockHeight, ClientRef, MemoryPoolRef, PeerIndex, PeersRef, RequestId, ServerRef, StorageRef,
     SyncListenerRef, SynchronizationStateRef,
 };
+use zebra_chain::{IndexedBlock, IndexedBlockHeader, IndexedTransaction};
+use zebra_keys::Address;
+use zebra_message::types;
+use zebra_miner::BlockAssembler;
+use zebra_miner::BlockTemplate;
+use zebra_network::ConsensusParams;
+use zebra_primitives::hash::H256;
 
 /// Local synchronization node
 pub struct LocalNode<U: Server, V: Client> {
@@ -286,17 +286,10 @@ impl TransactionVerificationSink for TransactionAcceptSink {
 
 #[cfg(test)]
 pub mod tests {
-    extern crate test_data;
+    extern crate zebra_test_data;
 
     use super::LocalNode;
-    use chain::Transaction;
-    use db::BlockChainDatabase;
-    use message::common::{InventoryType, InventoryVector};
-    use message::types;
-    use miner::MemoryPool;
-    use network::{ConsensusParams, Network};
     use parking_lot::RwLock;
-    use primitives::bytes::Bytes;
     use std::iter::repeat;
     use std::sync::Arc;
     use synchronization_chain::Chain;
@@ -310,6 +303,13 @@ pub mod tests {
     use synchronization_verifier::tests::DummyVerifier;
     use types::SynchronizationStateRef;
     use utils::SynchronizationState;
+    use zebra_chain::Transaction;
+    use zebra_db::BlockChainDatabase;
+    use zebra_message::common::{InventoryType, InventoryVector};
+    use zebra_message::types;
+    use zebra_miner::MemoryPool;
+    use zebra_network::{ConsensusParams, Network};
+    use zebra_primitives::bytes::Bytes;
 
     pub fn default_filterload() -> types::FilterLoad {
         types::FilterLoad {
@@ -333,7 +333,7 @@ pub mod tests {
     ) {
         let memory_pool = Arc::new(RwLock::new(MemoryPool::new()));
         let storage = Arc::new(BlockChainDatabase::init_test_chain(vec![
-            test_data::genesis().into(),
+            zebra_test_data::genesis().into(),
         ]));
         let sync_state =
             SynchronizationStateRef::new(SynchronizationState::with_storage(storage.clone()));
@@ -382,7 +382,7 @@ pub mod tests {
         let peer_index = 0;
         local_node.on_connect(peer_index, "test".into(), types::Version::default());
         // peer requests genesis block
-        let genesis_block_hash = test_data::genesis().hash();
+        let genesis_block_hash = zebra_test_data::genesis().hash();
         let inventory = vec![InventoryVector {
             inv_type: InventoryType::MessageBlock,
             hash: genesis_block_hash.clone(),
@@ -413,8 +413,8 @@ pub mod tests {
         local_node.on_connect(peer_index1, "test".into(), types::Version::default());
         executor.take_tasks();
 
-        let genesis = test_data::genesis();
-        let transaction: Transaction = test_data::TransactionBuilder::with_output(1)
+        let genesis = zebra_test_data::genesis();
+        let transaction: Transaction = zebra_test_data::TransactionBuilder::with_output(1)
             .add_input(&genesis.transactions[0], 0)
             .into();
         let transaction_hash = transaction.hash();
@@ -430,8 +430,8 @@ pub mod tests {
 
     #[test]
     fn local_node_discards_local_transaction() {
-        let genesis = test_data::genesis();
-        let transaction: Transaction = test_data::TransactionBuilder::with_output(1)
+        let genesis = zebra_test_data::genesis();
+        let transaction: Transaction = zebra_test_data::TransactionBuilder::with_output(1)
             .add_input(&genesis.transactions[0], 0)
             .into();
         let transaction_hash = transaction.hash();

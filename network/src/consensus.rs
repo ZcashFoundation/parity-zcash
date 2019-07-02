@@ -1,15 +1,16 @@
-use keys::Address;
-use {crypto, Deployment, Magic, Network};
+use zebra_crypto;
+use zebra_keys::Address;
+use {Deployment, Magic, Network};
 
 lazy_static! {
-    static ref SAPLING_SPEND_VK: crypto::Groth16VerifyingKey =
-        crypto::load_sapling_spend_verifying_key()
+    static ref SAPLING_SPEND_VK: zebra_crypto::Groth16VerifyingKey =
+        zebra_crypto::load_sapling_spend_verifying_key()
             .expect("hardcoded value should load without errors");
-    static ref SAPLING_OUTPUT_VK: crypto::Groth16VerifyingKey =
-        crypto::load_sapling_output_verifying_key()
+    static ref SAPLING_OUTPUT_VK: zebra_crypto::Groth16VerifyingKey =
+        zebra_crypto::load_sapling_output_verifying_key()
             .expect("hardcoded value should load without errors");
-    static ref JOINSPLIT_GROTH16_VK: crypto::Groth16VerifyingKey =
-        crypto::load_joinsplit_groth16_verifying_key()
+    static ref JOINSPLIT_GROTH16_VK: zebra_crypto::Groth16VerifyingKey =
+        zebra_crypto::load_joinsplit_groth16_verifying_key()
             .expect("hardcoded value should load without errors");
 }
 
@@ -76,19 +77,19 @@ pub struct ConsensusParams {
     pub equihash_params: Option<(u32, u32)>,
 
     /// Active key for pghr13 joinsplit verification
-    pub joinsplit_verification_key: crypto::Pghr13VerifyingKey,
+    pub joinsplit_verification_key: zebra_crypto::Pghr13VerifyingKey,
 
     /// Active key for groth16 joinsplit verification
-    pub joinsplit_groth16_verification_key: &'static crypto::Groth16VerifyingKey,
+    pub joinsplit_groth16_verification_key: &'static zebra_crypto::Groth16VerifyingKey,
 
     /// Sapling spend verification key.
-    pub sapling_spend_verifying_key: &'static crypto::Groth16VerifyingKey,
+    pub sapling_spend_verifying_key: &'static zebra_crypto::Groth16VerifyingKey,
     /// Sapling output verification key.
-    pub sapling_output_verifying_key: &'static crypto::Groth16VerifyingKey,
+    pub sapling_output_verifying_key: &'static zebra_crypto::Groth16VerifyingKey,
 }
 
-fn mainnet_pghr_verification_key() -> crypto::Pghr13VerifyingKey {
-    crypto::json::pghr13::decode(include_bytes!("../../res/sprout-verifying-key.json"))
+fn mainnet_pghr_verification_key() -> zebra_crypto::Pghr13VerifyingKey {
+    zebra_crypto::json::pghr13::decode(include_bytes!("../../res/sprout-verifying-key.json"))
         .expect("verifying key json invalid")
         .into()
 }

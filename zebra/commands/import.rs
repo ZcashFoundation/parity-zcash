@@ -1,7 +1,7 @@
 use clap::ArgMatches;
 use config::Config;
-use sync::{create_sync_blocks_writer, Error};
 use util::init_db;
+use zebra_sync::{create_sync_blocks_writer, Error};
 
 pub fn import(cfg: Config, matches: &ArgMatches) -> Result<(), String> {
     try!(init_db(&cfg));
@@ -9,7 +9,7 @@ pub fn import(cfg: Config, matches: &ArgMatches) -> Result<(), String> {
     let blk_path = matches
         .value_of("PATH")
         .expect("PATH is required in cli.yml; qed");
-    let blk_dir = ::import::open_blk_dir(blk_path)
+    let blk_dir = ::zebra_import::open_blk_dir(blk_path)
         .map_err(|err| format!("Failed to open import directory: {}", err))?;
 
     let mut writer = create_sync_blocks_writer(cfg.db, cfg.consensus, cfg.verification_params);

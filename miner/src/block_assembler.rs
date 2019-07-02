@@ -1,16 +1,16 @@
-use chain::{
+use memory_pool::{Entry, MemoryPool, OrderingStrategy};
+use std::collections::HashSet;
+use zebra_chain::{
     IndexedTransaction, OutPoint, Transaction, TransactionInput, TransactionOutput,
     SAPLING_TX_VERSION, SAPLING_TX_VERSION_GROUP_ID,
 };
-use keys::Address;
-use memory_pool::{Entry, MemoryPool, OrderingStrategy};
-use network::ConsensusParams;
-use primitives::compact::Compact;
-use primitives::hash::H256;
-use script::Builder;
-use std::collections::HashSet;
-use storage::{SaplingTreeState, SharedStore, TransactionOutputProvider};
-use verification::{transaction_sigops, work_required};
+use zebra_keys::Address;
+use zebra_network::ConsensusParams;
+use zebra_primitives::compact::Compact;
+use zebra_primitives::hash::H256;
+use zebra_script::Builder;
+use zebra_storage::{SaplingTreeState, SharedStore, TransactionOutputProvider};
+use zebra_verification::{transaction_sigops, work_required};
 
 const BLOCK_VERSION: u32 = 4;
 const BLOCK_HEADER_SIZE: u32 = 4 + 32 + 32 + 32 + 4 + 4 + 32 + 1344;
@@ -385,18 +385,18 @@ impl<'a> BlockAssembler<'a> {
 
 #[cfg(test)]
 mod tests {
-    extern crate test_data;
+    extern crate zebra_test_data;
 
-    use self::test_data::{ChainBuilder, TransactionBuilder};
+    use self::zebra_test_data::{ChainBuilder, TransactionBuilder};
     use super::{BlockAssembler, BlockTemplate, NextStep, SizePolicy};
-    use chain::IndexedTransaction;
-    use db::BlockChainDatabase;
     use fee::{FeeCalculator, NonZeroFeeCalculator};
     use memory_pool::MemoryPool;
-    use network::{ConsensusParams, Network};
-    use primitives::hash::H256;
     use std::sync::Arc;
-    use storage::SharedStore;
+    use zebra_chain::IndexedTransaction;
+    use zebra_db::BlockChainDatabase;
+    use zebra_network::{ConsensusParams, Network};
+    use zebra_primitives::hash::H256;
+    use zebra_storage::SharedStore;
 
     #[test]
     fn test_size_policy() {
@@ -478,7 +478,7 @@ mod tests {
 
             let mut pool = MemoryPool::new();
             let storage: SharedStore = Arc::new(BlockChainDatabase::init_test_chain(vec![
-                test_data::genesis().into(),
+                zebra_test_data::genesis().into(),
             ]));
             pool.insert_verified(chain.at(0).into(), &NonZeroFeeCalculator);
             pool.insert_verified(chain.at(1).into(), &NonZeroFeeCalculator);
@@ -506,15 +506,15 @@ mod tests {
 
     #[test]
     fn block_assembler_miner_fee() {
-        let input_tx = test_data::block_h1().transactions[0].clone();
+        let input_tx = zebra_test_data::block_h1().transactions[0].clone();
         let tx0: IndexedTransaction = TransactionBuilder::with_input(&input_tx, 0)
             .set_output(10_000)
             .into();
         let expected_tx0_fee = input_tx.outputs[0].value - tx0.raw.total_spends();
 
         let storage: SharedStore = Arc::new(BlockChainDatabase::init_test_chain(vec![
-            test_data::genesis().into(),
-            test_data::block_h1().into(),
+            zebra_test_data::genesis().into(),
+            zebra_test_data::block_h1().into(),
         ]));
         let mut pool = MemoryPool::new();
         pool.insert_verified(

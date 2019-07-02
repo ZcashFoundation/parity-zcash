@@ -1,12 +1,12 @@
 use bytes::Bytes;
-use crypto::checksum;
 use futures::{Async, Future, Poll};
 use io::{read_header, ReadHeader};
-use message::{Command, Error, MessageHeader, MessageResult};
-use network::Magic;
 use std::io;
 use tokio_io::io::{read_exact, ReadExact};
 use tokio_io::AsyncRead;
+use zebra_crypto::checksum;
+use zebra_message::{Command, Error, MessageHeader, MessageResult};
+use zebra_network::Magic;
 
 pub fn read_any_message<A>(a: A, magic: Magic) -> ReadAnyMessage<A>
 where
@@ -73,8 +73,8 @@ mod tests {
     use super::read_any_message;
     use bytes::Bytes;
     use futures::Future;
-    use message::Error;
-    use network::Network;
+    use zebra_message::Error;
+    use zebra_network::Network;
 
     #[test]
     fn test_read_any_message() {

@@ -1,7 +1,4 @@
-use chain::IndexedTransaction;
-use message::{common, types};
 use parking_lot::{Condvar, Mutex};
-use primitives::hash::H256;
 use std::collections::hash_map::Entry;
 use std::collections::{HashMap, VecDeque};
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -9,6 +6,9 @@ use std::sync::Arc;
 use std::thread;
 use synchronization_executor::{Task, TaskExecutor};
 use types::{BlockHeight, ExecutorRef, MemoryPoolRef, PeerIndex, PeersRef, RequestId, StorageRef};
+use zebra_chain::IndexedTransaction;
+use zebra_message::{common, types};
+use zebra_primitives::hash::H256;
 
 /// Synchronization server task
 #[derive(Debug, PartialEq)]
@@ -462,24 +462,24 @@ where
 
 #[cfg(test)]
 pub mod tests {
-    extern crate test_data;
+    extern crate zebra_test_data;
 
     use super::{Server, ServerImpl, ServerTask, ServerTaskExecutor};
-    use chain::Transaction;
-    use db::BlockChainDatabase;
     use inbound_connection::tests::DummyOutboundSyncConnection;
     use local_node::tests::{default_filterload, make_filteradd};
-    use message::common::{InventoryType, InventoryVector, Services};
-    use message::types;
-    use miner::{MemoryPool, NonZeroFeeCalculator};
     use parking_lot::{Mutex, RwLock};
-    use primitives::hash::H256;
     use std::mem::replace;
     use std::sync::Arc;
     use synchronization_executor::tests::DummyTaskExecutor;
     use synchronization_executor::Task;
     use synchronization_peers::{PeersContainer, PeersFilters, PeersImpl};
     use types::{ExecutorRef, MemoryPoolRef, PeerIndex, PeersRef, StorageRef};
+    use zebra_chain::Transaction;
+    use zebra_db::BlockChainDatabase;
+    use zebra_message::common::{InventoryType, InventoryVector, Services};
+    use zebra_message::types;
+    use zebra_miner::{MemoryPool, NonZeroFeeCalculator};
+    use zebra_primitives::hash::H256;
 
     pub struct DummyServer {
         tasks: Mutex<Vec<ServerTask>>,
@@ -514,7 +514,7 @@ pub mod tests {
     ) {
         let peers = Arc::new(PeersImpl::default());
         let storage = Arc::new(BlockChainDatabase::init_test_chain(vec![
-            test_data::genesis().into(),
+            zebra_test_data::genesis().into(),
         ]));
         let memory_pool = Arc::new(RwLock::new(MemoryPool::new()));
         let executor = DummyTaskExecutor::new();
@@ -556,7 +556,7 @@ pub mod tests {
         // when asking for known block
         let inventory = vec![InventoryVector {
             inv_type: InventoryType::MessageBlock,
-            hash: test_data::genesis().hash(),
+            hash: zebra_test_data::genesis().hash(),
         }];
         server.execute(ServerTask::GetData(
             0,
@@ -564,14 +564,17 @@ pub mod tests {
         ));
         // => respond with block
         let tasks = DummyTaskExecutor::wait_tasks(executor);
-        assert_eq!(tasks, vec![Task::Block(0, test_data::genesis().into())]);
+        assert_eq!(
+            tasks,
+            vec![Task::Block(0, zebra_test_data::genesis().into())]
+        );
     }
 
     #[test]
     fn server_getblocks_do_not_responds_inventory_when_synchronized() {
         let (_, _, executor, _, server) = create_synchronization_server();
         // when asking for blocks hashes
-        let genesis_block_hash = test_data::genesis().hash();
+        let genesis_block_hash = zebra_test_data::genesis().hash();
         server.execute(ServerTask::GetBlocks(
             0,
             types::GetBlocks {
@@ -589,22 +592,24 @@ pub mod tests {
     fn server_getblocks_responds_inventory_when_have_unknown_blocks() {
         let (storage, _, executor, _, server) = create_synchronization_server();
         storage
-            .insert(test_data::block_h1().into())
+            .insert(zebra_test_data::block_h1().into())
             .expect("Db write error");
-        storage.canonize(&test_data::block_h1().hash()).unwrap();
+        storage
+            .canonize(&zebra_test_data::block_h1().hash())
+            .unwrap();
         // when asking for blocks hashes
         server.execute(ServerTask::GetBlocks(
             0,
             types::GetBlocks {
                 version: 0,
-                block_locator_hashes: vec![test_data::genesis().hash()],
+                block_locator_hashes: vec![zebra_test_data::genesis().hash()],
                 hash_stop: H256::default(),
             },
         ));
         // => responds with inventory
         let inventory = vec![InventoryVector {
             inv_type: InventoryType::MessageBlock,
-            hash: test_data::block_h1().hash(),
+            hash: zebra_test_data::block_h1().hash(),
         }];
         let tasks = DummyTaskExecutor::wait_tasks(executor);
         assert_eq!(
@@ -617,7 +622,7 @@ pub mod tests {
     fn server_getheaders_do_not_responds_headers_when_synchronized() {
         let (_, _, executor, _, server) = create_synchronization_server();
         // when asking for blocks hashes
-        let genesis_block_hash = test_data::genesis().hash();
+        let genesis_block_hash = zebra_test_data::genesis().hash();
         let dummy_id = 6;
         server.execute(ServerTask::GetHeaders(
             0,
@@ -644,22 +649,24 @@ pub mod tests {
     fn server_getheaders_responds_headers_when_have_unknown_blocks() {
         let (storage, _, executor, _, server) = create_synchronization_server();
         storage
-            .insert(test_data::block_h1().into())
+            .insert(zebra_test_data::block_h1().into())
             .expect("Db write error");
-        storage.canonize(&test_data::block_h1().hash()).unwrap();
+        storage
+            .canonize(&zebra_test_data::block_h1().hash())
+            .unwrap();
         // when asking for blocks hashes
         let dummy_id = 0;
         server.execute(ServerTask::GetHeaders(
             0,
             types::GetHeaders {
                 version: 0,
-                block_locator_hashes: vec![test_data::genesis().hash()],
+                block_locator_hashes: vec![zebra_test_data::genesis().hash()],
                 hash_stop: H256::default(),
             },
             dummy_id,
         ));
         // => responds with headers
-        let headers = vec![test_data::block_h1().block_header];
+        let headers = vec![zebra_test_data::block_h1().block_header];
         let tasks = DummyTaskExecutor::wait_tasks(executor);
         assert_eq!(
             tasks,
@@ -715,7 +722,7 @@ pub mod tests {
             },
             InventoryVector {
                 inv_type: InventoryType::MessageTx,
-                hash: test_data::genesis().transactions[0].hash(),
+                hash: zebra_test_data::genesis().transactions[0].hash(),
             },
         ];
         server.execute(ServerTask::GetData(
@@ -736,7 +743,7 @@ pub mod tests {
     #[test]
     fn server_getdata_responds_transaction_when_transaction_is_in_memory() {
         let (_, memory_pool, executor, _, server) = create_synchronization_server();
-        let tx_verified: Transaction = test_data::TransactionBuilder::with_output(20).into();
+        let tx_verified: Transaction = zebra_test_data::TransactionBuilder::with_output(20).into();
         let tx_verified_hash = tx_verified.hash();
         // given in-memory transaction
         {
@@ -767,9 +774,11 @@ pub mod tests {
         let (storage, _, executor, _, server) = create_synchronization_server();
         {
             storage
-                .insert(test_data::block_h1().into())
+                .insert(zebra_test_data::block_h1().into())
                 .expect("no error");
-            storage.canonize(&test_data::block_h1().hash()).unwrap();
+            storage
+                .canonize(&zebra_test_data::block_h1().hash())
+                .unwrap();
         }
         // when asking with stop_hash
         server.execute(ServerTask::GetBlocks(
@@ -777,13 +786,13 @@ pub mod tests {
             types::GetBlocks {
                 version: 0,
                 block_locator_hashes: vec![],
-                hash_stop: test_data::genesis().hash(),
+                hash_stop: zebra_test_data::genesis().hash(),
             },
         ));
         // => respond with next block
         let inventory = vec![InventoryVector {
             inv_type: InventoryType::MessageBlock,
-            hash: test_data::block_h1().hash(),
+            hash: zebra_test_data::block_h1().hash(),
         }];
         let tasks = DummyTaskExecutor::wait_tasks(executor);
         assert_eq!(
@@ -797,9 +806,11 @@ pub mod tests {
         let (storage, _, executor, _, server) = create_synchronization_server();
         {
             storage
-                .insert(test_data::block_h1().into())
+                .insert(zebra_test_data::block_h1().into())
                 .expect("no error");
-            storage.canonize(&test_data::block_h1().hash()).unwrap();
+            storage
+                .canonize(&zebra_test_data::block_h1().hash())
+                .unwrap();
         }
         // when asking with stop_hash
         let dummy_id = 6;
@@ -808,12 +819,12 @@ pub mod tests {
             types::GetHeaders {
                 version: 0,
                 block_locator_hashes: vec![],
-                hash_stop: test_data::genesis().hash(),
+                hash_stop: zebra_test_data::genesis().hash(),
             },
             dummy_id,
         ));
         // => respond with next block
-        let headers = vec![test_data::block_h1().block_header];
+        let headers = vec![zebra_test_data::block_h1().block_header];
         let tasks = DummyTaskExecutor::wait_tasks(executor);
         assert_eq!(
             tasks,
@@ -829,7 +840,7 @@ pub mod tests {
     fn server_serves_merkleblock() {
         let peers = Arc::new(PeersImpl::default());
         let storage = Arc::new(BlockChainDatabase::init_test_chain(vec![
-            test_data::genesis().into(),
+            zebra_test_data::genesis().into(),
         ]));
         let memory_pool = Arc::new(RwLock::new(MemoryPool::new()));
         let sync_executor = DummyTaskExecutor::new();
@@ -840,8 +851,8 @@ pub mod tests {
             sync_executor.clone(),
         );
 
-        let genesis = test_data::genesis();
-        let b1 = test_data::block_builder()
+        let genesis = zebra_test_data::genesis();
+        let b1 = zebra_test_data::block_builder()
             .header()
             .parent(genesis.hash())
             .build()
@@ -851,7 +862,7 @@ pub mod tests {
             .build()
             .build()
             .build(); // genesis -> b1
-        let b2 = test_data::block_builder()
+        let b2 = zebra_test_data::block_builder()
             .header()
             .parent(b1.hash())
             .build()

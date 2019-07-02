@@ -1,8 +1,8 @@
 use common::Command;
-use crypto::checksum;
 use hash::H32;
-use network::Magic;
 use ser::{Reader, Serializable, Stream};
+use zebra_crypto::checksum;
+use zebra_network::Magic;
 use Error;
 
 #[derive(Debug, PartialEq)]
@@ -62,8 +62,8 @@ impl Serializable for MessageHeader {
 mod tests {
     use super::MessageHeader;
     use bytes::Bytes;
-    use network::Network;
     use ser::serialize;
+    use zebra_network::Network;
 
     #[test]
     fn test_message_header_serialization() {

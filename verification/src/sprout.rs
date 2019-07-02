@@ -1,5 +1,5 @@
-use chain::{JoinSplit, JoinSplitDescription, JoinSplitProof};
-use crypto::{curve::bls, curve::bn, pghr13_verify, Pghr13Proof};
+use zebra_chain::{JoinSplit, JoinSplitDescription, JoinSplitProof};
+use zebra_crypto::{curve::bls, curve::bn, pghr13_verify, Pghr13Proof};
 
 /// Join split verification error kind
 #[derive(Debug)]
@@ -18,7 +18,7 @@ pub fn compute_hsig(
     nullifiers: &[[u8; 32]; 2],
     pub_key_hash: &[u8; 32],
 ) -> [u8; 32] {
-    use crypto::blake2::Params;
+    use zebra_crypto::blake2::Params;
 
     let res = Params::new()
         .hash_length(32)
@@ -38,8 +38,8 @@ pub fn compute_hsig(
 pub fn verify(
     desc: &JoinSplitDescription,
     join_split: &JoinSplit,
-    sprout_verifying_key: &crypto::Pghr13VerifyingKey,
-    sapling_verifying_key: &crypto::Groth16VerifyingKey,
+    sprout_verifying_key: &zebra_crypto::Pghr13VerifyingKey,
+    sapling_verifying_key: &zebra_crypto::Groth16VerifyingKey,
 ) -> Result<(), ErrorKind> {
     let hsig = compute_hsig(
         &desc.random_seed,
@@ -74,7 +74,7 @@ pub fn verify(
         JoinSplitProof::Groth(ref proof) => {
             let input = input.into_bls_frs();
 
-            if !crypto::bellman::groth16::verify_proof(
+            if !zebra_crypto::bellman::groth16::verify_proof(
                 &sapling_verifying_key.0,
                 &proof
                     .to_bls_proof()
@@ -143,7 +143,7 @@ impl Input {
     }
 
     pub fn into_bls_frs(self) -> Vec<bls::Fr> {
-        use crypto::pairing::{Field, PrimeField};
+        use zebra_crypto::pairing::{Field, PrimeField};
 
         let mut frs = Vec::new();
 
@@ -168,9 +168,9 @@ impl Input {
 mod tests {
 
     use super::{compute_hsig, verify};
-    use chain::{JoinSplit, JoinSplitDescription, JoinSplitProof};
-    use crypto;
-    use crypto::load_joinsplit_groth16_verifying_key;
+    use zebra_chain::{JoinSplit, JoinSplitDescription, JoinSplitProof};
+    use zebra_crypto;
+    use zebra_crypto::load_joinsplit_groth16_verifying_key;
 
     fn hash(s: &'static str) -> [u8; 32] {
         use hex::FromHex;
@@ -195,14 +195,14 @@ mod tests {
         result
     }
 
-    fn dummy_groth16_key() -> crypto::Groth16VerifyingKey {
-        use crypto::bellman::groth16::{prepare_verifying_key, VerifyingKey};
-        use crypto::pairing::{
+    fn dummy_groth16_key() -> zebra_crypto::Groth16VerifyingKey {
+        use zebra_crypto::bellman::groth16::{prepare_verifying_key, VerifyingKey};
+        use zebra_crypto::pairing::{
             bls12_381::{G1Affine, G2Affine},
             CurveAffine,
         };
 
-        crypto::Groth16VerifyingKey(prepare_verifying_key(&VerifyingKey {
+        zebra_crypto::Groth16VerifyingKey(prepare_verifying_key(&VerifyingKey {
             alpha_g1: G1Affine::zero(),
             beta_g1: G1Affine::zero(),
             beta_g2: G2Affine::zero(),
@@ -307,8 +307,8 @@ mod tests {
         assert_eq!(input.into_bn_frs()[0].into_u256(), 10161672.into());
     }
 
-    fn vkey() -> crypto::Pghr13VerifyingKey {
-        crypto::json::pghr13::decode(include_bytes!("../../res/sprout-verifying-key.json"))
+    fn vkey() -> zebra_crypto::Pghr13VerifyingKey {
+        zebra_crypto::json::pghr13::decode(include_bytes!("../../res/sprout-verifying-key.json"))
             .expect("known to be good")
             .into()
     }

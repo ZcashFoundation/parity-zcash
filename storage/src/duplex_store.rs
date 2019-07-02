@@ -1,7 +1,7 @@
 //! Some transaction validation rules,
 //! require sophisticated (in more than one source) previous transaction lookups
 
-use chain::{OutPoint, TransactionOutput};
+use zebra_chain::{OutPoint, TransactionOutput};
 use TransactionOutputProvider;
 
 #[derive(Clone, Copy)]

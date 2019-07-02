@@ -1,5 +1,5 @@
-use crypto::{pedersen_hash, sha256_compress};
 use hash::H256;
+use zebra_crypto::{pedersen_hash, sha256_compress};
 
 lazy_static! {
     static ref SPROUT_EMPTY_ROOTS: Vec<H256> = [
@@ -276,18 +276,18 @@ impl<D: Dim, H: TreeHash> TreeState<D, H> {
 pub type SproutTreeState = TreeState<H29, SproutTreeHash>;
 pub type SaplingTreeState = TreeState<H32, SaplingTreeHash>;
 
-impl<D: Dim, H: TreeHash> serialization::Serializable for TreeState<D, H> {
-    fn serialize(&self, stream: &mut serialization::Stream) {
+impl<D: Dim, H: TreeHash> zebra_serialization::Serializable for TreeState<D, H> {
+    fn serialize(&self, stream: &mut zebra_serialization::Stream) {
         stream.append(&self.left);
         stream.append(&self.right);
         stream.append_list(&self.parents);
     }
 }
 
-impl<D: Dim, H: TreeHash> serialization::Deserializable for TreeState<D, H> {
+impl<D: Dim, H: TreeHash> zebra_serialization::Deserializable for TreeState<D, H> {
     fn deserialize<R: ::std::io::Read>(
-        reader: &mut serialization::Reader<R>,
-    ) -> Result<Self, serialization::Error> {
+        reader: &mut zebra_serialization::Reader<R>,
+    ) -> Result<Self, zebra_serialization::Error> {
         let mut tree_state = TreeState::new();
         tree_state.left = reader.read()?;
         tree_state.right = reader.read()?;
@@ -622,12 +622,12 @@ mod tests {
             H256::from("0bf622cb9f901b7532433ea2e7c1b7632f5935899b62dcf897a71551997dc8cc")
         );
 
-        let mut stream = serialization::Stream::new();
+        let mut stream = zebra_serialization::Stream::new();
         stream.append(&tree);
 
         let bytes = stream.out();
 
-        let mut reader = serialization::Reader::new(&bytes[..]);
+        let mut reader = zebra_serialization::Reader::new(&bytes[..]);
         let deserialized_tree: TestSproutTreeState = reader.read().expect("Failed to deserialize");
 
         assert!(!tree.is_empty);
@@ -640,13 +640,13 @@ mod tests {
     #[test]
     fn serde_empty() {
         let tree = TestSproutTreeState::new();
-        let mut stream = serialization::Stream::new();
+        let mut stream = zebra_serialization::Stream::new();
         assert!(tree.is_empty);
         stream.append(&tree);
 
         let bytes = stream.out();
 
-        let mut reader = serialization::Reader::new(&bytes[..]);
+        let mut reader = zebra_serialization::Reader::new(&bytes[..]);
         let deserialized_tree: TestSproutTreeState = reader.read().expect("Failed to deserialize");
         assert!(deserialized_tree.is_empty);
     }

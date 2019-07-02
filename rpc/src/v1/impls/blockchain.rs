@@ -1,11 +1,6 @@
-use chain::OutPoint;
 use global_script::Script;
 use jsonrpc_core::Error;
-use keys::{self, Address};
-use network::{ConsensusParams, Network};
-use primitives::hash::H256 as GlobalH256;
 use ser::serialize;
-use storage;
 use v1::helpers::errors::{
     block_at_height_not_found, block_not_found, invalid_params, transaction_not_found,
     transaction_of_side_branch, transaction_output_not_found,
@@ -15,7 +10,12 @@ use v1::types::GetTxOutSetInfoResponse;
 use v1::types::H256;
 use v1::types::{BlockRef, GetBlockResponse, RawBlock, VerboseBlock};
 use v1::types::{GetTxOutResponse, TransactionOutputScript};
-use verification;
+use zebra_chain::OutPoint;
+use zebra_keys::{self, Address};
+use zebra_network::{ConsensusParams, Network};
+use zebra_primitives::hash::H256 as GlobalH256;
+use zebra_storage;
+use zebra_verification;
 
 pub struct BlockChainClient<T: BlockChainClientCoreApi> {
     core: T,
@@ -33,11 +33,11 @@ pub trait BlockChainClientCoreApi: Send + Sync + 'static {
 
 pub struct BlockChainClientCore {
     consensus: ConsensusParams,
-    storage: storage::SharedStore,
+    storage: zebra_storage::SharedStore,
 }
 
 impl BlockChainClientCore {
-    pub fn new(consensus: ConsensusParams, storage: storage::SharedStore) -> Self {
+    pub fn new(consensus: ConsensusParams, storage: zebra_storage::SharedStore) -> Self {
         BlockChainClientCore {
             consensus: consensus,
             storage: storage,
@@ -62,7 +62,7 @@ impl BlockChainClientCoreApi for BlockChainClientCore {
         let best_block = self.storage.best_block();
         let now = ::time::get_time().sec as u32;
 
-        let next_work_required = verification::work_required(
+        let next_work_required = zebra_verification::work_required(
             best_block.hash,
             now,
             best_block.number + 1,
@@ -163,10 +163,10 @@ impl BlockChainClientCoreApi for BlockChainClientCore {
                     .into_iter()
                     .map(|a| Address {
                         network: match self.consensus.network {
-                            Network::Mainnet => keys::Network::Mainnet,
+                            Network::Mainnet => zebra_keys::Network::Mainnet,
                             // there's no correct choices for Regtests && Other networks
                             // => let's just make Testnet key
-                            _ => keys::Network::Testnet,
+                            _ => zebra_keys::Network::Testnet,
                         },
                         hash: a.hash,
                         kind: a.kind,
@@ -280,16 +280,11 @@ where
 
 #[cfg(test)]
 pub mod tests {
-    extern crate test_data;
+    extern crate zebra_test_data;
 
     use super::*;
-    use chain::OutPoint;
-    use db::BlockChainDatabase;
     use jsonrpc_core::Error;
     use jsonrpc_core::IoHandler;
-    use network::Network;
-    use primitives::bytes::Bytes as GlobalBytes;
-    use primitives::hash::H256 as GlobalH256;
     use std::sync::Arc;
     use v1::helpers::errors::block_not_found;
     use v1::traits::BlockChain;
@@ -298,6 +293,11 @@ pub mod tests {
     use v1::types::H256;
     use v1::types::{GetTxOutResponse, TransactionOutputScript};
     use v1::types::{RawBlock, VerboseBlock};
+    use zebra_chain::OutPoint;
+    use zebra_db::BlockChainDatabase;
+    use zebra_network::Network;
+    use zebra_primitives::bytes::Bytes as GlobalBytes;
+    use zebra_primitives::hash::H256 as GlobalH256;
 
     #[derive(Default)]
     struct SuccessBlockChainClientCore;
@@ -306,7 +306,7 @@ pub mod tests {
 
     impl BlockChainClientCoreApi for SuccessBlockChainClientCore {
         fn best_block_hash(&self) -> GlobalH256 {
-            test_data::genesis().hash()
+            zebra_test_data::genesis().hash()
         }
 
         fn block_count(&self) -> u32 {
@@ -314,7 +314,7 @@ pub mod tests {
         }
 
         fn block_hash(&self, _height: u32) -> Option<GlobalH256> {
-            Some(test_data::genesis().hash())
+            Some(zebra_test_data::genesis().hash())
         }
 
         fn difficulty(&self) -> f64 {
@@ -375,7 +375,7 @@ pub mod tests {
 
     impl BlockChainClientCoreApi for ErrorBlockChainClientCore {
         fn best_block_hash(&self) -> GlobalH256 {
-            test_data::genesis().hash()
+            zebra_test_data::genesis().hash()
         }
 
         fn block_count(&self) -> u32 {
@@ -511,9 +511,9 @@ pub mod tests {
     #[test]
     fn verbose_block_contents() {
         let storage = Arc::new(BlockChainDatabase::init_test_chain(vec![
-            test_data::genesis().into(),
-            test_data::block_h1().into(),
-            test_data::block_h2().into(),
+            zebra_test_data::genesis().into(),
+            zebra_test_data::block_h1().into(),
+            zebra_test_data::block_h2().into(),
         ]));
 
         let core = BlockChainClientCore::new(ConsensusParams::new(Network::Mainnet), storage);
@@ -683,8 +683,8 @@ pub mod tests {
     #[test]
     fn verbose_transaction_out_contents() {
         let storage = Arc::new(BlockChainDatabase::init_test_chain(vec![
-            test_data::genesis().into(),
-            test_data::block_h1().into(),
+            zebra_test_data::genesis().into(),
+            zebra_test_data::block_h1().into(),
         ]));
         let core = BlockChainClientCore::new(ConsensusParams::new(Network::Mainnet), storage);
 

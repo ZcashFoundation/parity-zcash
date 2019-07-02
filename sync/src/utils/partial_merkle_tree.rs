@@ -1,7 +1,7 @@
 use bit_vec::BitVec;
-use chain::merkle_node_hash;
-use primitives::hash::H256;
 use std::cmp::min;
+use zebra_chain::merkle_node_hash;
+use zebra_primitives::hash::H256;
 
 /// Partial merkle tree
 pub struct PartialMerkleTree {
@@ -249,11 +249,11 @@ impl PartialMerkleTreeBuilder {
 
 #[cfg(test)]
 mod tests {
-    extern crate test_data;
+    extern crate zebra_test_data;
 
     use super::{build_partial_merkle_tree, parse_partial_merkle_tree};
-    use chain::{merkle_root, Transaction};
-    use primitives::hash::H256;
+    use zebra_chain::{merkle_root, Transaction};
+    use zebra_primitives::hash::H256;
 
     #[test]
     // test from core implementation (slow)
@@ -270,7 +270,7 @@ mod tests {
         for tx_count in tx_counts {
             // build block with given transactions number
             let transactions: Vec<Transaction> = (0..tx_count)
-                .map(|n| test_data::TransactionBuilder::with_version(n as i32).into())
+                .map(|n| zebra_test_data::TransactionBuilder::with_version(n as i32).into())
                 .collect();
             let hashes: Vec<_> = transactions.iter().map(|t| t.hash()).collect();
             let merkle_root = merkle_root(&hashes);

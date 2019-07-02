@@ -1,5 +1,5 @@
-use chain::{IndexedBlock, IndexedBlockHeader};
 use hash::H256;
+use zebra_chain::{IndexedBlock, IndexedBlockHeader};
 use {BlockOrigin, Error, SideChainOrigin, Store};
 
 pub trait ForkChain {

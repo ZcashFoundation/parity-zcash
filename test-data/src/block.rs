@@ -1,15 +1,15 @@
 //! Block builder
 
 use super::genesis;
-use chain;
 use invoke::{Identity, Invoke};
-use network::ConsensusParams;
-use primitives::bytes::Bytes;
-use primitives::compact::Compact;
-use primitives::hash::H256;
-use script::{Builder as ScriptBuilder, Opcode};
 use ser::{serialized_list_size, Serializable};
 use std::cell::Cell;
+use zebra_chain;
+use zebra_network::ConsensusParams;
+use zebra_primitives::bytes::Bytes;
+use zebra_primitives::compact::Compact;
+use zebra_primitives::hash::H256;
+use zebra_script::{Builder as ScriptBuilder, Opcode};
 
 thread_local! {
     pub static TIMESTAMP_COUNTER: Cell<u32> = Cell::new(0);
@@ -17,7 +17,7 @@ thread_local! {
 
 pub struct BlockHashBuilder<F = Identity> {
     callback: F,
-    block: Option<chain::Block>,
+    block: Option<zebra_chain::Block>,
 }
 
 impl BlockHashBuilder {
@@ -28,7 +28,7 @@ impl BlockHashBuilder {
 
 impl<F> BlockHashBuilder<F>
 where
-    F: Invoke<(H256, chain::Block)>,
+    F: Invoke<(H256, zebra_chain::Block)>,
 {
     pub fn with_callback(callback: F) -> Self {
         BlockHashBuilder {
@@ -41,7 +41,7 @@ where
         BlockBuilder::with_callback(self)
     }
 
-    pub fn with_block(mut self, block: chain::Block) -> Self {
+    pub fn with_block(mut self, block: zebra_chain::Block) -> Self {
         self.block = Some(block);
         self
     }
@@ -54,21 +54,21 @@ where
     }
 }
 
-impl<F> Invoke<chain::Block> for BlockHashBuilder<F>
+impl<F> Invoke<zebra_chain::Block> for BlockHashBuilder<F>
 where
-    F: Invoke<(H256, chain::Block)>,
+    F: Invoke<(H256, zebra_chain::Block)>,
 {
     type Result = Self;
 
-    fn invoke(self, block: chain::Block) -> Self {
+    fn invoke(self, block: zebra_chain::Block) -> Self {
         self.with_block(block)
     }
 }
 
 pub struct BlockBuilder<F = Identity> {
     callback: F,
-    header: Option<chain::BlockHeader>,
-    transactions: Vec<chain::Transaction>,
+    header: Option<zebra_chain::BlockHeader>,
+    transactions: Vec<zebra_chain::Transaction>,
 }
 
 impl BlockBuilder {
@@ -79,7 +79,7 @@ impl BlockBuilder {
 
 impl<F> BlockBuilder<F>
 where
-    F: Invoke<chain::Block>,
+    F: Invoke<zebra_chain::Block>,
 {
     pub fn with_callback(callback: F) -> Self {
         BlockBuilder {
@@ -89,26 +89,26 @@ where
         }
     }
 
-    pub fn with_header(mut self, header: chain::BlockHeader) -> Self {
+    pub fn with_header(mut self, header: zebra_chain::BlockHeader) -> Self {
         self.header = Some(header);
         self
     }
 
-    pub fn with_transaction(mut self, transaction: chain::Transaction) -> Self {
+    pub fn with_transaction(mut self, transaction: zebra_chain::Transaction) -> Self {
         self.transactions.push(transaction);
         self
     }
 
     pub fn with_transactions<I>(mut self, txs: I) -> Self
     where
-        I: IntoIterator<Item = chain::Transaction>,
+        I: IntoIterator<Item = zebra_chain::Transaction>,
     {
         self.transactions.extend(txs);
         self
     }
 
     pub fn with_raw(mut self, raw: &'static str) -> Self {
-        let raw_block: chain::Block = raw.into();
+        let raw_block: zebra_chain::Block = raw.into();
         self.transactions = raw_block.transactions.to_vec();
         self.header = Some(raw_block.header().clone());
         self
@@ -120,7 +120,7 @@ where
 
     pub fn merkled_header(self) -> BlockHeaderBuilder<Self> {
         let hashes: Vec<H256> = self.transactions.iter().map(|t| t.hash()).collect();
-        let builder = self.header().merkle_root(chain::merkle_root(&hashes));
+        let builder = self.header().merkle_root(zebra_chain::merkle_root(&hashes));
         builder
     }
 
@@ -192,29 +192,31 @@ where
     }
 
     pub fn build(self) -> F::Result {
-        self.callback
-            .invoke(chain::Block::new(self.header.unwrap(), self.transactions))
+        self.callback.invoke(zebra_chain::Block::new(
+            self.header.unwrap(),
+            self.transactions,
+        ))
     }
 }
 
-impl<F> Invoke<chain::BlockHeader> for BlockBuilder<F>
+impl<F> Invoke<zebra_chain::BlockHeader> for BlockBuilder<F>
 where
-    F: Invoke<chain::Block>,
+    F: Invoke<zebra_chain::Block>,
 {
     type Result = Self;
 
-    fn invoke(self, header: chain::BlockHeader) -> Self {
+    fn invoke(self, header: zebra_chain::BlockHeader) -> Self {
         self.with_header(header)
     }
 }
 
-impl<F> Invoke<chain::Transaction> for BlockBuilder<F>
+impl<F> Invoke<zebra_chain::Transaction> for BlockBuilder<F>
 where
-    F: Invoke<chain::Block>,
+    F: Invoke<zebra_chain::Block>,
 {
     type Result = Self;
 
-    fn invoke(self, tx: chain::Transaction) -> Self {
+    fn invoke(self, tx: zebra_chain::Transaction) -> Self {
         self.with_transaction(tx)
     }
 }
@@ -232,7 +234,7 @@ pub struct BlockHeaderBuilder<F = Identity> {
 
 impl<F> BlockHeaderBuilder<F>
 where
-    F: Invoke<chain::BlockHeader>,
+    F: Invoke<zebra_chain::BlockHeader>,
 {
     pub fn with_callback(callback: F) -> Self {
         BlockHeaderBuilder {
@@ -288,7 +290,7 @@ where
     }
 
     pub fn build(self) -> F::Result {
-        self.callback.invoke(chain::BlockHeader {
+        self.callback.invoke(zebra_chain::BlockHeader {
             time: self.time,
             previous_header_hash: self.parent,
             bits: self.bits,
@@ -296,7 +298,7 @@ where
             merkle_root_hash: self.merkle_root,
             version: self.version,
             final_sapling_root: self.final_sapling_root,
-            solution: chain::EquihashSolution::default(),
+            solution: zebra_chain::EquihashSolution::default(),
         })
     }
 }
@@ -305,13 +307,13 @@ pub struct TransactionBuilder<F = Identity> {
     callback: F,
     version: i32,
     lock_time: u32,
-    inputs: Vec<chain::TransactionInput>,
-    outputs: Vec<chain::TransactionOutput>,
+    inputs: Vec<zebra_chain::TransactionInput>,
+    outputs: Vec<zebra_chain::TransactionOutput>,
 }
 
 impl<F> TransactionBuilder<F>
 where
-    F: Invoke<chain::Transaction>,
+    F: Invoke<zebra_chain::Transaction>,
 {
     fn with_callback(callback: F) -> Self {
         TransactionBuilder {
@@ -323,12 +325,12 @@ where
         }
     }
 
-    fn with_input(mut self, input: chain::TransactionInput) -> Self {
+    fn with_input(mut self, input: zebra_chain::TransactionInput) -> Self {
         self.inputs.push(input);
         self
     }
 
-    fn with_output(mut self, input: chain::TransactionOutput) -> Self {
+    fn with_output(mut self, input: zebra_chain::TransactionOutput) -> Self {
         self.outputs.push(input);
         self
     }
@@ -388,7 +390,7 @@ where
     }
 
     pub fn build(self) -> F::Result {
-        self.callback.invoke(chain::Transaction {
+        self.callback.invoke(zebra_chain::Transaction {
             lock_time: self.lock_time,
             version: self.version,
             inputs: self.inputs,
@@ -398,38 +400,38 @@ where
     }
 }
 
-impl<F> Invoke<chain::TransactionInput> for TransactionBuilder<F>
+impl<F> Invoke<zebra_chain::TransactionInput> for TransactionBuilder<F>
 where
-    F: Invoke<chain::Transaction>,
+    F: Invoke<zebra_chain::Transaction>,
 {
     type Result = Self;
 
-    fn invoke(self, tx: chain::TransactionInput) -> Self {
+    fn invoke(self, tx: zebra_chain::TransactionInput) -> Self {
         self.with_input(tx)
     }
 }
 
-impl<F> Invoke<chain::TransactionOutput> for TransactionBuilder<F>
+impl<F> Invoke<zebra_chain::TransactionOutput> for TransactionBuilder<F>
 where
-    F: Invoke<chain::Transaction>,
+    F: Invoke<zebra_chain::Transaction>,
 {
     type Result = Self;
 
-    fn invoke(self, tx: chain::TransactionOutput) -> Self {
+    fn invoke(self, tx: zebra_chain::TransactionOutput) -> Self {
         self.with_output(tx)
     }
 }
 
 pub struct TransactionInputBuilder<F = Identity> {
     callback: F,
-    output: Option<chain::OutPoint>,
+    output: Option<zebra_chain::OutPoint>,
     signature: Bytes,
     sequence: u32,
 }
 
 impl<F> TransactionInputBuilder<F>
 where
-    F: Invoke<chain::TransactionInput>,
+    F: Invoke<zebra_chain::TransactionInput>,
 {
     fn with_callback(callback: F) -> Self {
         TransactionInputBuilder {
@@ -477,7 +479,7 @@ where
     }
 
     pub fn hash(mut self, hash: H256) -> Self {
-        let mut output = self.output.unwrap_or(chain::OutPoint {
+        let mut output = self.output.unwrap_or(zebra_chain::OutPoint {
             hash: hash.clone(),
             index: 0,
         });
@@ -487,7 +489,7 @@ where
     }
 
     pub fn index(mut self, index: u32) -> Self {
-        let mut output = self.output.unwrap_or(chain::OutPoint {
+        let mut output = self.output.unwrap_or(zebra_chain::OutPoint {
             hash: H256::from(0),
             index: index,
         });
@@ -497,7 +499,7 @@ where
     }
 
     pub fn coinbase(mut self) -> Self {
-        self.output = Some(chain::OutPoint {
+        self.output = Some(zebra_chain::OutPoint {
             hash: H256::from(0),
             index: 0xffffffff,
         });
@@ -506,7 +508,7 @@ where
     }
 
     pub fn build(self) -> F::Result {
-        self.callback.invoke(chain::TransactionInput {
+        self.callback.invoke(zebra_chain::TransactionInput {
             previous_output: self.output.expect("Building input without previous output"),
             script_sig: self.signature,
             sequence: self.sequence,
@@ -522,7 +524,7 @@ pub struct TransactionOutputBuilder<F = Identity> {
 
 impl<F> TransactionOutputBuilder<F>
 where
-    F: Invoke<chain::TransactionOutput>,
+    F: Invoke<zebra_chain::TransactionOutput>,
 {
     fn with_callback(callback: F) -> Self {
         TransactionOutputBuilder {
@@ -572,7 +574,7 @@ where
     }
 
     pub fn build(self) -> F::Result {
-        self.callback.invoke(chain::TransactionOutput {
+        self.callback.invoke(zebra_chain::TransactionOutput {
             script_pubkey: self.script_pubkey,
             value: self.value,
         })
@@ -589,8 +591,8 @@ pub fn block_hash_builder() -> BlockHashBuilder {
 pub fn build_n_empty_blocks_from(
     n: u32,
     start_nonce: u32,
-    previous: &chain::BlockHeader,
-) -> Vec<chain::Block> {
+    previous: &zebra_chain::BlockHeader,
+) -> Vec<zebra_chain::Block> {
     let mut result = Vec::new();
     let mut previous_hash = previous.hash();
     let end_nonce = start_nonce + n;
@@ -607,11 +609,11 @@ pub fn build_n_empty_blocks_from(
     result
 }
 
-pub fn build_n_empty_blocks_from_genesis(n: u32, start_nonce: u32) -> Vec<chain::Block> {
+pub fn build_n_empty_blocks_from_genesis(n: u32, start_nonce: u32) -> Vec<zebra_chain::Block> {
     build_n_empty_blocks_from(n, start_nonce, &genesis().block_header)
 }
 
-pub fn build_n_empty_blocks(n: u32, start_nonce: u32) -> Vec<chain::Block> {
+pub fn build_n_empty_blocks(n: u32, start_nonce: u32) -> Vec<zebra_chain::Block> {
     assert!(n != 0);
     let previous = block_builder()
         .header()

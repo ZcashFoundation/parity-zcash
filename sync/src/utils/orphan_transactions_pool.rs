@@ -1,9 +1,9 @@
-use chain::IndexedTransaction;
 use linked_hash_map::LinkedHashMap;
-use primitives::hash::H256;
 use std::collections::hash_map::Entry;
 use std::collections::{HashMap, HashSet, VecDeque};
 use time;
+use zebra_chain::IndexedTransaction;
+use zebra_primitives::hash::H256;
 
 #[derive(Debug)]
 /// Storage for transactions, for which we have no parent transactions yet.
@@ -143,12 +143,12 @@ impl OrphanTransaction {
 
 #[cfg(test)]
 mod tests {
-    extern crate test_data;
+    extern crate zebra_test_data;
 
-    use self::test_data::{ChainBuilder, TransactionBuilder};
+    use self::zebra_test_data::{ChainBuilder, TransactionBuilder};
     use super::OrphanTransactionsPool;
-    use primitives::hash::H256;
     use std::collections::HashSet;
+    use zebra_primitives::hash::H256;
 
     #[test]
     fn orphan_transaction_pool_empty_on_start() {

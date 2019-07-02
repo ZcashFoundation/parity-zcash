@@ -1,26 +1,26 @@
-extern crate bitcrypto;
 extern crate byteorder;
-extern crate chain;
-extern crate db;
-extern crate storage;
+extern crate zebra_chain;
+extern crate zebra_crypto;
+extern crate zebra_db;
+extern crate zebra_storage;
 #[macro_use]
 extern crate log;
 extern crate bit_vec;
 extern crate futures;
-extern crate keys;
 extern crate linked_hash_map;
-extern crate message;
-extern crate miner;
 extern crate murmur3;
-extern crate network;
-extern crate p2p;
 extern crate parking_lot;
-extern crate primitives;
 extern crate rand;
-extern crate script;
-extern crate serialization as ser;
 extern crate time;
-extern crate verification;
+extern crate zebra_keys;
+extern crate zebra_message;
+extern crate zebra_miner;
+extern crate zebra_network;
+extern crate zebra_p2p;
+extern crate zebra_primitives;
+extern crate zebra_script;
+extern crate zebra_serialization as ser;
+extern crate zebra_verification;
 
 mod blocks_writer;
 mod inbound_connection;
@@ -41,11 +41,11 @@ mod utils;
 pub use types::LocalNodeRef;
 pub use types::PeersRef;
 
-use network::{ConsensusParams, Network};
 use parking_lot::RwLock;
-use primitives::hash::H256;
 use std::sync::Arc;
-use verification::BackwardsCompatibleChainVerifier as ChainVerifier;
+use zebra_network::{ConsensusParams, Network};
+use zebra_primitives::hash::H256;
+use zebra_verification::BackwardsCompatibleChainVerifier as ChainVerifier;
 
 /// Sync errors.
 #[derive(Debug, PartialEq)]
@@ -53,7 +53,7 @@ pub enum Error {
     /// Too many orphan blocks.
     TooManyOrphanBlocks,
     /// Database error.
-    Database(storage::Error),
+    Database(zebra_storage::Error),
     /// Block verification error.
     Verification(String),
 }
@@ -62,7 +62,7 @@ pub enum Error {
 /// Verification parameters.
 pub struct VerificationParameters {
     /// Blocks verification level.
-    pub verification_level: verification::VerificationLevel,
+    pub verification_level: zebra_verification::VerificationLevel,
     /// Blocks verification edge: all blocks before this are validated using verification_level.
     /// All blocks after this (inclusive) are validated using VerificationLevel::Full level.
     pub verification_edge: H256,
@@ -78,7 +78,7 @@ pub trait SyncListener: Send + 'static {
 
 /// Create blocks writer.
 pub fn create_sync_blocks_writer(
-    db: storage::SharedStore,
+    db: zebra_storage::SharedStore,
     consensus: ConsensusParams,
     verification_params: VerificationParameters,
 ) -> blocks_writer::BlocksWriter {
@@ -95,12 +95,11 @@ pub fn create_sync_peers() -> PeersRef {
 /// Creates local sync node for given `db`
 pub fn create_local_sync_node(
     consensus: ConsensusParams,
-    db: storage::SharedStore,
+    db: zebra_storage::SharedStore,
     peers: PeersRef,
     verification_params: VerificationParameters,
 ) -> LocalNodeRef {
     use local_node::LocalNode as SyncNode;
-    use miner::MemoryPool;
     use synchronization_chain::Chain as SyncChain;
     use synchronization_client::SynchronizationClient;
     use synchronization_client_core::{
@@ -111,6 +110,7 @@ pub fn create_local_sync_node(
     use synchronization_verifier::AsyncVerifier;
     use types::SynchronizationStateRef;
     use utils::SynchronizationState;
+    use zebra_miner::MemoryPool;
 
     let network = consensus.network;
     let sync_client_config = SynchronizationConfig {
@@ -176,7 +176,7 @@ pub fn create_local_sync_node(
 pub fn create_sync_connection_factory(
     peers: PeersRef,
     local_sync_node: LocalNodeRef,
-) -> p2p::LocalSyncNodeRef {
+) -> zebra_p2p::LocalSyncNodeRef {
     use inbound_connection_factory::InboundConnectionFactory as SyncConnectionFactory;
 
     SyncConnectionFactory::new(peers, local_sync_node).boxed()

@@ -1,8 +1,8 @@
 use io::SharedTcpStream;
-use message::common::Services;
-use message::types;
-use network::Magic;
 use std::net;
+use zebra_message::common::Services;
+use zebra_message::types;
+use zebra_network::Magic;
 
 pub struct Connection {
     pub stream: SharedTcpStream,

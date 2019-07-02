@@ -4,9 +4,9 @@ use accept_transaction::TransactionAcceptor;
 use canon::CanonBlock;
 use deployments::BlockDeployments;
 use error::Error;
-use network::ConsensusParams;
 use rayon::prelude::{IndexedParallelIterator, IntoParallelRefIterator, ParallelIterator};
-use storage::{
+use zebra_network::ConsensusParams;
+use zebra_storage::{
     BlockHeaderProvider, DuplexTransactionOutputProvider, NullifierTracker,
     TransactionMetaProvider, TransactionOutputProvider, TreeStateProvider,
 };

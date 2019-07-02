@@ -1,9 +1,9 @@
-use network::ConsensusParams;
-use primitives::bigint::U256;
-use primitives::compact::Compact;
-use primitives::hash::H256;
-use storage::{BlockAncestors, BlockHeaderProvider};
 use timestamp::median_timestamp_inclusive;
+use zebra_network::ConsensusParams;
+use zebra_primitives::bigint::U256;
+use zebra_primitives::compact::Compact;
+use zebra_primitives::hash::H256;
+use zebra_storage::{BlockAncestors, BlockHeaderProvider};
 
 /// Returns true if hash is lower or equal than target represented by compact bits
 pub fn is_valid_proof_of_work_hash(bits: Compact, hash: &H256) -> bool {
@@ -124,18 +124,18 @@ fn calculate_work_required(
 
 #[cfg(test)]
 mod tests {
-    extern crate test_data;
+    extern crate zebra_test_data;
 
     use super::{calculate_work_required, work_required};
-    use chain::{BlockHeader, IndexedBlockHeader};
-    use network::{ConsensusParams, Network};
-    use primitives::bigint::U256;
-    use primitives::bytes::Bytes;
-    use primitives::compact::Compact;
-    use primitives::hash::H256;
     use std::collections::HashMap;
-    use storage::{BlockHeaderProvider, BlockRef};
     use timestamp::median_timestamp_inclusive;
+    use zebra_chain::{BlockHeader, IndexedBlockHeader};
+    use zebra_network::{ConsensusParams, Network};
+    use zebra_primitives::bigint::U256;
+    use zebra_primitives::bytes::Bytes;
+    use zebra_primitives::compact::Compact;
+    use zebra_primitives::hash::H256;
+    use zebra_storage::{BlockHeaderProvider, BlockRef};
 
     #[derive(Default)]
     pub struct MemoryBlockHeaderProvider {
@@ -191,11 +191,11 @@ mod tests {
 
         // insert genesis block
         let mut header_provider = MemoryBlockHeaderProvider::default();
-        let genesis = test_data::genesis().block_header;
+        let genesis = zebra_test_data::genesis().block_header;
         header_provider.insert(genesis.clone());
 
         // assert block#1 work
-        let h1 = test_data::block_h1();
+        let h1 = zebra_test_data::block_h1();
         let expected = h1.block_header.bits;
         let actual = work_required(
             genesis.hash(),

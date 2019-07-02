@@ -1,12 +1,5 @@
-use chain::{
-    IndexedTransaction as GlobalIndexedTransaction, Transaction as GlobalTransaction,
-    SAPLING_TX_VERSION, SAPLING_TX_VERSION_GROUP_ID,
-};
 use jsonrpc_core::Error;
-use primitives::bytes::Bytes as GlobalBytes;
-use primitives::hash::H256 as GlobalH256;
 use ser::{deserialize, serialize, Reader};
-use sync;
 use v1::helpers::errors::{execution, invalid_params};
 use v1::traits::Raw;
 use v1::types::H256;
@@ -14,6 +7,13 @@ use v1::types::{
     GetRawTransactionResponse, RawTransaction, Transaction, TransactionInput, TransactionOutput,
     TransactionOutputs,
 };
+use zebra_chain::{
+    IndexedTransaction as GlobalIndexedTransaction, Transaction as GlobalTransaction,
+    SAPLING_TX_VERSION, SAPLING_TX_VERSION_GROUP_ID,
+};
+use zebra_primitives::bytes::Bytes as GlobalBytes;
+use zebra_primitives::hash::H256 as GlobalH256;
+use zebra_sync;
 
 /// Default expiry height delta (best blocks number + height in blocks) for transactions
 /// created by `createrawtransaction` RPC.
@@ -35,11 +35,11 @@ pub trait RawClientCoreApi: Send + Sync + 'static {
 }
 
 pub struct RawClientCore {
-    local_sync_node: sync::LocalNodeRef,
+    local_sync_node: zebra_sync::LocalNodeRef,
 }
 
 impl RawClientCore {
-    pub fn new(local_sync_node: sync::LocalNodeRef) -> Self {
+    pub fn new(local_sync_node: zebra_sync::LocalNodeRef) -> Self {
         RawClientCore {
             local_sync_node: local_sync_node,
         }
@@ -61,9 +61,9 @@ impl RawClientCore {
         // to make lock_time work at least one input must have sequence < SEQUENCE_FINAL
         let lock_time = lock_time.unwrap_or_default();
         let default_sequence = if lock_time != 0 {
-            chain::constants::SEQUENCE_FINAL - 1
+            zebra_chain::constants::SEQUENCE_FINAL - 1
         } else {
-            chain::constants::SEQUENCE_FINAL
+            zebra_chain::constants::SEQUENCE_FINAL
         };
 
         // by default we're creating transactions that are expired in DEFAULT_TX_EXPIRY_DELTA blocks
@@ -73,8 +73,8 @@ impl RawClientCore {
         // prepare inputs
         let inputs: Vec<_> = inputs
             .into_iter()
-            .map(|input| chain::TransactionInput {
-                previous_output: chain::OutPoint {
+            .map(|input| zebra_chain::TransactionInput {
+                previous_output: zebra_chain::OutPoint {
                     hash: Into::<GlobalH256>::into(input.txid).reversed(),
                     index: input.vout,
                 },
@@ -89,14 +89,19 @@ impl RawClientCore {
             .into_iter()
             .map(|output| match output {
                 TransactionOutput::Address(with_address) => {
-                    let amount_in_satoshis =
-                        (with_address.amount * (chain::constants::SATOSHIS_IN_COIN as f64)) as u64;
+                    let amount_in_satoshis = (with_address.amount
+                        * (zebra_chain::constants::SATOSHIS_IN_COIN as f64))
+                        as u64;
                     let script = match with_address.address.kind {
-                        keys::Type::P2PKH => ScriptBuilder::build_p2pkh(&with_address.address.hash),
-                        keys::Type::P2SH => ScriptBuilder::build_p2sh(&with_address.address.hash),
+                        zebra_keys::Type::P2PKH => {
+                            ScriptBuilder::build_p2pkh(&with_address.address.hash)
+                        }
+                        zebra_keys::Type::P2SH => {
+                            ScriptBuilder::build_p2sh(&with_address.address.hash)
+                        }
                     };
 
-                    chain::TransactionOutput {
+                    zebra_chain::TransactionOutput {
                         value: amount_in_satoshis,
                         script_pubkey: script.to_bytes(),
                     }
@@ -106,7 +111,7 @@ impl RawClientCore {
                         .return_bytes(&*with_script_data.script_data)
                         .into_script();
 
-                    chain::TransactionOutput {
+                    zebra_chain::TransactionOutput {
                         value: 0,
                         script_pubkey: script.to_bytes(),
                     }
@@ -217,11 +222,11 @@ where
 #[cfg(test)]
 pub mod tests {
     use super::*;
-    use chain::Transaction;
     use jsonrpc_core::IoHandler;
-    use primitives::hash::H256 as GlobalH256;
     use v1::traits::Raw;
     use v1::types::{TransactionInput, TransactionOutputs};
+    use zebra_chain::Transaction;
+    use zebra_primitives::hash::H256 as GlobalH256;
 
     #[derive(Default)]
     struct SuccessRawClientCore;

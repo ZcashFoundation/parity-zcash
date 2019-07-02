@@ -1,8 +1,10 @@
 use inbound_connection::InboundConnection;
-use message::Services;
-use p2p::{InboundSyncConnectionRef, LocalSyncNode, LocalSyncNodeRef, OutboundSyncConnectionRef};
 use std::sync::atomic::{AtomicUsize, Ordering};
 use types::{LocalNodeRef, PeersRef};
+use zebra_message::Services;
+use zebra_p2p::{
+    InboundSyncConnectionRef, LocalSyncNode, LocalSyncNodeRef, OutboundSyncConnectionRef,
+};
 
 /// Inbound synchronization connection factory
 pub struct InboundConnectionFactory {

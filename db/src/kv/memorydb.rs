@@ -1,5 +1,4 @@
 use bytes::Bytes;
-use chain::{BlockHeader, Transaction as ChainTransaction};
 use hash::H256;
 use kv::{Key, KeyState, KeyValue, KeyValueDatabase, Operation, Transaction, Value};
 use parking_lot::RwLock;
@@ -7,7 +6,8 @@ use ser::List;
 use std::collections::HashMap;
 use std::mem::replace;
 use std::sync::Arc;
-use storage::{EpochRef, EpochTag, SaplingTreeState, SproutTreeState, TransactionMeta};
+use zebra_chain::{BlockHeader, Transaction as ChainTransaction};
+use zebra_storage::{EpochRef, EpochTag, SaplingTreeState, SproutTreeState, TransactionMeta};
 
 #[derive(Default, Debug)]
 struct InnerDatabase {

@@ -1,12 +1,12 @@
 use bytes::Bytes;
-use crypto::checksum;
 use futures::{Future, Poll};
 use hash::H32;
-use message::{deserialize_payload, Error, MessageResult, Payload};
 use std::io;
 use std::marker::PhantomData;
 use tokio_io::io::{read_exact, ReadExact};
 use tokio_io::AsyncRead;
+use zebra_crypto::checksum;
+use zebra_message::{deserialize_payload, Error, MessageResult, Payload};
 
 pub fn read_payload<M, A>(a: A, version: u32, len: usize, checksum: H32) -> ReadPayload<M, A>
 where
@@ -51,8 +51,8 @@ mod tests {
     use super::read_payload;
     use bytes::Bytes;
     use futures::Future;
-    use message::types::Ping;
-    use message::Error;
+    use zebra_message::types::Ping;
+    use zebra_message::Error;
 
     #[test]
     fn test_read_payload() {

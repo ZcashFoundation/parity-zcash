@@ -1,15 +1,17 @@
 use super::super::rpc;
-use primitives::hash::H256;
+use config;
 use std::net::SocketAddr;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::mpsc::{channel, Receiver, Sender};
 use std::sync::Arc;
 use std::thread;
-use sync::{
+use util::{init_db, node_table_path};
+use zebra_p2p;
+use zebra_primitives::hash::H256;
+use zebra_sync::{
     create_local_sync_node, create_sync_connection_factory, create_sync_peers, SyncListener,
 };
-use util::{init_db, node_table_path};
-use {config, p2p, ZCASH_PROTOCOL_MINIMUM, ZCASH_PROTOCOL_VERSION};
+use {ZCASH_PROTOCOL_MINIMUM, ZCASH_PROTOCOL_VERSION};
 
 enum BlockNotifierTask {
     NewBlock(H256),
@@ -86,17 +88,17 @@ impl Drop for BlockNotifier {
 }
 
 pub fn start(cfg: config::Config) -> Result<(), String> {
-    let mut el = p2p::event_loop();
+    let mut el = zebra_p2p::event_loop();
 
     init_db(&cfg)?;
 
     let nodes_path = node_table_path(&cfg);
 
-    let p2p_cfg = p2p::Config {
+    let p2p_cfg = zebra_p2p::Config {
         threads: cfg.p2p_threads,
         inbound_connections: cfg.inbound_connections,
         outbound_connections: cfg.outbound_connections,
-        connection: p2p::NetConfig {
+        connection: zebra_p2p::NetConfig {
             protocol_version: ZCASH_PROTOCOL_VERSION,
             protocol_minimum: ZCASH_PROTOCOL_MINIMUM,
             magic: cfg.consensus.magic(),
@@ -128,7 +130,8 @@ pub fn start(cfg: config::Config) -> Result<(), String> {
     }
 
     let p2p = try!(
-        p2p::P2P::new(p2p_cfg, sync_connection_factory, el.handle()).map_err(|x| x.to_string())
+        zebra_p2p::P2P::new(p2p_cfg, sync_connection_factory, el.handle())
+            .map_err(|x| x.to_string())
     );
     let rpc_deps = rpc::Dependencies {
         consensus: cfg.consensus,
@@ -140,6 +143,6 @@ pub fn start(cfg: config::Config) -> Result<(), String> {
     let _rpc_server = try!(rpc::new_http(cfg.rpc_config, rpc_deps));
 
     try!(p2p.run().map_err(|_| "Failed to start p2p module"));
-    el.run(p2p::forever()).unwrap();
+    el.run(zebra_p2p::forever()).unwrap();
     Ok(())
 }

@@ -1,7 +1,6 @@
 //! Secret with additional network identifier and format type
 
 use base58::{FromBase58, ToBase58};
-use crypto::checksum;
 use hash::H520;
 use hex::ToHex;
 use network::Network;
@@ -9,6 +8,7 @@ use secp256k1::key;
 use secp256k1::Message as SecpMessage;
 use std::fmt;
 use std::str::FromStr;
+use zebra_crypto::checksum;
 use {CompactSignature, DisplayLayout, Error, Message, Secret, Signature, SECP256K1};
 
 /// Secret with additional network identifier and format type

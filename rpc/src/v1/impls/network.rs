@@ -1,16 +1,16 @@
 use jsonrpc_core::Error;
-use p2p;
 use std::net::{IpAddr, SocketAddr};
 use std::sync::Arc;
 use v1::helpers::errors;
 use v1::traits::Network as NetworkRpc;
 use v1::types::{AddNodeOperation, NodeInfo};
+use zebra_p2p;
 
 pub trait NetworkApi: Send + Sync + 'static {
-    fn add_node(&self, socket_addr: SocketAddr) -> Result<(), p2p::NodeTableError>;
-    fn remove_node(&self, socket_addr: SocketAddr) -> Result<(), p2p::NodeTableError>;
+    fn add_node(&self, socket_addr: SocketAddr) -> Result<(), zebra_p2p::NodeTableError>;
+    fn remove_node(&self, socket_addr: SocketAddr) -> Result<(), zebra_p2p::NodeTableError>;
     fn connect(&self, socket_addr: SocketAddr);
-    fn node_info(&self, node_addr: IpAddr) -> Result<NodeInfo, p2p::NodeTableError>;
+    fn node_info(&self, node_addr: IpAddr) -> Result<NodeInfo, zebra_p2p::NodeTableError>;
     fn nodes_info(&self) -> Vec<NodeInfo>;
     fn connection_count(&self) -> usize;
 }
@@ -77,38 +77,38 @@ where
 }
 
 pub struct NetworkClientCore {
-    p2p: Arc<p2p::Context>,
+    p2p: Arc<zebra_p2p::Context>,
 }
 
 impl NetworkClientCore {
-    pub fn new(p2p: Arc<p2p::Context>) -> Self {
+    pub fn new(p2p: Arc<zebra_p2p::Context>) -> Self {
         NetworkClientCore { p2p: p2p }
     }
 }
 
 impl NetworkApi for NetworkClientCore {
-    fn add_node(&self, socket_addr: SocketAddr) -> Result<(), p2p::NodeTableError> {
+    fn add_node(&self, socket_addr: SocketAddr) -> Result<(), zebra_p2p::NodeTableError> {
         self.p2p.add_node(socket_addr)
     }
 
-    fn remove_node(&self, socket_addr: SocketAddr) -> Result<(), p2p::NodeTableError> {
+    fn remove_node(&self, socket_addr: SocketAddr) -> Result<(), zebra_p2p::NodeTableError> {
         self.p2p.remove_node(socket_addr)
     }
 
     fn connect(&self, socket_addr: SocketAddr) {
-        p2p::Context::connect_normal(self.p2p.clone(), socket_addr);
+        zebra_p2p::Context::connect_normal(self.p2p.clone(), socket_addr);
     }
 
-    fn node_info(&self, node_addr: IpAddr) -> Result<NodeInfo, p2p::NodeTableError> {
+    fn node_info(&self, node_addr: IpAddr) -> Result<NodeInfo, zebra_p2p::NodeTableError> {
         let exact_node = try!(self
             .p2p
             .nodes()
             .iter()
             .find(|n| n.address().ip() == node_addr)
             .cloned()
-            .ok_or(p2p::NodeTableError::NoAddressInTable));
+            .ok_or(zebra_p2p::NodeTableError::NoAddressInTable));
 
-        let peers: Vec<p2p::PeerInfo> = self
+        let peers: Vec<zebra_p2p::PeerInfo> = self
             .p2p
             .connections()
             .info()
@@ -124,13 +124,13 @@ impl NetworkApi for NetworkClientCore {
     }
 
     fn nodes_info(&self) -> Vec<NodeInfo> {
-        let peers: Vec<p2p::PeerInfo> = self.p2p.connections().info();
+        let peers: Vec<zebra_p2p::PeerInfo> = self.p2p.connections().info();
 
         self.p2p
             .nodes()
             .iter()
             .map(|n| {
-                let node_peers: Vec<p2p::PeerInfo> = peers
+                let node_peers: Vec<zebra_p2p::PeerInfo> = peers
                     .iter()
                     .filter(|p| p.address == n.address())
                     .cloned()

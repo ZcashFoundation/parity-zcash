@@ -1,6 +1,6 @@
-use chain::Transaction;
 use ser::{Reader, Stream};
 use std::io;
+use zebra_chain::Transaction;
 use {MessageResult, Payload};
 
 #[derive(Debug, PartialEq)]

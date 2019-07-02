@@ -88,7 +88,7 @@ impl KeyPair {
 #[cfg(test)]
 mod tests {
     use super::KeyPair;
-    use crypto::dhash256;
+    use zebra_crypto::dhash256;
     use Public;
 
     /// Tests from:

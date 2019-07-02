@@ -1,9 +1,9 @@
-use chain::IndexedBlock;
 use linked_hash_map::LinkedHashMap;
-use primitives::hash::H256;
 use std::collections::hash_map::Entry;
 use std::collections::{HashMap, HashSet, VecDeque};
 use time;
+use zebra_chain::IndexedBlock;
+use zebra_primitives::hash::H256;
 
 #[derive(Debug)]
 /// Storage for blocks, for which we have no parent yet.
@@ -126,11 +126,11 @@ impl OrphanBlocksPool {
 
 #[cfg(test)]
 mod tests {
-    extern crate test_data;
+    extern crate zebra_test_data;
 
     use super::OrphanBlocksPool;
-    use primitives::hash::H256;
     use std::collections::HashSet;
+    use zebra_primitives::hash::H256;
 
     #[test]
     fn orphan_block_pool_empty_on_start() {
@@ -141,7 +141,7 @@ mod tests {
     #[test]
     fn orphan_block_pool_insert_orphan_block() {
         let mut pool = OrphanBlocksPool::new();
-        let b1 = test_data::block_h1();
+        let b1 = zebra_test_data::block_h1();
         let b1_hash = b1.hash();
 
         pool.insert_orphaned_block(b1.into());
@@ -154,7 +154,7 @@ mod tests {
     #[test]
     fn orphan_block_pool_insert_unknown_block() {
         let mut pool = OrphanBlocksPool::new();
-        let b1 = test_data::block_h1();
+        let b1 = zebra_test_data::block_h1();
         let b1_hash = b1.hash();
 
         pool.insert_unknown_block(b1.into());
@@ -167,9 +167,9 @@ mod tests {
     #[test]
     fn orphan_block_pool_remove_known_blocks() {
         let mut pool = OrphanBlocksPool::new();
-        let b1 = test_data::block_h1();
+        let b1 = zebra_test_data::block_h1();
         let b1_hash = b1.hash();
-        let b2 = test_data::block_h169();
+        let b2 = zebra_test_data::block_h169();
         let b2_hash = b2.hash();
 
         pool.insert_orphaned_block(b1.into());
@@ -191,18 +191,18 @@ mod tests {
     #[test]
     fn orphan_block_pool_remove_blocks_for_parent() {
         let mut pool = OrphanBlocksPool::new();
-        let b1 = test_data::block_h1();
+        let b1 = zebra_test_data::block_h1();
         let b1_hash = b1.hash();
-        let b2 = test_data::block_h169();
+        let b2 = zebra_test_data::block_h169();
         let b2_hash = b2.hash();
-        let b3 = test_data::block_h2();
+        let b3 = zebra_test_data::block_h2();
         let b3_hash = b3.hash();
 
         pool.insert_orphaned_block(b1.into());
         pool.insert_unknown_block(b2.into());
         pool.insert_orphaned_block(b3.into());
 
-        let removed = pool.remove_blocks_for_parent(&test_data::genesis().hash());
+        let removed = pool.remove_blocks_for_parent(&zebra_test_data::genesis().hash());
         assert_eq!(removed.len(), 2);
         assert_eq!(removed[0].hash(), &b1_hash);
         assert_eq!(removed[1].hash(), &b3_hash);
@@ -217,15 +217,15 @@ mod tests {
     #[test]
     fn orphan_block_pool_remove_blocks() {
         let mut pool = OrphanBlocksPool::new();
-        let b1 = test_data::block_h1();
+        let b1 = zebra_test_data::block_h1();
         let b1_hash = b1.hash();
-        let b2 = test_data::block_h2();
+        let b2 = zebra_test_data::block_h2();
         let b2_hash = b2.hash();
-        let b3 = test_data::block_h169();
+        let b3 = zebra_test_data::block_h169();
         let b3_hash = b3.hash();
-        let b4 = test_data::block_h170();
+        let b4 = zebra_test_data::block_h170();
         let b4_hash = b4.hash();
-        let b5 = test_data::block_h181();
+        let b5 = zebra_test_data::block_h181();
 
         pool.insert_orphaned_block(b1.into());
         pool.insert_orphaned_block(b2.into());

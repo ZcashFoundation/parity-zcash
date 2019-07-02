@@ -1,9 +1,9 @@
-use message::common::{NetAddress, Services};
-use message::types::version::{Version, V0, V106, V70001};
-use network::Magic;
 use std::net::SocketAddr;
 use util::nonce::{NonceGenerator, RandomNonce};
 use util::time::{RealTime, Time};
+use zebra_message::common::{NetAddress, Services};
+use zebra_message::types::version::{Version, V0, V106, V70001};
+use zebra_network::Magic;
 
 #[derive(Debug, Clone)]
 pub struct Config {

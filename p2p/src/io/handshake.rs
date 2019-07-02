@@ -1,10 +1,10 @@
 use futures::{Async, Future, Poll};
 use io::{read_message, write_message, ReadMessage, WriteMessage};
-use message::types::{Verack, Version};
-use message::{Error, Message, MessageResult};
-use network::Magic;
 use std::{cmp, io};
 use tokio_io::{AsyncRead, AsyncWrite};
+use zebra_message::types::{Verack, Version};
+use zebra_message::{Error, Message, MessageResult};
+use zebra_network::Magic;
 
 pub fn handshake<A>(a: A, magic: Magic, version: Version, min_version: u32) -> Handshake<A>
 where
@@ -241,13 +241,13 @@ mod tests {
     use super::{accept_handshake, handshake, HandshakeResult};
     use bytes::Bytes;
     use futures::{Future, Poll};
-    use message::types::version::{Version, V0, V106, V70001};
-    use message::types::Verack;
-    use message::{Error, Message};
-    use network::Network;
     use ser::Stream;
     use std::io;
     use tokio_io::{AsyncRead, AsyncWrite};
+    use zebra_message::types::version::{Version, V0, V106, V70001};
+    use zebra_message::types::Verack;
+    use zebra_message::{Error, Message};
+    use zebra_network::Network;
 
     pub struct TestIo {
         read: io::Cursor<Bytes>,

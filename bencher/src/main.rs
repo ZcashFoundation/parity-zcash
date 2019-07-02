@@ -1,12 +1,12 @@
 extern crate byteorder;
-extern crate chain;
-extern crate db;
-extern crate network;
-extern crate primitives;
-extern crate storage;
-extern crate test_data;
 extern crate time;
-extern crate verification;
+extern crate zebra_chain;
+extern crate zebra_db;
+extern crate zebra_network;
+extern crate zebra_primitives;
+extern crate zebra_storage;
+extern crate zebra_test_data;
+extern crate zebra_verification;
 
 mod database;
 mod verifier;

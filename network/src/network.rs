@@ -1,10 +1,10 @@
 //! Bitcoin network
 //! https://www.anintegratedworld.com/unravelling-the-mysterious-block-chain-magic-number/
 
-use chain::IndexedBlock;
 use compact::Compact;
-use primitives::bigint::U256;
-use primitives::hash::H256;
+use zebra_chain::IndexedBlock;
+use zebra_primitives::bigint::U256;
+use zebra_primitives::hash::H256;
 
 const ZCASH_MAGIC_MAINNET: u32 = 0x6427e924;
 const ZCASH_MAGIC_TESTNET: u32 = 0xbff91afa;

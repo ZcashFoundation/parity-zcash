@@ -1,8 +1,8 @@
-use chain::BlockHeader;
 use hash::H256;
 use kv::{Key, KeyState, KeyValue, KeyValueDatabase, Operation, Transaction, Value};
 use lru_cache::LruCache;
 use parking_lot::Mutex;
+use zebra_chain::BlockHeader;
 
 pub struct CacheDatabase<T>
 where

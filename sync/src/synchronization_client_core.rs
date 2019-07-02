@@ -1,10 +1,5 @@
-use chain::{IndexedBlock, IndexedBlockHeader, IndexedTransaction};
 use futures::Future;
-use message::common::{InventoryType, InventoryVector};
-use message::types;
-use miner::transaction_fee_rate;
 use parking_lot::Mutex;
-use primitives::hash::H256;
 use rand::{thread_rng, Rng};
 use std::cmp::{max, min};
 use std::collections::hash_map::Entry;
@@ -28,6 +23,11 @@ use types::{
     SynchronizationStateRef,
 };
 use utils::{AverageSpeedMeter, HashPosition, OrphanBlocksPool, OrphanTransactionsPool};
+use zebra_chain::{IndexedBlock, IndexedBlockHeader, IndexedTransaction};
+use zebra_message::common::{InventoryType, InventoryVector};
+use zebra_message::types;
+use zebra_miner::transaction_fee_rate;
+use zebra_primitives::hash::H256;
 
 /// Approximate maximal number of blocks hashes in scheduled queue.
 const MAX_SCHEDULED_HASHES: BlockHeight = 4 * 1024;
@@ -1628,19 +1628,12 @@ impl Default for BlocksRequestLimits {
 
 #[cfg(test)]
 pub mod tests {
-    extern crate test_data;
+    extern crate zebra_test_data;
 
     use super::super::SyncListener;
     use super::{ClientCore, Config, CoreVerificationSink, SynchronizationClientCore};
-    use chain::{Block, IndexedBlock, Transaction};
-    use db::BlockChainDatabase;
     use inbound_connection::tests::DummyOutboundSyncConnection;
-    use message::common::InventoryVector;
-    use message::{types, Services};
-    use miner::MemoryPool;
-    use network::{ConsensusParams, Network};
     use parking_lot::{Mutex, RwLock};
-    use primitives::hash::H256;
     use std::sync::Arc;
     use synchronization_chain::{BlockState, Chain};
     use synchronization_client::{Client, SynchronizationClient};
@@ -1650,7 +1643,14 @@ pub mod tests {
     use synchronization_verifier::tests::DummyVerifier;
     use types::{ClientCoreRef, PeerIndex, StorageRef, SynchronizationStateRef};
     use utils::SynchronizationState;
-    use verification::BackwardsCompatibleChainVerifier as ChainVerifier;
+    use zebra_chain::{Block, IndexedBlock, Transaction};
+    use zebra_db::BlockChainDatabase;
+    use zebra_message::common::InventoryVector;
+    use zebra_message::{types, Services};
+    use zebra_miner::MemoryPool;
+    use zebra_network::{ConsensusParams, Network};
+    use zebra_primitives::hash::H256;
+    use zebra_verification::BackwardsCompatibleChainVerifier as ChainVerifier;
 
     #[derive(Default)]
     struct DummySyncListenerData {
@@ -1680,8 +1680,8 @@ pub mod tests {
 
     fn storage_with_block1() -> StorageRef {
         Arc::new(BlockChainDatabase::init_test_chain(vec![
-            test_data::genesis().into(),
-            test_data::block_h1().into(),
+            zebra_test_data::genesis().into(),
+            zebra_test_data::block_h1().into(),
         ]))
     }
 
@@ -1697,7 +1697,7 @@ pub mod tests {
         let storage = match storage {
             Some(storage) => storage,
             None => Arc::new(BlockChainDatabase::init_test_chain(vec![
-                test_data::genesis().into(),
+                zebra_test_data::genesis().into(),
             ])),
         };
         let sync_state =
@@ -1740,12 +1740,12 @@ pub mod tests {
     fn request_block_headers_genesis(peer_index: PeerIndex) -> Task {
         Task::GetHeaders(
             peer_index,
-            types::GetHeaders::with_block_locator_hashes(vec![test_data::genesis().hash()]),
+            types::GetHeaders::with_block_locator_hashes(vec![zebra_test_data::genesis().hash()]),
         )
     }
 
     fn request_block_headers_genesis_and(peer_index: PeerIndex, mut hashes: Vec<H256>) -> Task {
-        hashes.push(test_data::genesis().hash());
+        hashes.push(zebra_test_data::genesis().hash());
         Task::GetHeaders(
             peer_index,
             types::GetHeaders::with_block_locator_hashes(hashes),
@@ -1784,8 +1784,8 @@ pub mod tests {
     fn synchronization_in_order_block_path_nearly_saturated() {
         let (executor, core, sync) = create_sync(None, None);
 
-        let block1: Block = test_data::block_h1();
-        let block2: Block = test_data::block_h2();
+        let block1: Block = zebra_test_data::block_h1();
+        let block2: Block = zebra_test_data::block_h2();
 
         sync.on_headers(5, vec![block1.block_header.clone().into()]);
         let tasks = executor.take_tasks();
@@ -1833,11 +1833,11 @@ pub mod tests {
         sync.on_headers(
             5,
             vec![
-                test_data::block_h1().block_header.into(),
-                test_data::block_h2().block_header.into(),
+                zebra_test_data::block_h1().block_header.into(),
+                zebra_test_data::block_h2().block_header.into(),
             ],
         );
-        sync.on_block(5, test_data::block_h169().into());
+        sync.on_block(5, zebra_test_data::block_h169().into());
 
         // out-of-order block was presented by the peer
         assert!(core.lock().information().state.is_synchronizing());
@@ -1855,8 +1855,8 @@ pub mod tests {
     fn synchronization_parallel_peers() {
         let (executor, core, sync) = create_sync(None, None);
 
-        let block1: Block = test_data::block_h1();
-        let block2: Block = test_data::block_h2();
+        let block1: Block = zebra_test_data::block_h1();
+        let block2: Block = zebra_test_data::block_h2();
 
         {
             // not synchronizing after start
@@ -1921,7 +1921,7 @@ pub mod tests {
 
         // request new blocks
         {
-            sync.on_headers(1, vec![test_data::block_h1().block_header.into()]);
+            sync.on_headers(1, vec![zebra_test_data::block_h1().block_header.into()]);
             assert!(core.lock().information().state.is_nearly_saturated());
         }
 
@@ -1936,7 +1936,7 @@ pub mod tests {
     fn synchronization_not_starting_when_receiving_known_blocks() {
         let (executor, core, sync) = create_sync(None, None);
         // saturated => receive inventory with known blocks only
-        sync.on_headers(1, vec![test_data::genesis().block_header.into()]);
+        sync.on_headers(1, vec![zebra_test_data::genesis().block_header.into()]);
         // => no need to start synchronization
         assert!(!core.lock().information().state.is_nearly_saturated());
         // => no synchronization tasks are scheduled
@@ -1947,7 +1947,7 @@ pub mod tests {
     #[test]
     fn synchronization_asks_for_inventory_after_saturating() {
         let (executor, _, sync) = create_sync(None, None);
-        let block = test_data::block_h1();
+        let block = zebra_test_data::block_h1();
         sync.on_headers(1, vec![block.block_header.clone().into()]);
         sync.on_headers(2, vec![block.block_header.clone().into()]);
         executor.take_tasks();
@@ -1972,8 +1972,8 @@ pub mod tests {
     fn synchronization_remembers_correct_block_headers_in_order() {
         let (executor, core, sync) = create_sync(None, None);
 
-        let b1 = test_data::block_h1();
-        let b2 = test_data::block_h2();
+        let b1 = zebra_test_data::block_h1();
+        let b2 = zebra_test_data::block_h2();
         sync.on_headers(
             1,
             vec![
@@ -2033,8 +2033,8 @@ pub mod tests {
     fn synchronization_remembers_correct_block_headers_out_of_order() {
         let (executor, core, sync) = create_sync(None, None);
 
-        let b1 = test_data::block_h1();
-        let b2 = test_data::block_h2();
+        let b1 = zebra_test_data::block_h1();
+        let b2 = zebra_test_data::block_h2();
         sync.on_headers(
             1,
             vec![
@@ -2094,7 +2094,7 @@ pub mod tests {
     fn synchronization_ignores_unknown_block_headers() {
         let (executor, core, sync) = create_sync(None, None);
 
-        let b169 = test_data::block_h169();
+        let b169 = zebra_test_data::block_h169();
         sync.on_headers(1, vec![b169.block_header.into()]);
 
         let tasks = executor.take_tasks();
@@ -2108,15 +2108,15 @@ pub mod tests {
 
     #[test]
     fn synchronization_works_for_forks_from_db_best_block() {
-        let genesis = test_data::genesis();
+        let genesis = zebra_test_data::genesis();
         let storage = Arc::new(BlockChainDatabase::init_test_chain(vec![
-            test_data::genesis().into(),
+            zebra_test_data::genesis().into(),
         ]));
 
         let (executor, core, sync) = create_sync(Some(storage), None);
         let genesis_header = &genesis.block_header;
-        let fork1 = test_data::build_n_empty_blocks_from(2, 100, &genesis_header);
-        let fork2 = test_data::build_n_empty_blocks_from(3, 200, &genesis_header);
+        let fork1 = zebra_test_data::build_n_empty_blocks_from(2, 100, &genesis_header);
+        let fork2 = zebra_test_data::build_n_empty_blocks_from(3, 200, &genesis_header);
 
         sync.on_headers(
             1,
@@ -2197,19 +2197,19 @@ pub mod tests {
 
     #[test]
     fn synchronization_works_for_forks_long_after_short() {
-        let genesis = test_data::genesis();
+        let genesis = zebra_test_data::genesis();
         let storage = Arc::new(BlockChainDatabase::init_test_chain(vec![
-            test_data::genesis().into(),
+            zebra_test_data::genesis().into(),
         ]));
 
         let (executor, core, sync) = create_sync(Some(storage), None);
-        let common_block = test_data::block_builder()
+        let common_block = zebra_test_data::block_builder()
             .header()
             .parent(genesis.hash())
             .build()
             .build();
-        let fork1 = test_data::build_n_empty_blocks_from(2, 100, &common_block.block_header);
-        let fork2 = test_data::build_n_empty_blocks_from(3, 200, &common_block.block_header);
+        let fork1 = zebra_test_data::build_n_empty_blocks_from(2, 100, &common_block.block_header);
+        let fork2 = zebra_test_data::build_n_empty_blocks_from(3, 200, &common_block.block_header);
 
         sync.on_headers(
             1,
@@ -2284,7 +2284,7 @@ pub mod tests {
     fn accept_out_of_order_blocks_when_saturated() {
         let (_, core, sync) = create_sync(None, None);
 
-        sync.on_block(1, test_data::block_h2().into());
+        sync.on_block(1, zebra_test_data::block_h2().into());
         assert_eq!(core.lock().information().orphaned_blocks, 1);
 
         {
@@ -2293,7 +2293,7 @@ pub mod tests {
             assert_eq!(chain.best_storage_block().number, 0);
         }
 
-        sync.on_block(1, test_data::block_h1().into());
+        sync.on_block(1, zebra_test_data::block_h1().into());
         assert_eq!(core.lock().information().orphaned_blocks, 0);
 
         {
@@ -2307,12 +2307,12 @@ pub mod tests {
     fn do_not_rerequest_unknown_block_in_inventory() {
         let (executor, _, sync) = create_sync(None, None);
 
-        sync.on_block(1, test_data::block_h2().into());
+        sync.on_block(1, zebra_test_data::block_h2().into());
         sync.on_inventory(
             1,
             types::Inv::with_inventory(vec![
-                InventoryVector::block(test_data::block_h1().hash()),
-                InventoryVector::block(test_data::block_h2().hash()),
+                InventoryVector::block(zebra_test_data::block_h1().hash()),
+                InventoryVector::block(zebra_test_data::block_h2().hash()),
             ]),
         );
 
@@ -2322,7 +2322,7 @@ pub mod tests {
             vec![Task::GetData(
                 1,
                 types::GetData::with_inventory(vec![InventoryVector::block(
-                    test_data::block_h1().hash()
+                    zebra_test_data::block_h1().hash()
                 )])
             )]
         );
@@ -2332,8 +2332,8 @@ pub mod tests {
     fn blocks_rerequested_on_peer_disconnect() {
         let (executor, _, sync) = create_sync(None, None);
 
-        let block1: Block = test_data::block_h1();
-        let block2: Block = test_data::block_h2();
+        let block1: Block = zebra_test_data::block_h1();
+        let block2: Block = zebra_test_data::block_h2();
 
         {
             // receive inventory from new peer#1
@@ -2383,9 +2383,9 @@ pub mod tests {
 
     #[test]
     fn sync_after_db_insert_nonfatal_fail() {
-        let block = test_data::block_h2();
-        let storage = BlockChainDatabase::init_test_chain(vec![test_data::genesis().into()]);
-        assert!(storage.insert(test_data::block_h2().into()).is_err());
+        let block = zebra_test_data::block_h2();
+        let storage = BlockChainDatabase::init_test_chain(vec![zebra_test_data::genesis().into()]);
+        assert!(storage.insert(zebra_test_data::block_h2().into()).is_err());
         let best_genesis = storage.best_block();
 
         let (_, core, sync) = create_sync(Some(Arc::new(storage)), None);
@@ -2401,8 +2401,8 @@ pub mod tests {
     fn peer_removed_from_sync_after_responding_with_requested_block_notfound() {
         let (executor, core, sync) = create_sync(None, None);
 
-        let b1 = test_data::block_h1();
-        let b2 = test_data::block_h2();
+        let b1 = zebra_test_data::block_h1();
+        let b2 = zebra_test_data::block_h2();
         sync.on_headers(
             1,
             vec![
@@ -2444,8 +2444,8 @@ pub mod tests {
     fn peer_not_removed_from_sync_after_responding_with_non_requested_block_notfound() {
         let (executor, core, sync) = create_sync(None, None);
 
-        let b1 = test_data::block_h1();
-        let b2 = test_data::block_h2();
+        let b1 = zebra_test_data::block_h1();
+        let b2 = zebra_test_data::block_h2();
         sync.on_headers(
             1,
             vec![
@@ -2470,7 +2470,7 @@ pub mod tests {
         sync.on_notfound(
             1,
             types::NotFound::with_inventory(vec![InventoryVector::block(
-                test_data::block_h170().hash(),
+                zebra_test_data::block_h170().hash(),
             )]),
         );
 
@@ -2502,7 +2502,7 @@ pub mod tests {
             );
         }
 
-        let b1 = test_data::block_h1();
+        let b1 = zebra_test_data::block_h1();
         sync.on_headers(1, vec![b1.block_header.clone().into()]);
 
         assert!(core.lock().information().state.is_nearly_saturated());
@@ -2565,7 +2565,7 @@ pub mod tests {
         sync.on_inventory(
             0,
             types::Inv::with_inventory(vec![
-                InventoryVector::tx(test_data::genesis().transactions[0].hash()),
+                InventoryVector::tx(zebra_test_data::genesis().transactions[0].hash()),
                 InventoryVector::tx(H256::from(0)),
             ]),
         );
@@ -2582,8 +2582,8 @@ pub mod tests {
     fn transaction_is_not_accepted_when_synchronizing() {
         let (_, core, sync) = create_sync(None, None);
 
-        let b1 = test_data::block_h1();
-        let b2 = test_data::block_h2();
+        let b1 = zebra_test_data::block_h1();
+        let b2 = zebra_test_data::block_h2();
         sync.on_headers(1, vec![b1.block_header.into(), b2.block_header.into()]);
 
         assert!(core.lock().information().state.is_synchronizing());
@@ -2603,9 +2603,9 @@ pub mod tests {
     #[test]
     fn transaction_is_accepted_when_not_synchronizing() {
         let (_, core, sync) = create_sync(Some(storage_with_block1()), None);
-        let input_tx = test_data::block_h1().transactions[0].clone();
+        let input_tx = zebra_test_data::block_h1().transactions[0].clone();
 
-        let tx1: Transaction = test_data::TransactionBuilder::with_input(&input_tx, 0)
+        let tx1: Transaction = zebra_test_data::TransactionBuilder::with_input(&input_tx, 0)
             .set_output(100)
             .into();
         sync.on_transaction(1, tx1.clone().into());
@@ -2618,12 +2618,15 @@ pub mod tests {
             1
         );
 
-        let b2 = test_data::block_h2();
+        let b2 = zebra_test_data::block_h2();
         sync.on_headers(1, vec![b2.block_header.into()]);
 
         assert!(core.lock().information().state.is_nearly_saturated());
 
-        sync.on_transaction(1, test_data::TransactionBuilder::with_input(&tx1, 0).into());
+        sync.on_transaction(
+            1,
+            zebra_test_data::TransactionBuilder::with_input(&tx1, 0).into(),
+        );
         assert_eq!(
             core.lock()
                 .information()
@@ -2640,7 +2643,7 @@ pub mod tests {
 
         sync.on_transaction(
             1,
-            test_data::TransactionBuilder::with_default_input(0).into(),
+            zebra_test_data::TransactionBuilder::with_default_input(0).into(),
         );
         assert_eq!(
             core.lock()
@@ -2655,9 +2658,9 @@ pub mod tests {
 
     #[test]
     fn orphaned_transaction_is_verified_when_input_is_received() {
-        let input_tx = test_data::block_h1().transactions[0].clone();
-        let chain = &mut test_data::ChainBuilder::new();
-        test_data::TransactionBuilder::with_input(&input_tx, 0)
+        let input_tx = zebra_test_data::block_h1().transactions[0].clone();
+        let chain = &mut zebra_test_data::ChainBuilder::new();
+        zebra_test_data::TransactionBuilder::with_input(&input_tx, 0)
             .set_output(100)
             .store(chain) // t0
             .set_input(&chain.at(0), 0)
@@ -2707,37 +2710,37 @@ pub mod tests {
         // => do not trust first intersection point - check each hash when scheduling hashes.
         // If at least one hash is known => previous verification failed => drop all headers.
 
-        let genesis = test_data::genesis();
-        let b10 = test_data::block_builder()
+        let genesis = zebra_test_data::genesis();
+        let b10 = zebra_test_data::block_builder()
             .header()
             .parent(genesis.hash())
             .build()
             .build();
 
-        let b11 = test_data::block_builder()
+        let b11 = zebra_test_data::block_builder()
             .header()
             .nonce(1.into())
             .parent(b10.hash())
             .build()
             .build();
-        let b12 = test_data::block_builder()
+        let b12 = zebra_test_data::block_builder()
             .header()
             .parent(b11.hash())
             .build()
             .build();
 
-        let b21 = test_data::block_builder()
+        let b21 = zebra_test_data::block_builder()
             .header()
             .nonce(2.into())
             .parent(b10.hash())
             .build()
             .build();
-        let b22 = test_data::block_builder()
+        let b22 = zebra_test_data::block_builder()
             .header()
             .parent(b21.hash())
             .build()
             .build();
-        let b23 = test_data::block_builder()
+        let b23 = zebra_test_data::block_builder()
             .header()
             .parent(b22.hash())
             .build()
@@ -2787,23 +2790,23 @@ pub mod tests {
     #[test]
     fn relay_new_block_when_in_saturated_state() {
         let (executor, _, sync) = create_sync(None, None);
-        let genesis = test_data::genesis();
-        let b0 = test_data::block_builder()
+        let genesis = zebra_test_data::genesis();
+        let b0 = zebra_test_data::block_builder()
             .header()
             .parent(genesis.hash())
             .build()
             .build();
-        let b1 = test_data::block_builder()
+        let b1 = zebra_test_data::block_builder()
             .header()
             .parent(b0.hash())
             .build()
             .build();
-        let b2 = test_data::block_builder()
+        let b2 = zebra_test_data::block_builder()
             .header()
             .parent(b1.hash())
             .build()
             .build();
-        let b3 = test_data::block_builder()
+        let b3 = zebra_test_data::block_builder()
             .header()
             .parent(b2.hash())
             .build()
@@ -2863,7 +2866,7 @@ pub mod tests {
     fn relay_new_transaction_when_in_saturated_state() {
         let (executor, _, sync) = create_sync(None, None);
 
-        let tx: Transaction = test_data::TransactionBuilder::with_output(20).into();
+        let tx: Transaction = zebra_test_data::TransactionBuilder::with_output(20).into();
 
         sync.on_connect(1);
         executor.take_tasks();
@@ -2878,15 +2881,15 @@ pub mod tests {
     fn receive_same_unknown_block_twice() {
         let (_, _, sync) = create_sync(None, None);
 
-        sync.on_block(1, test_data::block_h2().into());
+        sync.on_block(1, zebra_test_data::block_h2().into());
         // should not panic here
-        sync.on_block(2, test_data::block_h2().into());
+        sync.on_block(2, zebra_test_data::block_h2().into());
     }
 
     #[test]
     fn collection_closed_on_block_verification_error() {
-        let genesis = test_data::genesis();
-        let b0 = test_data::block_builder()
+        let genesis = zebra_test_data::genesis();
+        let b0 = zebra_test_data::block_builder()
             .header()
             .parent(genesis.hash())
             .build()
@@ -2910,18 +2913,18 @@ pub mod tests {
 
     #[test]
     fn collection_closed_on_begin_dead_end_block_header() {
-        let genesis = test_data::genesis();
-        let b0 = test_data::block_builder()
+        let genesis = zebra_test_data::genesis();
+        let b0 = zebra_test_data::block_builder()
             .header()
             .parent(genesis.hash())
             .build()
             .build();
-        let b1 = test_data::block_builder()
+        let b1 = zebra_test_data::block_builder()
             .header()
             .parent(b0.hash())
             .build()
             .build();
-        let b2 = test_data::block_builder()
+        let b2 = zebra_test_data::block_builder()
             .header()
             .parent(b1.hash())
             .build()
@@ -2953,18 +2956,18 @@ pub mod tests {
 
     #[test]
     fn collection_closed_on_in_middle_dead_end_block_header() {
-        let genesis = test_data::genesis();
-        let b0 = test_data::block_builder()
+        let genesis = zebra_test_data::genesis();
+        let b0 = zebra_test_data::block_builder()
             .header()
             .parent(genesis.hash())
             .build()
             .build();
-        let b1 = test_data::block_builder()
+        let b1 = zebra_test_data::block_builder()
             .header()
             .parent(b0.hash())
             .build()
             .build();
-        let b2 = test_data::block_builder()
+        let b2 = zebra_test_data::block_builder()
             .header()
             .parent(b1.hash())
             .build()
@@ -2997,8 +3000,8 @@ pub mod tests {
 
     #[test]
     fn collection_closed_on_providing_dead_end_block() {
-        let genesis = test_data::genesis();
-        let b0 = test_data::block_builder()
+        let genesis = zebra_test_data::genesis();
+        let b0 = zebra_test_data::block_builder()
             .header()
             .parent(genesis.hash())
             .build()
@@ -3023,13 +3026,13 @@ pub mod tests {
 
     #[test]
     fn collection_closed_on_providing_child_dead_end_block() {
-        let genesis = test_data::genesis();
-        let b0 = test_data::block_builder()
+        let genesis = zebra_test_data::genesis();
+        let b0 = zebra_test_data::block_builder()
             .header()
             .parent(genesis.hash())
             .build()
             .build();
-        let b1 = test_data::block_builder()
+        let b1 = zebra_test_data::block_builder()
             .header()
             .parent(b0.hash())
             .build()
@@ -3054,18 +3057,18 @@ pub mod tests {
 
     #[test]
     fn when_peer_does_not_respond_to_block_requests() {
-        let genesis = test_data::genesis();
-        let b0 = test_data::block_builder()
+        let genesis = zebra_test_data::genesis();
+        let b0 = zebra_test_data::block_builder()
             .header()
             .parent(genesis.hash())
             .build()
             .build(); // block we will stuck with
-        let b1 = test_data::block_builder()
+        let b1 = zebra_test_data::block_builder()
             .header()
             .parent(genesis.hash())
             .build()
             .build(); // another branch
-        let b2 = test_data::block_builder()
+        let b2 = zebra_test_data::block_builder()
             .header()
             .parent(b1.hash())
             .build()
@@ -3112,7 +3115,7 @@ pub mod tests {
 
         sync.on_transaction(
             1,
-            test_data::TransactionBuilder::with_default_input(0).into(),
+            zebra_test_data::TransactionBuilder::with_default_input(0).into(),
         );
         assert_eq!(
             core.lock()
@@ -3127,7 +3130,7 @@ pub mod tests {
         // should not panic
         sync.on_transaction(
             1,
-            test_data::TransactionBuilder::with_default_input(0).into(),
+            zebra_test_data::TransactionBuilder::with_default_input(0).into(),
         );
     }
 
@@ -3140,7 +3143,7 @@ pub mod tests {
     fn when_transaction_double_spends_during_reorg() {
         let consensus = ConsensusParams::new(Network::Unitest);
 
-        let b0 = test_data::block_builder()
+        let b0 = zebra_test_data::block_builder()
             .header()
             .build()
             .transaction()
@@ -3172,7 +3175,7 @@ pub mod tests {
             .build();
 
         // in-storage spends b0[1] && b0[2]
-        let b1 = test_data::block_builder()
+        let b1 = zebra_test_data::block_builder()
             .transaction()
             .coinbase()
             .founder_reward(&consensus, 1)
@@ -3206,7 +3209,7 @@ pub mod tests {
             .build();
         // in-memory spends b0[3]
         // in-memory spends b0[4]
-        let future_block = test_data::block_builder()
+        let future_block = zebra_test_data::block_builder()
             .header()
             .parent(b1.hash())
             .build()
@@ -3235,7 +3238,7 @@ pub mod tests {
         let tx3: Transaction = future_block.transactions[1].clone();
 
         // in-storage [side] spends b0[3]
-        let b2 = test_data::block_builder()
+        let b2 = zebra_test_data::block_builder()
             .header()
             .parent(b0.hash())
             .build()
@@ -3258,7 +3261,7 @@ pub mod tests {
             .build()
             .build();
         // in-storage [causes reorg to b2 + b3] spends b0[1]
-        let b3 = test_data::block_builder()
+        let b3 = zebra_test_data::block_builder()
             .transaction()
             .coinbase()
             .founder_reward(&consensus, 2)
@@ -3349,7 +3352,7 @@ pub mod tests {
         assert_eq!(data.lock().best_blocks.len(), 0);
 
         // supply with new block header => is_synchronizing is still false
-        sync.on_headers(0, vec![test_data::block_h1().block_header.into()]);
+        sync.on_headers(0, vec![zebra_test_data::block_h1().block_header.into()]);
         assert_eq!(data.lock().is_synchronizing, false);
         assert_eq!(data.lock().best_blocks.len(), 0);
 
@@ -3357,25 +3360,25 @@ pub mod tests {
         sync.on_headers(
             0,
             vec![
-                test_data::block_h2().block_header.into(),
-                test_data::block_h3().block_header.into(),
+                zebra_test_data::block_h2().block_header.into(),
+                zebra_test_data::block_h3().block_header.into(),
             ],
         );
         assert_eq!(data.lock().is_synchronizing, true);
         assert_eq!(data.lock().best_blocks.len(), 0);
 
         // supply with block 3 => no new best block is informed
-        sync.on_block(0, test_data::block_h3().into());
+        sync.on_block(0, zebra_test_data::block_h3().into());
         assert_eq!(data.lock().is_synchronizing, true);
         assert_eq!(data.lock().best_blocks.len(), 0);
 
         // supply with block 1 => new best block is informed
-        sync.on_block(0, test_data::block_h1().into());
+        sync.on_block(0, zebra_test_data::block_h1().into());
         assert_eq!(data.lock().is_synchronizing, true);
         assert_eq!(data.lock().best_blocks.len(), 1);
 
         // supply with block 2 => 2 new best block is informed
-        sync.on_block(0, test_data::block_h2().into());
+        sync.on_block(0, zebra_test_data::block_h2().into());
         assert_eq!(data.lock().is_synchronizing, false);
         assert_eq!(data.lock().best_blocks.len(), 3);
     }
@@ -3385,8 +3388,8 @@ pub mod tests {
         let (_, sync, _) = create_sync(None, None);
         let mut sync = sync.lock();
 
-        let block1: IndexedBlock = test_data::block_h1().into();
-        let block2: IndexedBlock = test_data::block_h2().into();
+        let block1: IndexedBlock = zebra_test_data::block_h1().into();
+        let block2: IndexedBlock = zebra_test_data::block_h2().into();
         let header1 = block1.header.clone();
         let header2 = block2.header.clone();
         let hash1 = *block1.hash();

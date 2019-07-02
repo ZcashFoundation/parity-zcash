@@ -1,5 +1,5 @@
 use linked_hash_map::LinkedHashMap;
-use primitives::hash::H256;
+use zebra_primitives::hash::H256;
 
 /// Maximal number of hashes to store in known-hashes filter
 pub const MAX_KNOWN_HASHES_LEN: usize = 2048;
@@ -66,7 +66,7 @@ impl KnownHashFilter {
 #[cfg(test)]
 mod tests {
     use super::{KnownHashFilter, KnownHashType, MAX_KNOWN_HASHES_LEN};
-    use primitives::hash::H256;
+    use zebra_primitives::hash::H256;
 
     #[test]
     fn known_hash_filter_empty() {

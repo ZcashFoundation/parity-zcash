@@ -1,14 +1,14 @@
-use chain::{
-    IndexedTransaction, BTC_TX_VERSION, OVERWINTER_TX_VERSION, OVERWINTER_TX_VERSION_GROUP_ID,
-    SAPLING_TX_VERSION_GROUP_ID,
-};
 use constants::{MAX_COINBASE_SIZE, MIN_COINBASE_SIZE};
 use error::TransactionError;
-use network::ConsensusParams;
 use ser::Serializable;
 use sigops::transaction_sigops;
 use std::{collections::HashMap, ops};
-use storage::NoopStore;
+use zebra_chain::{
+    IndexedTransaction, BTC_TX_VERSION, OVERWINTER_TX_VERSION, OVERWINTER_TX_VERSION_GROUP_ID,
+    SAPLING_TX_VERSION_GROUP_ID,
+};
+use zebra_network::ConsensusParams;
+use zebra_storage::NoopStore;
 
 pub struct TransactionVerifier<'a> {
     pub version: TransactionVersion<'a>,
@@ -628,7 +628,7 @@ impl<'a> TransactionDuplicateSaplingNullifiers<'a> {
 
 #[cfg(test)]
 mod tests {
-    extern crate test_data;
+    extern crate zebra_test_data;
 
     use super::{
         TransactionDuplicateInputs, TransactionDuplicateJoinSplitNullifiers,
@@ -636,12 +636,12 @@ mod tests {
         TransactionInputValueOverflow, TransactionJoinSplit, TransactionNonTransparentCoinbase,
         TransactionOutputValueOverflow, TransactionSapling, TransactionVersion,
     };
-    use chain::{
+    use error::TransactionError;
+    use zebra_chain::{
         JoinSplit, JoinSplitDescription, Sapling, BTC_TX_VERSION, OVERWINTER_TX_VERSION,
         OVERWINTER_TX_VERSION_GROUP_ID, SAPLING_TX_VERSION_GROUP_ID,
     };
-    use error::TransactionError;
-    use network::{ConsensusParams, Network};
+    use zebra_network::{ConsensusParams, Network};
 
     #[test]
     fn transaction_empty_works() {
@@ -649,7 +649,7 @@ mod tests {
 
         assert_eq!(
             TransactionEmpty::new(
-                &test_data::TransactionBuilder::with_version(2)
+                &zebra_test_data::TransactionBuilder::with_version(2)
                     .add_output(0)
                     .into()
             )
@@ -659,7 +659,7 @@ mod tests {
 
         assert_eq!(
             TransactionEmpty::new(
-                &test_data::TransactionBuilder::with_version(2)
+                &zebra_test_data::TransactionBuilder::with_version(2)
                     .add_output(0)
                     .add_default_join_split()
                     .into()
@@ -670,7 +670,7 @@ mod tests {
 
         assert_eq!(
             TransactionEmpty::new(
-                &test_data::TransactionBuilder::with_version(2)
+                &zebra_test_data::TransactionBuilder::with_version(2)
                     .add_output(0)
                     .set_sapling(Sapling {
                         spends: vec![Default::default()],
@@ -686,7 +686,7 @@ mod tests {
 
         assert_eq!(
             TransactionEmpty::new(
-                &test_data::TransactionBuilder::with_version(2)
+                &zebra_test_data::TransactionBuilder::with_version(2)
                     .add_default_input(0)
                     .into()
             )
@@ -696,7 +696,7 @@ mod tests {
 
         assert_eq!(
             TransactionEmpty::new(
-                &test_data::TransactionBuilder::with_version(2)
+                &zebra_test_data::TransactionBuilder::with_version(2)
                     .add_default_input(0)
                     .add_default_join_split()
                     .into()
@@ -707,7 +707,7 @@ mod tests {
 
         assert_eq!(
             TransactionEmpty::new(
-                &test_data::TransactionBuilder::with_version(2)
+                &zebra_test_data::TransactionBuilder::with_version(2)
                     .add_default_input(0)
                     .set_sapling(Sapling {
                         outputs: vec![Default::default()],
@@ -723,13 +723,14 @@ mod tests {
     #[test]
     fn transaction_version_works() {
         assert_eq!(
-            TransactionVersion::new(&test_data::TransactionBuilder::with_version(0).into()).check(),
+            TransactionVersion::new(&zebra_test_data::TransactionBuilder::with_version(0).into())
+                .check(),
             Err(TransactionError::InvalidVersion)
         );
 
         assert_eq!(
             TransactionVersion::new(
-                &test_data::TransactionBuilder::with_version(BTC_TX_VERSION).into()
+                &zebra_test_data::TransactionBuilder::with_version(BTC_TX_VERSION).into()
             )
             .check(),
             Ok(())
@@ -737,7 +738,7 @@ mod tests {
 
         assert_eq!(
             TransactionVersion::new(
-                &test_data::TransactionBuilder::overwintered()
+                &zebra_test_data::TransactionBuilder::overwintered()
                     .set_version(BTC_TX_VERSION)
                     .into()
             )
@@ -747,7 +748,7 @@ mod tests {
 
         assert_eq!(
             TransactionVersion::new(
-                &test_data::TransactionBuilder::overwintered()
+                &zebra_test_data::TransactionBuilder::overwintered()
                     .set_version(OVERWINTER_TX_VERSION)
                     .into()
             )
@@ -757,7 +758,7 @@ mod tests {
 
         assert_eq!(
             TransactionVersion::new(
-                &test_data::TransactionBuilder::overwintered()
+                &zebra_test_data::TransactionBuilder::overwintered()
                     .set_version(OVERWINTER_TX_VERSION)
                     .set_version_group_id(OVERWINTER_TX_VERSION_GROUP_ID)
                     .into()
@@ -768,7 +769,7 @@ mod tests {
 
         assert_eq!(
             TransactionVersion::new(
-                &test_data::TransactionBuilder::overwintered()
+                &zebra_test_data::TransactionBuilder::overwintered()
                     .set_version(OVERWINTER_TX_VERSION)
                     .set_version_group_id(SAPLING_TX_VERSION_GROUP_ID)
                     .into()
@@ -782,7 +783,7 @@ mod tests {
     fn transaction_non_transparent_coinbase_works() {
         assert_eq!(
             TransactionNonTransparentCoinbase::new(
-                &test_data::TransactionBuilder::coinbase()
+                &zebra_test_data::TransactionBuilder::coinbase()
                     .add_default_join_split()
                     .into()
             )
@@ -792,7 +793,7 @@ mod tests {
 
         assert_eq!(
             TransactionNonTransparentCoinbase::new(
-                &test_data::TransactionBuilder::coinbase()
+                &zebra_test_data::TransactionBuilder::coinbase()
                     .set_sapling(Sapling {
                         spends: vec![Default::default()],
                         ..Default::default()
@@ -805,7 +806,7 @@ mod tests {
 
         assert_eq!(
             TransactionNonTransparentCoinbase::new(
-                &test_data::TransactionBuilder::coinbase()
+                &zebra_test_data::TransactionBuilder::coinbase()
                     .set_sapling(Sapling {
                         outputs: vec![Default::default()],
                         ..Default::default()
@@ -818,7 +819,7 @@ mod tests {
 
         assert_eq!(
             TransactionNonTransparentCoinbase::new(
-                &test_data::TransactionBuilder::coinbase()
+                &zebra_test_data::TransactionBuilder::coinbase()
                     .set_sapling(Default::default())
                     .into()
             )
@@ -828,7 +829,7 @@ mod tests {
 
         assert_eq!(
             TransactionNonTransparentCoinbase::new(
-                &test_data::TransactionBuilder::coinbase().into()
+                &zebra_test_data::TransactionBuilder::coinbase().into()
             )
             .check(),
             Ok(())
@@ -836,7 +837,7 @@ mod tests {
 
         assert_eq!(
             TransactionNonTransparentCoinbase::new(
-                &test_data::TransactionBuilder::default()
+                &zebra_test_data::TransactionBuilder::default()
                     .add_default_join_split()
                     .into()
             )
@@ -846,7 +847,7 @@ mod tests {
 
         assert_eq!(
             TransactionNonTransparentCoinbase::new(
-                &test_data::TransactionBuilder::default().into()
+                &zebra_test_data::TransactionBuilder::default().into()
             )
             .check(),
             Ok(())
@@ -860,7 +861,7 @@ mod tests {
 
         assert_eq!(
             TransactionOutputValueOverflow::new(
-                &test_data::TransactionBuilder::with_output(max_value as u64 + 1).into(),
+                &zebra_test_data::TransactionBuilder::with_output(max_value as u64 + 1).into(),
                 &consensus
             )
             .check(),
@@ -869,7 +870,7 @@ mod tests {
 
         assert_eq!(
             TransactionOutputValueOverflow::new(
-                &test_data::TransactionBuilder::with_output(max_value as u64 / 2)
+                &zebra_test_data::TransactionBuilder::with_output(max_value as u64 / 2)
                     .add_output(max_value as u64 / 2 + 1)
                     .into(),
                 &consensus
@@ -880,7 +881,7 @@ mod tests {
 
         assert_eq!(
             TransactionOutputValueOverflow::new(
-                &test_data::TransactionBuilder::with_output(max_value as u64).into(),
+                &zebra_test_data::TransactionBuilder::with_output(max_value as u64).into(),
                 &consensus
             )
             .check(),
@@ -889,7 +890,7 @@ mod tests {
 
         assert_eq!(
             TransactionOutputValueOverflow::new(
-                &test_data::TransactionBuilder::with_sapling(Sapling {
+                &zebra_test_data::TransactionBuilder::with_sapling(Sapling {
                     balancing_value: max_value,
                     ..Default::default()
                 })
@@ -902,7 +903,7 @@ mod tests {
 
         assert_eq!(
             TransactionOutputValueOverflow::new(
-                &test_data::TransactionBuilder::with_sapling(Sapling {
+                &zebra_test_data::TransactionBuilder::with_sapling(Sapling {
                     balancing_value: max_value + 1,
                     ..Default::default()
                 })
@@ -915,7 +916,7 @@ mod tests {
 
         assert_eq!(
             TransactionOutputValueOverflow::new(
-                &test_data::TransactionBuilder::with_output(max_value as u64 / 2 + 1)
+                &zebra_test_data::TransactionBuilder::with_output(max_value as u64 / 2 + 1)
                     .set_sapling(Sapling {
                         balancing_value: -max_value / 2,
                         ..Default::default()
@@ -929,7 +930,7 @@ mod tests {
 
         assert_eq!(
             TransactionOutputValueOverflow::new(
-                &test_data::TransactionBuilder::with_join_split(JoinSplit {
+                &zebra_test_data::TransactionBuilder::with_join_split(JoinSplit {
                     descriptions: vec![JoinSplitDescription {
                         value_pub_old: max_value as u64,
                         value_pub_new: 0,
@@ -946,7 +947,7 @@ mod tests {
 
         assert_eq!(
             TransactionOutputValueOverflow::new(
-                &test_data::TransactionBuilder::with_join_split(JoinSplit {
+                &zebra_test_data::TransactionBuilder::with_join_split(JoinSplit {
                     descriptions: vec![JoinSplitDescription {
                         value_pub_old: max_value as u64 + 1,
                         value_pub_new: 0,
@@ -963,7 +964,7 @@ mod tests {
 
         assert_eq!(
             TransactionOutputValueOverflow::new(
-                &test_data::TransactionBuilder::with_join_split(JoinSplit {
+                &zebra_test_data::TransactionBuilder::with_join_split(JoinSplit {
                     descriptions: vec![JoinSplitDescription {
                         value_pub_old: 0,
                         value_pub_new: max_value as u64,
@@ -980,7 +981,7 @@ mod tests {
 
         assert_eq!(
             TransactionOutputValueOverflow::new(
-                &test_data::TransactionBuilder::with_join_split(JoinSplit {
+                &zebra_test_data::TransactionBuilder::with_join_split(JoinSplit {
                     descriptions: vec![JoinSplitDescription {
                         value_pub_old: 0,
                         value_pub_new: max_value as u64 + 1,
@@ -997,7 +998,7 @@ mod tests {
 
         assert_eq!(
             TransactionOutputValueOverflow::new(
-                &test_data::TransactionBuilder::with_output(max_value as u64 / 2 + 1)
+                &zebra_test_data::TransactionBuilder::with_output(max_value as u64 / 2 + 1)
                     .set_join_split(JoinSplit {
                         descriptions: vec![JoinSplitDescription {
                             value_pub_old: max_value as u64 / 2,
@@ -1021,7 +1022,7 @@ mod tests {
 
         assert_eq!(
             TransactionInputValueOverflow::new(
-                &test_data::TransactionBuilder::with_join_split(JoinSplit {
+                &zebra_test_data::TransactionBuilder::with_join_split(JoinSplit {
                     descriptions: vec![JoinSplitDescription {
                         value_pub_new: max_value as u64,
                         ..Default::default()
@@ -1037,7 +1038,7 @@ mod tests {
 
         assert_eq!(
             TransactionInputValueOverflow::new(
-                &test_data::TransactionBuilder::with_join_split(JoinSplit {
+                &zebra_test_data::TransactionBuilder::with_join_split(JoinSplit {
                     descriptions: vec![JoinSplitDescription {
                         value_pub_new: max_value as u64 + 1,
                         ..Default::default()
@@ -1053,7 +1054,7 @@ mod tests {
 
         assert_eq!(
             TransactionInputValueOverflow::new(
-                &test_data::TransactionBuilder::with_sapling(Sapling {
+                &zebra_test_data::TransactionBuilder::with_sapling(Sapling {
                     balancing_value: max_value,
                     ..Default::default()
                 })
@@ -1066,7 +1067,7 @@ mod tests {
 
         assert_eq!(
             TransactionInputValueOverflow::new(
-                &test_data::TransactionBuilder::with_sapling(Sapling {
+                &zebra_test_data::TransactionBuilder::with_sapling(Sapling {
                     balancing_value: max_value + 1,
                     ..Default::default()
                 })
@@ -1079,7 +1080,7 @@ mod tests {
 
         assert_eq!(
             TransactionInputValueOverflow::new(
-                &test_data::TransactionBuilder::with_join_split(JoinSplit {
+                &zebra_test_data::TransactionBuilder::with_join_split(JoinSplit {
                     descriptions: vec![JoinSplitDescription {
                         value_pub_new: max_value as u64 / 2 + 1,
                         ..Default::default()
@@ -1104,7 +1105,7 @@ mod tests {
 
         assert_eq!(
             TransactionExpiry::new(
-                &test_data::TransactionBuilder::overwintered()
+                &zebra_test_data::TransactionBuilder::overwintered()
                     .set_expiry_height(consensus.transaction_expiry_height_threshold() - 1)
                     .into(),
                 &consensus
@@ -1115,7 +1116,7 @@ mod tests {
 
         assert_eq!(
             TransactionExpiry::new(
-                &test_data::TransactionBuilder::overwintered()
+                &zebra_test_data::TransactionBuilder::overwintered()
                     .set_expiry_height(consensus.transaction_expiry_height_threshold())
                     .into(),
                 &consensus
@@ -1129,7 +1130,7 @@ mod tests {
     fn transaction_sapling_works() {
         assert_eq!(
             TransactionSapling::new(
-                &test_data::TransactionBuilder::with_sapling(Sapling {
+                &zebra_test_data::TransactionBuilder::with_sapling(Sapling {
                     balancing_value: 100,
                     spends: vec![Default::default()],
                     ..Default::default()
@@ -1142,7 +1143,7 @@ mod tests {
 
         assert_eq!(
             TransactionSapling::new(
-                &test_data::TransactionBuilder::with_sapling(Sapling {
+                &zebra_test_data::TransactionBuilder::with_sapling(Sapling {
                     balancing_value: 100,
                     outputs: vec![Default::default()],
                     ..Default::default()
@@ -1155,7 +1156,7 @@ mod tests {
 
         assert_eq!(
             TransactionSapling::new(
-                &test_data::TransactionBuilder::with_sapling(Sapling {
+                &zebra_test_data::TransactionBuilder::with_sapling(Sapling {
                     balancing_value: 100,
                     outputs: vec![Default::default()],
                     spends: vec![Default::default()],
@@ -1169,7 +1170,7 @@ mod tests {
 
         assert_eq!(
             TransactionSapling::new(
-                &test_data::TransactionBuilder::with_sapling(Sapling {
+                &zebra_test_data::TransactionBuilder::with_sapling(Sapling {
                     balancing_value: 100,
                     ..Default::default()
                 })
@@ -1184,7 +1185,7 @@ mod tests {
     fn transaction_join_split_works() {
         assert_eq!(
             TransactionJoinSplit::new(
-                &test_data::TransactionBuilder::with_join_split(JoinSplit {
+                &zebra_test_data::TransactionBuilder::with_join_split(JoinSplit {
                     descriptions: vec![JoinSplitDescription {
                         value_pub_old: 100,
                         value_pub_new: 0,
@@ -1200,7 +1201,7 @@ mod tests {
 
         assert_eq!(
             TransactionJoinSplit::new(
-                &test_data::TransactionBuilder::with_join_split(JoinSplit {
+                &zebra_test_data::TransactionBuilder::with_join_split(JoinSplit {
                     descriptions: vec![JoinSplitDescription {
                         value_pub_old: 0,
                         value_pub_new: 100,
@@ -1216,7 +1217,7 @@ mod tests {
 
         assert_eq!(
             TransactionJoinSplit::new(
-                &test_data::TransactionBuilder::with_join_split(JoinSplit {
+                &zebra_test_data::TransactionBuilder::with_join_split(JoinSplit {
                     descriptions: vec![JoinSplitDescription {
                         value_pub_old: 100,
                         value_pub_new: 100,
@@ -1235,7 +1236,7 @@ mod tests {
     fn transaction_duplicate_inputs_works() {
         assert_eq!(
             TransactionDuplicateInputs::new(
-                &test_data::TransactionBuilder::with_default_input(0)
+                &zebra_test_data::TransactionBuilder::with_default_input(0)
                     .add_default_input(1)
                     .into()
             )
@@ -1245,7 +1246,7 @@ mod tests {
 
         assert_eq!(
             TransactionDuplicateInputs::new(
-                &test_data::TransactionBuilder::with_default_input(0)
+                &zebra_test_data::TransactionBuilder::with_default_input(0)
                     .add_default_input(0)
                     .into()
             )
@@ -1258,7 +1259,7 @@ mod tests {
     fn transaction_duplicate_join_split_nullifiers_works() {
         assert_eq!(
             TransactionDuplicateJoinSplitNullifiers::new(
-                &test_data::TransactionBuilder::with_join_split(JoinSplit {
+                &zebra_test_data::TransactionBuilder::with_join_split(JoinSplit {
                     descriptions: vec![JoinSplitDescription {
                         nullifiers: [[1; 32], [2; 32]],
                         ..Default::default()
@@ -1273,7 +1274,7 @@ mod tests {
 
         assert_eq!(
             TransactionDuplicateJoinSplitNullifiers::new(
-                &test_data::TransactionBuilder::with_join_split(JoinSplit {
+                &zebra_test_data::TransactionBuilder::with_join_split(JoinSplit {
                     descriptions: vec![Default::default(), Default::default()],
                     ..Default::default()
                 })
@@ -1288,7 +1289,7 @@ mod tests {
     fn transaction_duplicate_sapling_nullifiers_works() {
         assert_eq!(
             TransactionDuplicateSaplingNullifiers::new(
-                &test_data::TransactionBuilder::with_sapling(Sapling {
+                &zebra_test_data::TransactionBuilder::with_sapling(Sapling {
                     spends: vec![Default::default()],
                     ..Default::default()
                 })
@@ -1300,7 +1301,7 @@ mod tests {
 
         assert_eq!(
             TransactionDuplicateSaplingNullifiers::new(
-                &test_data::TransactionBuilder::with_sapling(Sapling {
+                &zebra_test_data::TransactionBuilder::with_sapling(Sapling {
                     spends: vec![Default::default(), Default::default()],
                     ..Default::default()
                 })

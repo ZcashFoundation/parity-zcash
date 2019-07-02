@@ -1,14 +1,14 @@
 use futures::{Async, Future, Poll};
 use io::{deadline, handshake, Deadline, Handshake};
-use message::types::Version;
-use message::Error;
 use net::{Config, Connection};
-use network::Magic;
 use std::io;
 use std::net::SocketAddr;
 use std::time::Duration;
 use tokio_core::net::{TcpStream, TcpStreamNew};
 use tokio_core::reactor::Handle;
+use zebra_message::types::Version;
+use zebra_message::Error;
+use zebra_network::Magic;
 
 pub fn connect(address: &SocketAddr, handle: &Handle, config: &Config) -> Deadline<Connect> {
     let connect = Connect {

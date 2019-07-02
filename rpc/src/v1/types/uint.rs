@@ -1,8 +1,8 @@
-use primitives::bigint::U256 as GlobalU256;
 use serde;
 use serde::de::Unexpected;
 use std::fmt;
 use std::str::FromStr;
+use zebra_primitives::bigint::U256 as GlobalU256;
 
 macro_rules! impl_uint {
     ($name: ident, $other: ident, $size: expr) => {

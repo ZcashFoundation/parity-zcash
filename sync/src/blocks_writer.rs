@@ -1,11 +1,7 @@
 use super::Error;
-use chain;
-use network::ConsensusParams;
 use parking_lot::Mutex;
-use primitives::hash::H256;
 use std::collections::VecDeque;
 use std::sync::Arc;
-use storage;
 use synchronization_chain::Chain;
 use synchronization_verifier::{
     BlockVerificationSink, HeadersVerificationSink, PartiallyVerifiedBlock, SyncVerifier,
@@ -13,6 +9,10 @@ use synchronization_verifier::{
 };
 use types::{PeerIndex, StorageRef};
 use utils::OrphanBlocksPool;
+use zebra_chain;
+use zebra_network::ConsensusParams;
+use zebra_primitives::hash::H256;
+use zebra_storage;
 use VerificationParameters;
 
 /// Maximum number of orphaned in-memory blocks
@@ -63,17 +63,17 @@ impl BlocksWriter {
     }
 
     /// Append new block
-    pub fn append_block(&mut self, block: chain::IndexedBlock) -> Result<(), Error> {
+    pub fn append_block(&mut self, block: zebra_chain::IndexedBlock) -> Result<(), Error> {
         // do not append block if it is already there
         if self
             .storage
-            .contains_block(storage::BlockRef::Hash(block.hash().clone()))
+            .contains_block(zebra_storage::BlockRef::Hash(block.hash().clone()))
         {
             return Ok(());
         }
 
         // verify && insert only if parent block is already in the storage
-        if !self.storage.contains_block(storage::BlockRef::Hash(
+        if !self.storage.contains_block(zebra_storage::BlockRef::Hash(
             block.header.raw.previous_header_hash.clone(),
         )) {
             self.orphaned_blocks_pool.insert_orphaned_block(block);
@@ -85,7 +85,7 @@ impl BlocksWriter {
         }
 
         // verify && insert block && all its orphan children
-        let mut verification_queue: VecDeque<chain::IndexedBlock> = self
+        let mut verification_queue: VecDeque<zebra_chain::IndexedBlock> = self
             .orphaned_blocks_pool
             .remove_blocks_for_parent(block.hash());
         verification_queue.push_front(block);
@@ -128,7 +128,7 @@ impl VerificationSink for BlocksWriterSink {}
 impl BlockVerificationSink for BlocksWriterSink {
     fn on_block_verification_success(
         &self,
-        block: chain::IndexedBlock,
+        block: zebra_chain::IndexedBlock,
     ) -> Option<Vec<VerificationTask>> {
         let mut data = self.data.lock();
         if let Err(err) = data.chain.insert_best_block(block) {
@@ -144,7 +144,7 @@ impl BlockVerificationSink for BlocksWriterSink {
 }
 
 impl TransactionVerificationSink for BlocksWriterSink {
-    fn on_transaction_verification_success(&self, _transaction: chain::IndexedTransaction) {
+    fn on_transaction_verification_success(&self, _transaction: zebra_chain::IndexedTransaction) {
         unreachable!("not intended to verify transactions")
     }
 
@@ -154,7 +154,7 @@ impl TransactionVerificationSink for BlocksWriterSink {
 }
 
 impl HeadersVerificationSink for BlocksWriterSink {
-    fn on_headers_verification_success(&self, _headers: Vec<chain::IndexedBlockHeader>) {
+    fn on_headers_verification_success(&self, _headers: Vec<zebra_chain::IndexedBlockHeader>) {
         unreachable!("not intended to verify headers")
     }
 
@@ -163,7 +163,7 @@ impl HeadersVerificationSink for BlocksWriterSink {
         _peer: PeerIndex,
         _err: String,
         _hash: H256,
-        _headers: Vec<chain::IndexedBlockHeader>,
+        _headers: Vec<zebra_chain::IndexedBlockHeader>,
     ) {
         unreachable!("not intended to verify headers")
     }
@@ -171,14 +171,14 @@ impl HeadersVerificationSink for BlocksWriterSink {
 
 #[cfg(test)]
 mod tests {
-    extern crate test_data;
+    extern crate zebra_test_data;
 
     use super::super::Error;
     use super::{BlocksWriter, MAX_ORPHANED_BLOCKS};
-    use db::BlockChainDatabase;
-    use network::{ConsensusParams, Network};
     use std::sync::Arc;
-    use verification::VerificationLevel;
+    use zebra_db::BlockChainDatabase;
+    use zebra_network::{ConsensusParams, Network};
+    use zebra_verification::VerificationLevel;
     use VerificationParameters;
 
     fn default_verification_params() -> VerificationParameters {
@@ -191,7 +191,7 @@ mod tests {
     #[test]
     fn blocks_writer_appends_blocks() {
         let db = Arc::new(BlockChainDatabase::init_test_chain(vec![
-            test_data::genesis().into(),
+            zebra_test_data::genesis().into(),
         ]));
         let mut blocks_target = BlocksWriter::new(
             db.clone(),
@@ -199,7 +199,7 @@ mod tests {
             default_verification_params(),
         );
         blocks_target
-            .append_block(test_data::block_h1().into())
+            .append_block(zebra_test_data::block_h1().into())
             .expect("Expecting no error");
         assert_eq!(db.best_block().number, 1);
     }
@@ -207,10 +207,10 @@ mod tests {
     #[test]
     fn blocks_writer_verification_error() {
         let db = Arc::new(BlockChainDatabase::init_test_chain(vec![
-            test_data::genesis().into(),
+            zebra_test_data::genesis().into(),
         ]));
         let blocks =
-            test_data::build_n_empty_blocks_from_genesis((MAX_ORPHANED_BLOCKS + 2) as u32, 1);
+            zebra_test_data::build_n_empty_blocks_from_genesis((MAX_ORPHANED_BLOCKS + 2) as u32, 1);
         let mut blocks_target = BlocksWriter::new(
             db.clone(),
             ConsensusParams::new(Network::Testnet),
@@ -229,7 +229,7 @@ mod tests {
     #[test]
     fn blocks_writer_out_of_order_block() {
         let db = Arc::new(BlockChainDatabase::init_test_chain(vec![
-            test_data::genesis().into(),
+            zebra_test_data::genesis().into(),
         ]));
         let mut blocks_target = BlocksWriter::new(
             db.clone(),
@@ -237,9 +237,9 @@ mod tests {
             default_verification_params(),
         );
 
-        let wrong_block = test_data::block_builder()
+        let wrong_block = zebra_test_data::block_builder()
             .header()
-            .parent(test_data::genesis().hash())
+            .parent(zebra_test_data::genesis().hash())
             .build()
             .build();
         match blocks_target.append_block(wrong_block.into()).unwrap_err() {
@@ -252,7 +252,7 @@ mod tests {
     #[test]
     fn blocks_writer_append_to_existing_db() {
         let db = Arc::new(BlockChainDatabase::init_test_chain(vec![
-            test_data::genesis().into(),
+            zebra_test_data::genesis().into(),
         ]));
         let mut blocks_target = BlocksWriter::new(
             db.clone(),
@@ -261,7 +261,7 @@ mod tests {
         );
 
         assert!(blocks_target
-            .append_block(test_data::block_h1().into())
+            .append_block(zebra_test_data::block_h1().into())
             .is_ok());
         assert_eq!(db.best_block().number, 1);
     }
@@ -270,20 +270,20 @@ mod tests {
     fn blocks_write_able_to_reorganize() {
         // (1) b0 ---> (2) b1
         //        \--> (3) b2 ---> (4 - reorg) b3
-        let b0 = test_data::block_builder().header().build().build();
-        let b1 = test_data::block_builder()
+        let b0 = zebra_test_data::block_builder().header().build().build();
+        let b1 = zebra_test_data::block_builder()
             .header()
             .nonce(1.into())
             .parent(b0.hash())
             .build()
             .build();
-        let b2 = test_data::block_builder()
+        let b2 = zebra_test_data::block_builder()
             .header()
             .nonce(2.into())
             .parent(b0.hash())
             .build()
             .build();
-        let b3 = test_data::block_builder()
+        let b3 = zebra_test_data::block_builder()
             .header()
             .parent(b2.hash())
             .build()

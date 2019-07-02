@@ -1,5 +1,5 @@
-use chain::Transaction;
-use storage::TransactionOutputProvider;
+use zebra_chain::Transaction;
+use zebra_storage::TransactionOutputProvider;
 use TransactionError;
 
 /// Compute miner fee for given transaction.
@@ -79,16 +79,16 @@ pub fn checked_transaction_fee(
 
 #[cfg(test)]
 mod tests {
-    extern crate test_data;
+    extern crate zebra_test_data;
 
     use super::*;
-    use db::BlockChainDatabase;
     use std::sync::Arc;
-    use storage::AsSubstore;
+    use zebra_db::BlockChainDatabase;
+    use zebra_storage::AsSubstore;
 
     #[test]
     fn test_transaction_fee() {
-        let b0 = test_data::block_builder()
+        let b0 = zebra_test_data::block_builder()
             .header()
             .nonce(1.into())
             .build()
@@ -103,7 +103,7 @@ mod tests {
             .build();
         let tx0 = b0.transactions[0].clone();
         let tx0_hash = tx0.hash();
-        let b1 = test_data::block_builder()
+        let b1 = zebra_test_data::block_builder()
             .header()
             .parent(b0.hash().clone())
             .nonce(2.into())

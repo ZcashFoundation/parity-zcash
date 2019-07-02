@@ -1,5 +1,6 @@
-use chain::{Sapling, SaplingOutputDescription, SaplingSpendDescription};
-use crypto::{
+use std::io::Error as IoError;
+use zebra_chain::{Sapling, SaplingOutputDescription, SaplingSpendDescription};
+use zebra_crypto::{
     bellman::{
         groth16::{verify_proof, Proof},
         SynthesisError,
@@ -15,7 +16,6 @@ use crypto::{
     },
     Groth16VerifyingKey, JUBJUB,
 };
-use std::io::Error as IoError;
 
 type Point = edwards::Point<Bls12, Unknown>;
 
@@ -310,11 +310,11 @@ fn is_small_order(point: &Point) -> bool {
 
 #[cfg(test)]
 mod tests {
-    extern crate test_data;
+    extern crate zebra_test_data;
 
     use super::*;
-    use chain::Transaction;
-    use script::{SighashBase, TransactionInputSigner};
+    use zebra_chain::Transaction;
+    use zebra_script::{SighashBase, TransactionInputSigner};
 
     // tx: https://zcash.blockexplorer.com/tx/bd4fe81c15cfbd125f5ca6fe51fb5ac4ef340e64a36f576a6a09f7528eb2e176
     fn test_tx() -> Transaction {
@@ -336,8 +336,8 @@ mod tests {
     }
 
     fn run_accept_sapling(tx: Transaction) -> Result<(), Error> {
-        let spend_vk = crypto::load_sapling_spend_verifying_key().unwrap();
-        let output_vk = crypto::load_sapling_output_verifying_key().unwrap();
+        let spend_vk = zebra_crypto::load_sapling_spend_verifying_key().unwrap();
+        let output_vk = zebra_crypto::load_sapling_output_verifying_key().unwrap();
 
         let sighash = compute_sighash(tx.clone());
         let sapling = tx.sapling.unwrap();
@@ -369,8 +369,8 @@ mod tests {
     }
 
     fn bad_verifying_key() -> Groth16VerifyingKey {
-        use crypto::bellman::groth16::{prepare_verifying_key, VerifyingKey};
-        use crypto::pairing::{
+        use zebra_crypto::bellman::groth16::{prepare_verifying_key, VerifyingKey};
+        use zebra_crypto::pairing::{
             bls12_381::{G1Affine, G2Affine},
             CurveAffine,
         };
@@ -393,7 +393,7 @@ mod tests {
 
     #[test]
     fn accept_spend_fails() {
-        let spend_vk = crypto::load_sapling_spend_verifying_key().unwrap();
+        let spend_vk = zebra_crypto::load_sapling_spend_verifying_key().unwrap();
         let sighash = compute_sighash(test_tx());
         let sapling = test_tx().sapling.unwrap();
         let mut total = edwards::Point::zero();
@@ -476,7 +476,7 @@ mod tests {
 
     #[test]
     fn accept_output_fails() {
-        let output_vk = crypto::load_sapling_output_verifying_key().unwrap();
+        let output_vk = zebra_crypto::load_sapling_output_verifying_key().unwrap();
         let sapling = test_tx().sapling.unwrap();
         let mut total = edwards::Point::zero();
 

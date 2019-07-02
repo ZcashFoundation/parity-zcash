@@ -1,10 +1,10 @@
 #![feature(test)]
 
-extern crate chain;
-extern crate miner;
-extern crate primitives;
-extern crate serialization as ser;
 extern crate test;
+extern crate zebra_chain;
+extern crate zebra_miner;
+extern crate zebra_primitives;
+extern crate zebra_serialization as ser;
 
 #[cfg(test)]
 mod benchmarks {

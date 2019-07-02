@@ -1,7 +1,7 @@
-use chain::Transaction;
 use ser::Serializable;
-use storage::{DuplexTransactionOutputProvider, TransactionOutputProvider};
-use verification::checked_transaction_fee;
+use zebra_chain::Transaction;
+use zebra_storage::{DuplexTransactionOutputProvider, TransactionOutputProvider};
+use zebra_verification::checked_transaction_fee;
 use MemoryPool;
 
 /// Transaction fee calculator for memory pool
@@ -48,13 +48,13 @@ pub fn transaction_fee_rate(store: &TransactionOutputProvider, tx: &Transaction)
 #[cfg(test)]
 mod tests {
     use super::transaction_fee_rate;
-    use db::BlockChainDatabase;
     use std::sync::Arc;
-    use storage::AsSubstore;
+    use zebra_db::BlockChainDatabase;
+    use zebra_storage::AsSubstore;
 
     #[test]
     fn transaction_fee_rate_works() {
-        let b0 = test_data::block_builder()
+        let b0 = zebra_test_data::block_builder()
             .header()
             .nonce(1.into())
             .build()
@@ -69,7 +69,7 @@ mod tests {
             .build();
         let tx0 = b0.transactions[0].clone();
         let tx0_hash = tx0.hash();
-        let b1 = test_data::block_builder()
+        let b1 = zebra_test_data::block_builder()
             .header()
             .parent(b0.hash().clone())
             .nonce(2.into())

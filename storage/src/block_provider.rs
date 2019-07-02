@@ -1,6 +1,6 @@
 use bytes::Bytes;
-use chain::{IndexedBlock, IndexedBlockHeader, IndexedTransaction};
 use hash::H256;
+use zebra_chain::{IndexedBlock, IndexedBlockHeader, IndexedTransaction};
 use BlockRef;
 
 pub trait BlockHeaderProvider {

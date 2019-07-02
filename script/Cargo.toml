@@ -1,18 +1,19 @@
 [package]
-name = "script"
+name = "zebra-script"
 version = "0.1.0"
-authors = ["debris <marek.kotewicz@gmail.com>"]
+license = "GPL-3.0"
+authors = ["Zcash Foundation <zebra@zfnd.org>"]
 
 [dependencies]
-bitcrypto = { path = "../crypto" }
 byteorder = "1.0"
-chain = { path = "../chain" }
-keys = { path = "../keys" }
-primitives = { path = "../primitives" }
-serialization = { path = "../serialization" }
 log = "0.4"
+zebra-crypto = { path = "../crypto" }
+zebra-chain = { path = "../chain" }
+zebra-keys = { path = "../keys" }
+zebra-primitives = { path = "../primitives" }
+zebra-serialization = { path = "../serialization" }
 
 [dev-dependencies]
 rustc-hex = "2"
 serde_json = "1.0"
-chain = { path = "../chain", features = ["test-helpers"] }
+zebra-chain = { path = "../chain", features = ["test-helpers"] }

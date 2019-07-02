@@ -1,8 +1,8 @@
-use crypto::Groth16Proof;
 use hash::{H256, H512};
 use hex::ToHex;
 use ser::{CompactInteger, Error, Reader, Serializable, Stream};
 use std::{fmt, io};
+use zebra_crypto::Groth16Proof;
 
 #[derive(Clone)]
 pub enum JoinSplitProof {

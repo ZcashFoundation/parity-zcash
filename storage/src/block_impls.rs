@@ -1,5 +1,5 @@
-use chain::{IndexedBlock, IndexedTransaction, OutPoint, TransactionOutput};
 use std::cmp;
+use zebra_chain::{IndexedBlock, IndexedTransaction, OutPoint, TransactionOutput};
 use TransactionOutputProvider;
 
 fn transaction_output(

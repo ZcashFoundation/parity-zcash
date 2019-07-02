@@ -2,13 +2,13 @@
 
 extern crate time;
 
-extern crate chain;
-extern crate network;
-extern crate primitives;
-extern crate script;
-extern crate serialization as ser;
+extern crate zebra_chain;
+extern crate zebra_network;
+extern crate zebra_primitives;
+extern crate zebra_script;
+extern crate zebra_serialization as ser;
 
-use chain::{Block, Transaction};
+use zebra_chain::{Block, Transaction};
 
 pub mod block;
 pub mod chain_builder;

@@ -1,14 +1,15 @@
 [package]
-name = "message"
+name = "zebra-message"
 version = "0.1.0"
-authors = ["debris <marek.kotewicz@gmail.com>"]
+license = "GPL-3.0"
+authors = ["Zcash Foundation <zebra@zfnd.org>"]
 
 [dependencies]
 byteorder = "1.0"
 
-bitcrypto = { path = "../crypto" }
-chain = { path = "../chain" }
-primitives = { path = "../primitives" }
-serialization = { path = "../serialization" }
-serialization_derive = { path = "../serialization_derive" }
-network = { path = "../network" }
+zebra-crypto = { path = "../crypto" }
+zebra-chain = { path = "../chain" }
+zebra-primitives = { path = "../primitives" }
+zebra-serialization = { path = "../serialization" }
+zebra-serialization_derive = { path = "../serialization_derive" }
+zebra-network = { path = "../network" }

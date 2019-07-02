@@ -1,18 +1,17 @@
 [package]
-name = "bencher"
+name = "zebra-bencher"
 version = "0.1.0"
 license = "GPL-3.0"
-authors = ["Ethcore <admin@ethcore.io>"]
-description = "Parity bitcoin client."
+authors = ["Zcash Foundation <zebra@zfnd.org>"]
 
 [dependencies]
-storage = { path = "../storage" }
-db = { path = "../db" }
-verification = { path = "../verification" }
-network = { path = "../network" }
-chain = { path = "../chain", features = ["test-helpers"] }
-primitives = { path = "../primitives" }
-test-data = { path = "../test-data" }
+zebra-storage = { path = "../storage" }
+zebra-db = { path = "../db" }
+zebra-verification = { path = "../verification" }
+zebra-network = { path = "../network" }
+zebra-chain = { path = "../chain", features = ["test-helpers"] }
+zebra-primitives = { path = "../primitives" }
+zebra-test-data = { path = "../test-data" }
 time = "*"
 byteorder = "1.0"
 

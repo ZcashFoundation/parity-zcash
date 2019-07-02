@@ -1,24 +1,25 @@
 [package]
-name = "miner"
+name = "zebra-miner"
 version = "0.1.0"
-authors = ["Ethcore <admin@ethcore.io>"]
+license = "GPL-3.0"
+authors = ["Zcash Foundation <zebra@zfnd.org>"]
 
 [dependencies]
 byteorder = "1.0"
 heapsize = "0.4"
-bitcrypto = { path = "../crypto" }
-chain = { path = "../chain" }
-storage = { path = "../storage" }
-db = { path = "../db" }
-network = { path = "../network" }
-primitives = { path = "../primitives" }
-serialization = { path = "../serialization" }
-verification = { path = "../verification" }
-keys = { path = "../keys" }
-script = { path = "../script" }
+zebra-crypto = { path = "../crypto" }
+zebra-chain = { path = "../chain" }
+zebra-storage = { path = "../storage" }
+zebra-db = { path = "../db" }
+zebra-network = { path = "../network" }
+zebra-primitives = { path = "../primitives" }
+zebra-serialization = { path = "../serialization" }
+zebra-verification = { path = "../verification" }
+zebra-keys = { path = "../keys" }
+zebra-script = { path = "../script" }
 
 [dev-dependencies]
-test-data = { path = "../test-data" }
+zebra-test-data = { path = "../test-data" }
 
 [features]
 test-helpers = []

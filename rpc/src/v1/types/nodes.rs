@@ -1,7 +1,7 @@
-use p2p::{Direction, PeerInfo};
 use serde::de::Unexpected;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::fmt;
+use zebra_p2p::{Direction, PeerInfo};
 
 #[derive(Debug, PartialEq)]
 pub enum AddNodeOperation {

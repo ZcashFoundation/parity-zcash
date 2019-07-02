@@ -1,10 +1,10 @@
 use canon::CanonHeader;
 use deployments::Deployments;
 use error::Error;
-use network::ConsensusParams;
-use storage::BlockHeaderProvider;
 use timestamp::median_timestamp;
 use work::work_required;
+use zebra_network::ConsensusParams;
+use zebra_storage::BlockHeaderProvider;
 
 pub struct HeaderAcceptor<'a> {
     pub version: HeaderVersion<'a>,
