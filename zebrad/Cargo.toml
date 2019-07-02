@@ -1,6 +1,6 @@
 [package]
 name = "zebrad"
-authors = []
+authors = ["Zcash Foundation <zebra@zfnd.org>"]
 version = "0.1.0"
 edition = "2018"
 
