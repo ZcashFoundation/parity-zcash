@@ -14,7 +14,7 @@ chain = { path = "../chain", features = ["test-helpers"] }
 primitives = { path = "../primitives" }
 test-data = { path = "../test-data" }
 time = "*"
-byteorder = "1.0"
+byteorder = "1.3"
 
 [[bin]]
 path = "src/main.rs"

@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["debris <marek.kotewicz@gmail.com>"]
 
 [dependencies]
-byteorder = "1.0"
+byteorder = "1.3"
 
 bitcrypto = { path = "../crypto" }
 chain = { path = "../chain" }
