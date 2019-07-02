@@ -18,7 +18,10 @@ matrix:
 
   include:
 
-  - rust: nightly
+  # Use a hardcoded nightly version for fmt, so that changes
+  # to rustfmt have to be made explicitly, avoiding random fmt
+  # failures if rustfmt updates.
+  - rust: nightly-2019-06-30
     before_script:
     - rustup component add rustfmt-preview
     script:
