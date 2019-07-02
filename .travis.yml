@@ -33,6 +33,4 @@ cache:
   - "$HOME/.cargo"
 
 script:
-- cargo check --all
 - cargo test --all
-- cargo build --all
