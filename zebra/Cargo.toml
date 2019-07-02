@@ -1,0 +1,32 @@
+[package]
+name = "zebra"
+version = "0.1.0"
+license = "GPL-3.0"
+authors = ["Zcash Foundation <zebra@zfnd.org>"]
+description = "A consensus-compatible Zcash node client written in Rust."
+
+[dependencies]
+app_dirs = { git = "https://github.com/paritytech/app-dirs-rs" }
+clap = { version = "2", features = ["yaml"] }
+env_logger = "0.5"
+libc = "0.2"
+log = "0.4"
+zebra-db = { path = "../zebra-db" }
+zebra-chain = { path = "../zebra-chain" }
+zebra-import = { path = "../zebra-import" }
+zebra-keys = { path = "../zebra-keys" }
+zebra-logs = { path = "../zebra-logs" }
+zebra-message = { path = "../zebra-message" }
+zebra-network = { path = "../zebra-network" }
+zebra-miner = { path = "../zebra-miner" }
+zebra-p2p = { path = "../zebra-p2p" }
+zebra-primitives = { path = "../zebra-primitives" }
+zebra-rpc = { path = "../zebra-rpc" }
+zebra-script = { path = "../zebra-script" }
+zebra-storage = { path = "../zebra-storage" }
+zebra-sync = { path = "../zebra-sync" }
+zebra-verification = { path = "../zebra-verification" }
+
+[[bin]]
+path = "main.rs"
+name = "zebra"
