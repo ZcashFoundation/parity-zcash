@@ -7,8 +7,8 @@ authors = ["Zcash Foundation <zebra@zfnd.org>"]
 [dependencies]
 lazy_static = "1.3"
 rustc-hex = "2"
-zebra-chain = { path = "../chain" }
-zebra-keys = { path = "../keys" }
-zebra-primitives = { path = "../primitives" }
-zebra-serialization = { path = "../serialization" }
-zebra-crypto = { path = "../crypto" }
+zebra-chain = { path = "../zebra-chain" }
+zebra-keys = { path = "../zebra-keys" }
+zebra-primitives = { path = "../zebra-primitives" }
+zebra-serialization = { path = "../zebra-serialization" }
+zebra-crypto = { path = "../zebra-crypto" }

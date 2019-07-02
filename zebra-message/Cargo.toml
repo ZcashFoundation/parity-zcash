@@ -7,9 +7,9 @@ authors = ["Zcash Foundation <zebra@zfnd.org>"]
 [dependencies]
 byteorder = "1.0"
 
-zebra-crypto = { path = "../crypto" }
-zebra-chain = { path = "../chain" }
-zebra-primitives = { path = "../primitives" }
-zebra-serialization = { path = "../serialization" }
-zebra-serialization_derive = { path = "../serialization_derive" }
-zebra-network = { path = "../network" }
+zebra-crypto = { path = "../zebra-crypto" }
+zebra-chain = { path = "../zebra-chain" }
+zebra-primitives = { path = "../zebra-primitives" }
+zebra-serialization = { path = "../zebra-serialization" }
+zebra-serialization_derive = { path = "../zebra-serialization_derive" }
+zebra-network = { path = "../zebra-network" }

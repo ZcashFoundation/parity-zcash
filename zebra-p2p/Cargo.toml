@@ -17,8 +17,8 @@ abstract-ns = "0.3"
 ns-dns-tokio = "0.3"
 csv = "1"
 
-zebra-primitives = { path = "../primitives" }
-zebra-crypto = { path = "../crypto" }
-zebra-message = { path = "../message" }
-zebra-serialization = { path = "../serialization" }
-zebra-network = { path = "../network" }
+zebra-primitives = { path = "../zebra-primitives" }
+zebra-crypto = { path = "../zebra-crypto" }
+zebra-message = { path = "../zebra-message" }
+zebra-serialization = { path = "../zebra-serialization" }
+zebra-network = { path = "../zebra-network" }

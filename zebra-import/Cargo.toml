@@ -6,6 +6,6 @@ authors = ["Zcash Foundation <zebra@zfnd.org>"]
 
 [dependencies]
 log = "0.4"
-zebra-primitives = { path = "../primitives" }
-zebra-chain = { path = "../chain" }
-zebra-serialization = { path = "../serialization" }
+zebra-primitives = { path = "../zebra-primitives" }
+zebra-chain = { path = "../zebra-chain" }
+zebra-serialization = { path = "../zebra-serialization" }

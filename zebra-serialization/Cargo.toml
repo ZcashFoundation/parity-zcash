@@ -7,4 +7,4 @@ authors = ["Zcash Foundation <zebra@zfnd.org>"]
 [dependencies]
 byteorder = "1.0"
 rustc-hex = "2"
-zebra-primitives = { path = "../primitives" }
+zebra-primitives = { path = "../zebra-primitives" }

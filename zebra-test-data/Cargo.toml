@@ -7,8 +7,8 @@ authors = ["Zcash Foundation <zebra@zfnd.org>"]
 [dependencies]
 time = "0.1"
 
-zebra-chain = { path = "../chain" }
-zebra-network = { path = "../network" }
-zebra-primitives = { path = "../primitives" }
-zebra-serialization = { path = "../serialization" }
-zebra-script = { path = "../script" }
+zebra-chain = { path = "../zebra-chain" }
+zebra-network = { path = "../zebra-network" }
+zebra-primitives = { path = "../zebra-primitives" }
+zebra-serialization = { path = "../zebra-serialization" }
+zebra-script = { path = "../zebra-script" }

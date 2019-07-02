@@ -10,5 +10,5 @@ rustc-hex = "2"
 lazy_static = "1.3"
 base58 = "0.1"
 eth-secp256k1 = "0.5.7"
-zebra-crypto = { path = "../crypto" }
-zebra-primitives = { path = "../primitives" }
+zebra-crypto = { path = "../zebra-crypto" }
+zebra-primitives = { path = "../zebra-primitives" }

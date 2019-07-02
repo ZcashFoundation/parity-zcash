@@ -11,8 +11,8 @@ bit-vec = "0.4"
 lru-cache = "0.1"
 display_derive = "0.0.0"
 lazy_static = "*"
-zebra-primitives = { path = "../primitives" }
-zebra-serialization = { path = "../serialization" }
-zebra-chain = { path = "../chain" }
-zebra-crypto = { path = "../crypto" }
-zebra-network = { path = "../network" }
+zebra-primitives = { path = "../zebra-primitives" }
+zebra-serialization = { path = "../zebra-serialization" }
+zebra-chain = { path = "../zebra-chain" }
+zebra-crypto = { path = "../zebra-crypto" }
+zebra-network = { path = "../zebra-network" }

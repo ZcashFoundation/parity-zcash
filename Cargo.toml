@@ -11,21 +11,21 @@ clap = { version = "2", features = ["yaml"] }
 env_logger = "0.5"
 libc = "0.2"
 log = "0.4"
-zebra-db = { path = "db" }
-zebra-chain = { path = "chain" }
-zebra-import = { path = "import" }
-zebra-keys = { path = "keys" }
-zebra-logs = { path = "logs" }
-zebra-message = { path = "message" }
-zebra-network = { path = "network" }
-zebra-miner = { path = "miner" }
-zebra-p2p = { path = "p2p" }
-zebra-primitives = { path = "primitives" }
-zebra-rpc = { path = "rpc" }
-zebra-script = { path = "script" }
-zebra-storage = { path = "storage" }
-zebra-sync = { path = "sync" }
-zebra-verification = { path = "verification" }
+zebra-db = { path = "zebra-db" }
+zebra-chain = { path = "zebra-chain" }
+zebra-import = { path = "zebra-import" }
+zebra-keys = { path = "zebra-keys" }
+zebra-logs = { path = "zebra-logs" }
+zebra-message = { path = "zebra-message" }
+zebra-network = { path = "zebra-network" }
+zebra-miner = { path = "zebra-miner" }
+zebra-p2p = { path = "zebra-p2p" }
+zebra-primitives = { path = "zebra-primitives" }
+zebra-rpc = { path = "zebra-rpc" }
+zebra-script = { path = "zebra-script" }
+zebra-storage = { path = "zebra-storage" }
+zebra-sync = { path = "zebra-sync" }
+zebra-verification = { path = "zebra-verification" }
 
 [profile.dev]
 debug = true
@@ -44,26 +44,26 @@ name = "zebra"
 
 [workspace]
 members = [
-	"bencher",
-	"crypto",
-	"chain",
-	"db",
-	"import",
-	"keys",
-	"logs",
-	"message",
-	"miner",
-	"network",
-	"p2p",
-	"primitives",
-	"rpc",
-	"script",
-	"serialization",
-	"serialization_derive",
-	"storage",
-	"sync",
-	"test-data",
-	"verification",
+	"zebra-bencher",
+	"zebra-crypto",
+	"zebra-chain",
+	"zebra-db",
+	"zebra-import",
+	"zebra-keys",
+	"zebra-logs",
+	"zebra-message",
+	"zebra-miner",
+	"zebra-network",
+	"zebra-p2p",
+	"zebra-primitives",
+	"zebra-rpc",
+	"zebra-script",
+	"zebra-serialization",
+	"zebra-serialization_derive",
+	"zebra-storage",
+	"zebra-sync",
+	"zebra-test-data",
+	"zebra-verification",
 ]
 
 [patch.crates-io]

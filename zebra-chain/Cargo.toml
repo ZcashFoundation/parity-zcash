@@ -7,10 +7,10 @@ authors = ["Zcash Foundation <zebra@zfnd.org>"]
 [dependencies]
 rustc-hex = "2"
 heapsize = "0.4"
-zebra-crypto = { path = "../crypto" }
-zebra-primitives = { path = "../primitives" }
-zebra-serialization = { path = "../serialization" }
-zebra-serialization_derive = { path = "../serialization_derive" }
+zebra-crypto = { path = "../zebra-crypto" }
+zebra-primitives = { path = "../zebra-primitives" }
+zebra-serialization = { path = "../zebra-serialization" }
+zebra-serialization_derive = { path = "../zebra-serialization_derive" }
 
 [features]
 default = []

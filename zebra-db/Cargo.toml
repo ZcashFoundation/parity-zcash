@@ -11,11 +11,11 @@ parking_lot = "0.8"
 log = "0.4"
 bit-vec = "0.4"
 lru-cache = "0.1"
-zebra-primitives = { path = "../primitives" }
-zebra-serialization = { path = "../serialization" }
-zebra-chain = { path = "../chain" }
-zebra-storage = { path = "../storage" }
+zebra-primitives = { path = "../zebra-primitives" }
+zebra-serialization = { path = "../zebra-serialization" }
+zebra-chain = { path = "../zebra-chain" }
+zebra-storage = { path = "../zebra-storage" }
 
 [dev-dependencies]
 tempdir = "0.3"
-zebra-test-data = { path = "../test-data" }
+zebra-test-data = { path = "../zebra-test-data" }

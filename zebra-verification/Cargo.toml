@@ -13,18 +13,18 @@ byteorder = "1.2"
 rustc-hex = "2"
 bitvec = "0.10"
 bitflags = "1.0"
-zebra-keys = { path = "../keys" }
-zebra-primitives = { path = "../primitives" }
-zebra-chain = { path = "../chain" }
-zebra-serialization = { path = "../serialization" }
-zebra-script = { path = "../script" }
-zebra-network = { path = "../network" }
-zebra-storage = { path = "../storage" }
-zebra-crypto = { path = "../crypto" }
+zebra-keys = { path = "../zebra-keys" }
+zebra-primitives = { path = "../zebra-primitives" }
+zebra-chain = { path = "../zebra-chain" }
+zebra-serialization = { path = "../zebra-serialization" }
+zebra-script = { path = "../zebra-script" }
+zebra-network = { path = "../zebra-network" }
+zebra-storage = { path = "../zebra-storage" }
+zebra-crypto = { path = "../zebra-crypto" }
 
 [dev-dependencies]
 rand = "0.4"
 assert_matches = "1.3.0"
-zebra-chain = { path = "../chain", features = ["test-helpers"] }
-zebra-db = { path = "../db" }
-zebra-test-data = { path = "../test-data" }
+zebra-chain = { path = "../zebra-chain", features = ["test-helpers"] }
+zebra-db = { path = "../zebra-db" }
+zebra-test-data = { path = "../zebra-test-data" }
