@@ -17,7 +17,7 @@ use std::fmt;
 
 macro_rules! rpc_unimplemented {
     () => {
-        Err(::v1::helpers::errors::unimplemented(None))
+        Err(crate::v1::helpers::errors::unimplemented(None))
     };
 }
 

@@ -1,4 +1,4 @@
-use hex::{FromHex, ToHex};
+use crate::hex::{FromHex, ToHex};
 use primitives::bytes::Bytes as GlobalBytes;
 use serde::de::{Error, Visitor};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
@@ -70,7 +70,7 @@ impl<'a> Visitor<'a> for BytesVisitor {
         E: Error,
     {
         if value.len() > 0 && value.len() & 1 == 0 {
-            Ok(Bytes::new(try!(
+            Ok(Bytes::new(r#try!(
                 FromHex::from_hex(&value).map_err(|_| Error::custom("invalid hex"))
             )))
         } else {
@@ -97,7 +97,7 @@ impl ops::Deref for Bytes {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use hex::FromHex;
+    use crate::hex::FromHex;
     use serde_json;
 
     #[test]

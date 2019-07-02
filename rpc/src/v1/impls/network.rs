@@ -2,9 +2,9 @@ use jsonrpc_core::Error;
 use p2p;
 use std::net::{IpAddr, SocketAddr};
 use std::sync::Arc;
-use v1::helpers::errors;
-use v1::traits::Network as NetworkRpc;
-use v1::types::{AddNodeOperation, NodeInfo};
+use crate::v1::helpers::errors;
+use crate::v1::traits::Network as NetworkRpc;
+use crate::v1::types::{AddNodeOperation, NodeInfo};
 
 pub trait NetworkApi: Send + Sync + 'static {
     fn add_node(&self, socket_addr: SocketAddr) -> Result<(), p2p::NodeTableError>;
@@ -20,7 +20,7 @@ where
     T: NetworkApi,
 {
     fn add_node(&self, node: String, operation: AddNodeOperation) -> Result<(), Error> {
-        let addr = try!(node.parse().map_err(|_| errors::invalid_params(
+        let addr = r#try!(node.parse().map_err(|_| errors::invalid_params(
             "node",
             "Invalid socket address format, should be ip:port (127.0.0.1:8008)"
         )));
@@ -45,11 +45,11 @@ where
         Ok(match node_addr {
             None => self.api.nodes_info(),
             Some(node_addr) => {
-                let addr = try!(node_addr.parse().map_err(|_| errors::invalid_params(
+                let addr = r#try!(node_addr.parse().map_err(|_| errors::invalid_params(
                     "node",
                     "Invalid ip address format, should be ip address (127.0.0.1)"
                 )));
-                let node_info = try!(self
+                let node_info = r#try!(self
                     .api
                     .node_info(addr)
                     .map_err(|_| errors::node_not_added()));
@@ -100,7 +100,7 @@ impl NetworkApi for NetworkClientCore {
     }
 
     fn node_info(&self, node_addr: IpAddr) -> Result<NodeInfo, p2p::NodeTableError> {
-        let exact_node = try!(self
+        let exact_node = r#try!(self
             .p2p
             .nodes()
             .iter()

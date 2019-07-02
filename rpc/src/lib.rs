@@ -29,4 +29,4 @@ pub mod v1;
 pub use jsonrpc_core::{Compatibility, Error, MetaIoHandler};
 
 pub use jsonrpc_http_server::Server;
-pub use rpc_server::start_http;
+pub use crate::rpc_server::start_http;

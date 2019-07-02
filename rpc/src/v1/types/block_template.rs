@@ -76,7 +76,7 @@ impl From<miner::BlockTemplate> for BlockTemplate {
 
 impl From<chain::IndexedTransaction> for BlockTemplateTransaction {
     fn from(transaction: chain::IndexedTransaction) -> Self {
-        use ser::serialize;
+        use crate::ser::serialize;
         let serialize = serialize(&transaction.raw);
         BlockTemplateTransaction {
             data: RawTransaction::new(Vec::from((*serialize).clone())),
@@ -90,7 +90,7 @@ mod tests {
     use super::super::bytes::Bytes;
     use super::super::hash::H256;
     use super::*;
-    use hex::FromHex;
+    use crate::hex::FromHex;
     use serde_json;
 
     #[test]

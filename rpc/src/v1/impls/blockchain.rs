@@ -1,20 +1,20 @@
 use chain::OutPoint;
-use global_script::Script;
+use crate::global_script::Script;
 use jsonrpc_core::Error;
 use keys::{self, Address};
 use network::{ConsensusParams, Network};
 use primitives::hash::H256 as GlobalH256;
-use ser::serialize;
+use crate::ser::serialize;
 use storage;
-use v1::helpers::errors::{
+use crate::v1::helpers::errors::{
     block_at_height_not_found, block_not_found, invalid_params, transaction_not_found,
     transaction_of_side_branch, transaction_output_not_found,
 };
-use v1::traits::BlockChain;
-use v1::types::GetTxOutSetInfoResponse;
-use v1::types::H256;
-use v1::types::{BlockRef, GetBlockResponse, RawBlock, VerboseBlock};
-use v1::types::{GetTxOutResponse, TransactionOutputScript};
+use crate::v1::traits::BlockChain;
+use crate::v1::types::GetTxOutSetInfoResponse;
+use crate::v1::types::H256;
+use crate::v1::types::{BlockRef, GetBlockResponse, RawBlock, VerboseBlock};
+use crate::v1::types::{GetTxOutResponse, TransactionOutputScript};
 use verification;
 
 pub struct BlockChainClient<T: BlockChainClientCoreApi> {
@@ -291,13 +291,13 @@ pub mod tests {
     use primitives::bytes::Bytes as GlobalBytes;
     use primitives::hash::H256 as GlobalH256;
     use std::sync::Arc;
-    use v1::helpers::errors::block_not_found;
-    use v1::traits::BlockChain;
-    use v1::types::Bytes;
-    use v1::types::ScriptType;
-    use v1::types::H256;
-    use v1::types::{GetTxOutResponse, TransactionOutputScript};
-    use v1::types::{RawBlock, VerboseBlock};
+    use crate::v1::helpers::errors::block_not_found;
+    use crate::v1::traits::BlockChain;
+    use crate::v1::types::Bytes;
+    use crate::v1::types::ScriptType;
+    use crate::v1::types::H256;
+    use crate::v1::types::{GetTxOutResponse, TransactionOutputScript};
+    use crate::v1::types::{RawBlock, VerboseBlock};
 
     #[derive(Default)]
     struct SuccessBlockChainClientCore;

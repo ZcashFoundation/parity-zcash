@@ -1,4 +1,4 @@
-use global_script::ScriptType as GlobalScriptType;
+use crate::global_script::ScriptType as GlobalScriptType;
 use serde::de::Unexpected;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::fmt;

@@ -5,7 +5,7 @@ use keys::Address;
 use serde::ser::SerializeMap;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::fmt;
-use v1::types;
+use crate::v1::types;
 
 /// Hex-encoded transaction
 pub type RawTransaction = Bytes;
@@ -211,15 +211,15 @@ impl<'a> Deserialize<'a> for TransactionOutputs {
                 let mut outputs: Vec<TransactionOutput> =
                     Vec::with_capacity(visitor.size_hint().unwrap_or(0));
 
-                while let Some(key) = try!(visitor.next_key::<String>()) {
+                while let Some(key) = r#try!(visitor.next_key::<String>()) {
                     if &key == "data" {
-                        let value: Bytes = try!(visitor.next_value());
+                        let value: Bytes = r#try!(visitor.next_value());
                         outputs.push(TransactionOutput::ScriptData(
                             TransactionOutputWithScriptData { script_data: value },
                         ));
                     } else {
                         let address = types::address::AddressVisitor::default().visit_str(&key)?;
-                        let amount: f64 = try!(visitor.next_value());
+                        let amount: f64 = r#try!(visitor.next_value());
                         outputs.push(TransactionOutput::Address(TransactionOutputWithAddress {
                             address: address,
                             amount: amount,

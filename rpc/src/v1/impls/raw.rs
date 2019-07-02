@@ -5,12 +5,12 @@ use chain::{
 use jsonrpc_core::Error;
 use primitives::bytes::Bytes as GlobalBytes;
 use primitives::hash::H256 as GlobalH256;
-use ser::{deserialize, serialize, Reader};
+use crate::ser::{deserialize, serialize, Reader};
 use sync;
-use v1::helpers::errors::{execution, invalid_params};
-use v1::traits::Raw;
-use v1::types::H256;
-use v1::types::{
+use crate::v1::helpers::errors::{execution, invalid_params};
+use crate::v1::traits::Raw;
+use crate::v1::types::H256;
+use crate::v1::types::{
     GetRawTransactionResponse, RawTransaction, Transaction, TransactionInput, TransactionOutput,
     TransactionOutputs,
 };
@@ -52,7 +52,7 @@ impl RawClientCore {
         lock_time: Option<u32>,
         expiry_height: Option<u32>,
     ) -> Result<GlobalTransaction, String> {
-        use global_script::Builder as ScriptBuilder;
+        use crate::global_script::Builder as ScriptBuilder;
 
         // overwinter is active atm => assume that all new transactions are created for sapling era
         let version = SAPLING_TX_VERSION;
@@ -169,7 +169,7 @@ where
     fn send_raw_transaction(&self, raw_transaction: RawTransaction) -> Result<H256, Error> {
         let raw_transaction_data: Vec<u8> = raw_transaction.into();
         let transaction =
-            try!(deserialize(Reader::new(&raw_transaction_data))
+            r#try!(deserialize(Reader::new(&raw_transaction_data))
                 .map_err(|e| invalid_params("tx", e)));
         self.core
             .accept_transaction(transaction)
@@ -220,8 +220,8 @@ pub mod tests {
     use chain::Transaction;
     use jsonrpc_core::IoHandler;
     use primitives::hash::H256 as GlobalH256;
-    use v1::traits::Raw;
-    use v1::types::{TransactionInput, TransactionOutputs};
+    use crate::v1::traits::Raw;
+    use crate::v1::types::{TransactionInput, TransactionOutputs};
 
     #[derive(Default)]
     struct SuccessRawClientCore;

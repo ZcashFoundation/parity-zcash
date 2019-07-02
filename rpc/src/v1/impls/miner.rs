@@ -2,9 +2,9 @@ use jsonrpc_core::Error;
 use keys::Address;
 use miner;
 use sync;
-use v1::helpers::errors::execution;
-use v1::traits::Miner;
-use v1::types::{BlockTemplate, BlockTemplateRequest};
+use crate::v1::helpers::errors::execution;
+use crate::v1::traits::Miner;
+use crate::v1::types::{BlockTemplate, BlockTemplateRequest};
 
 pub struct MinerClient<T: MinerClientCoreApi> {
     core: T,
@@ -65,7 +65,7 @@ pub mod tests {
     use jsonrpc_core::IoHandler;
     use miner;
     use primitives::hash::H256;
-    use v1::traits::Miner;
+    use crate::v1::traits::Miner;
 
     #[derive(Default)]
     struct SuccessMinerClientCore;

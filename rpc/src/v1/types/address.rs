@@ -69,7 +69,7 @@ pub mod vec {
 mod tests {
     use keys::Address;
     use serde_json;
-    use v1::types;
+    use crate::v1::types;
 
     #[derive(Debug, PartialEq, Serialize, Deserialize)]
     struct TestStruct {

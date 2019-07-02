@@ -1,4 +1,4 @@
-use hex::{FromHex, ToHex};
+use crate::hex::{FromHex, ToHex};
 use primitives::hash::H160 as GlobalH160;
 use primitives::hash::H256 as GlobalH256;
 use serde;
@@ -39,7 +39,7 @@ macro_rules! impl_hash {
             type Err = <$other as FromStr>::Err;
 
             fn from_str(s: &str) -> Result<Self, Self::Err> {
-                let other = try!($other::from_str(s));
+                let other = r#try!($other::from_str(s));
                 Ok($name(other.take()))
             }
         }
