@@ -1,0 +1,19 @@
+[package]
+name = "zebra-script"
+version = "0.1.0"
+license = "GPL-3.0"
+authors = ["Zcash Foundation <zebra@zfnd.org>"]
+
+[dependencies]
+byteorder = "1.0"
+log = "0.4"
+zebra-crypto = { path = "../zebra-crypto" }
+zebra-chain = { path = "../zebra-chain" }
+zebra-keys = { path = "../zebra-keys" }
+zebra-primitives = { path = "../zebra-primitives" }
+zebra-serialization = { path = "../zebra-serialization" }
+
+[dev-dependencies]
+rustc-hex = "2"
+serde_json = "1.0"
+zebra-chain = { path = "../zebra-chain", features = ["test-helpers"] }

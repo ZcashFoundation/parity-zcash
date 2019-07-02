@@ -1,0 +1,10 @@
+[package]
+name = "zebra-serialization"
+version = "0.1.0"
+license = "GPL-3.0"
+authors = ["Zcash Foundation <zebra@zfnd.org>"]
+
+[dependencies]
+byteorder = "1.0"
+rustc-hex = "2"
+zebra-primitives = { path = "../zebra-primitives" }

@@ -1,0 +1,17 @@
+[package]
+name = "zebra-chain"
+version = "0.1.0"
+license = "GPL-3.0"
+authors = ["Zcash Foundation <zebra@zfnd.org>"]
+
+[dependencies]
+rustc-hex = "2"
+heapsize = "0.4"
+zebra-crypto = { path = "../zebra-crypto" }
+zebra-primitives = { path = "../zebra-primitives" }
+zebra-serialization = { path = "../zebra-serialization" }
+zebra-serialization_derive = { path = "../zebra-serialization_derive" }
+
+[features]
+default = []
+test-helpers = []

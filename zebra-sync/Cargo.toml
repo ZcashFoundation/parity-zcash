@@ -1,0 +1,35 @@
+[package]
+name = "zebra-sync"
+version = "0.1.0"
+license = "GPL-3.0"
+authors = ["Zcash Foundation <zebra@zfnd.org>"]
+
+[dependencies]
+parking_lot = "0.8"
+log = "0.4"
+time = "0.1"
+futures = "0.1"
+linked-hash-map = "0.5"
+bit-vec = "0.4.3"
+murmur3 = "0.4"
+rand = "0.4"
+byteorder = "1.0"
+
+zebra-chain = { path = "../zebra-chain" }
+zebra-crypto = { path = "../zebra-crypto" }
+zebra-storage = { path = "../zebra-storage" }
+zebra-db = { path = "../zebra-db" }
+zebra-keys = { path = "../zebra-keys" }
+zebra-message = { path = "../zebra-message" }
+zebra-miner = { path = "../zebra-miner" }
+zebra-p2p = { path = "../zebra-p2p" }
+zebra-primitives = { path = "../zebra-primitives" }
+zebra-script = { path = "../zebra-script" }
+zebra-serialization = { path = "../zebra-serialization" }
+zebra-verification = { path = "../zebra-verification" }
+zebra-network = { path = "../zebra-network" }
+
+[dev-dependencies]
+zebra-test-data = { path = "../zebra-test-data" }
+zebra-miner = { path = "../zebra-miner", features = ["test-helpers"] }
+zebra-chain = { path = "../zebra-chain", features = ["test-helpers"] }

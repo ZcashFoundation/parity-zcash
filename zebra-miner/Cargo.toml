@@ -1,0 +1,25 @@
+[package]
+name = "zebra-miner"
+version = "0.1.0"
+license = "GPL-3.0"
+authors = ["Zcash Foundation <zebra@zfnd.org>"]
+
+[dependencies]
+byteorder = "1.0"
+heapsize = "0.4"
+zebra-crypto = { path = "../zebra-crypto" }
+zebra-chain = { path = "../zebra-chain" }
+zebra-storage = { path = "../zebra-storage" }
+zebra-db = { path = "../zebra-db" }
+zebra-network = { path = "../zebra-network" }
+zebra-primitives = { path = "../zebra-primitives" }
+zebra-serialization = { path = "../zebra-serialization" }
+zebra-verification = { path = "../zebra-verification" }
+zebra-keys = { path = "../zebra-keys" }
+zebra-script = { path = "../zebra-script" }
+
+[dev-dependencies]
+zebra-test-data = { path = "../zebra-test-data" }
+
+[features]
+test-helpers = []

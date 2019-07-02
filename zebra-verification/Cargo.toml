@@ -1,0 +1,30 @@
+[package]
+name = "zebra-verification"
+version = "0.1.0"
+license = "GPL-3.0"
+authors = ["Zcash Foundation <zebra@zfnd.org>"]
+
+[dependencies]
+time = "0.1"
+log = "0.4"
+rayon = "1.0"
+parking_lot = "0.8"
+byteorder = "1.2"
+rustc-hex = "2"
+bitvec = "0.10"
+bitflags = "1.0"
+zebra-keys = { path = "../zebra-keys" }
+zebra-primitives = { path = "../zebra-primitives" }
+zebra-chain = { path = "../zebra-chain" }
+zebra-serialization = { path = "../zebra-serialization" }
+zebra-script = { path = "../zebra-script" }
+zebra-network = { path = "../zebra-network" }
+zebra-storage = { path = "../zebra-storage" }
+zebra-crypto = { path = "../zebra-crypto" }
+
+[dev-dependencies]
+rand = "0.4"
+assert_matches = "1.3.0"
+zebra-chain = { path = "../zebra-chain", features = ["test-helpers"] }
+zebra-db = { path = "../zebra-db" }
+zebra-test-data = { path = "../zebra-test-data" }

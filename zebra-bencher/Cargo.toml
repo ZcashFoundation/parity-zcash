@@ -1,0 +1,20 @@
+[package]
+name = "zebra-bencher"
+version = "0.1.0"
+license = "GPL-3.0"
+authors = ["Zcash Foundation <zebra@zfnd.org>"]
+
+[dependencies]
+zebra-storage = { path = "../zebra-storage" }
+zebra-db = { path = "../zebra-db" }
+zebra-verification = { path = "../zebra-verification" }
+zebra-network = { path = "../zebra-network" }
+zebra-chain = { path = "../zebra-chain", features = ["test-helpers"] }
+zebra-primitives = { path = "../zebra-primitives" }
+zebra-test-data = { path = "../zebra-test-data" }
+time = "*"
+byteorder = "1.0"
+
+[[bin]]
+path = "src/main.rs"
+name = "bencher"

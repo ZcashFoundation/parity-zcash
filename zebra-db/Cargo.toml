@@ -1,0 +1,21 @@
+[package]
+name = "zebra-db"
+version = "0.1.0"
+license = "GPL-3.0"
+authors = ["Zcash Foundation <zebra@zfnd.org>"]
+
+[dependencies]
+parity-rocksdb = { git = "https://github.com/paritytech/rust-rocksdb" }
+elastic-array = "0.10"
+parking_lot = "0.8"
+log = "0.4"
+bit-vec = "0.4"
+lru-cache = "0.1"
+zebra-primitives = { path = "../zebra-primitives" }
+zebra-serialization = { path = "../zebra-serialization" }
+zebra-chain = { path = "../zebra-chain" }
+zebra-storage = { path = "../zebra-storage" }
+
+[dev-dependencies]
+tempdir = "0.3"
+zebra-test-data = { path = "../zebra-test-data" }

@@ -1,0 +1,15 @@
+[package]
+name = "zebra-message"
+version = "0.1.0"
+license = "GPL-3.0"
+authors = ["Zcash Foundation <zebra@zfnd.org>"]
+
+[dependencies]
+byteorder = "1.0"
+
+zebra-crypto = { path = "../zebra-crypto" }
+zebra-chain = { path = "../zebra-chain" }
+zebra-primitives = { path = "../zebra-primitives" }
+zebra-serialization = { path = "../zebra-serialization" }
+zebra-serialization_derive = { path = "../zebra-serialization_derive" }
+zebra-network = { path = "../zebra-network" }

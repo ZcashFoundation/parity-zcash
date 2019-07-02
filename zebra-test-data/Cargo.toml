@@ -1,0 +1,14 @@
+[package]
+name = "zebra-test-data"
+version = "0.1.0"
+license = "GPL-3.0"
+authors = ["Zcash Foundation <zebra@zfnd.org>"]
+
+[dependencies]
+time = "0.1"
+
+zebra-chain = { path = "../zebra-chain" }
+zebra-network = { path = "../zebra-network" }
+zebra-primitives = { path = "../zebra-primitives" }
+zebra-serialization = { path = "../zebra-serialization" }
+zebra-script = { path = "../zebra-script" }
