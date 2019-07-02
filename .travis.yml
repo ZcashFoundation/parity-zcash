@@ -1,46 +1,35 @@
-sudo: required
-dist: trusty
 language: rust
+
+dist: xenial
+
 branches:
   only:
   - master
+
+rust:
+  - stable
+  - nightly
+
 matrix:
-  fast_finish: false
+  allow_failures:
+    - rust: nightly
+
+  fast_finish: true
+
   include:
-  - rust: stable
+
+  - rust: nightly
+    before_script:
+    - rustup component add rustfmt-preview
+    script:
+    - cargo fmt --all -- --check
+
 cache:
-  apt: true
   directories:
-  - "$TRAVIS_BUILD_DIR/target"
+  - "$HOME/.rustup"
   - "$HOME/.cargo"
-addons:
-  apt:
-    sources:
-    - ubuntu-toolchain-r-test
-    packages:
-    - libcurl4-openssl-dev
-    - libelf-dev
-    - libdw-dev
-    - gcc-4.8
-    - g++-4.8
-    - oracle-java8-set-default
+
 script:
-- cargo test --all
-- cargo build --release
-- "./tools/bench.sh"
-after_success: |
-  [ true ] &&
-  [ $TRAVIS_BRANCH = master ] &&
-  [ $TRAVIS_PULL_REQUEST = false ] &&
-  [ $TRAVIS_RUST_VERSION = stable ] &&
-  ./tools/doc.sh &&
-  echo '<meta http-equiv=refresh content=0;url=pzec/index.html>' > target/doc/index.html &&
-  pip install --user ghp-import &&
-  /home/travis/.local/bin/ghp-import -n target/doc &&
-  git push -fq https://${TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages
-env:
-  global:
-  - CXX="g++-4.8"
-  - CC="gcc-4.8"
-  - RUST_BACKTRACE=1
-  - secure: aFox44yM3elxZswfhncexpEFFleCkuhhMpVQf8ZmnfUtaIU3l8+d4Js/dnUJ9P/BxA/U1qu3a9YCa/OjsxL/1UWiMApgBPZeC3soi2fnoVyB9+wIZ6Aw2gio1hOiLKvUysyaoGgrTBEKTm0oIbesRdVMk8XTwVWchgZxtOXx5/XBbK1J0C7hKM6rsWbCQ5JOYE1VGtEzcyjgjTtTol1iUHgT7QJkDKjZT2z4TzaomjOzj+0dW0qYtolei772Zsj1HmTdiMXxTq9W1pWH0L0FNk4LkxXrgkZcrxMn4VqKYwd7xbVXFQKYmG3+RXDGJmVsTAqmb7NRTr4XN6QW4kGsP+BL9E2y+HOy2YxxatRz+htkVuEU7cBt2R9mzKOlEljV6H4IRMu4Bc6PVwSDONH01+bN+XA4QS8N4hxFZp5m/kqWKQi2qmoh1xxv0zXJxsA9aRcmdmR62MwA2TVFi7RsJ+aYNCabAI60nSz1nmmL8RZHdkBqjdM3m2EldElBgQ5h2V73IqOlaDjc3c4UJbhs8J4hU7NMiumPHZmDJn7QQ2v5geKlFSPXAz+KivtH0iV2ErcnSfvvm6EWgF3vnjy+DIhVnWRubi92UEeig7T3YRekl3gpk+LwYt/dhRJOv5fwV7kRuxyhHY9O0h/cTCkQlE2BGhwpGKE0t1PkcUv2rx8=
+- cargo check --verbose --all
+- cargo test --verbose --all
+- cargo build --verbose --all
