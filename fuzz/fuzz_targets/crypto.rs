@@ -2,12 +2,12 @@ extern crate zebra_crypto;
 
 #[allow(dead_code)]
 fn target(data: &[u8]) {
-    crypto::ripemd160(data);
-    crypto::sha1(data);
-    crypto::sha256(data);
-    crypto::dhash160(data);
-    crypto::dhash256(data);
-    crypto::checksum(data);
+    zebra_crypto::ripemd160(data);
+    zebra_crypto::sha1(data);
+    zebra_crypto::sha256(data);
+    zebra_crypto::dhash160(data);
+    zebra_crypto::dhash256(data);
+    zebra_crypto::checksum(data);
 }
 
 #[cfg(feature = "libfuzzer_fuzz")]

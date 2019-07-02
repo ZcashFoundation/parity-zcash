@@ -14,9 +14,9 @@ libfuzzer_fuzz = ["libfuzzer-sys"]
 
 [dependencies]
 afl = { version = "0.4", optional = true }
-bitcrypto = { path = "../crypto"}
 honggfuzz = { version = "0.5", optional = true }
 libfuzzer-sys = { git = "https://github.com/rust-fuzz/libfuzzer-sys.git", optional = true }
+zebra-crypto = { path = "../crypto"}
 
 [[bin]]
 name = "crypto"
