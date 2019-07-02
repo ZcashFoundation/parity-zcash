@@ -155,8 +155,13 @@ impl BloomFilterData {
                 .0
                 .overflowing_add(self.tweak)
                 .0;
-            let murmur_hash =
-                murmur3_32(&mut data.as_ref(), murmur_seed) as usize % self.filter.len();
+            // This API is terrible and doesn't accept a byte slice,
+            // but only a &mut R where R: Read.  This means that we
+            // need to create a mutable copy of the slice object (not
+            // a copy of the data it points to), then allow the Murmur
+            // API to consume the newly created slice to Read over it.
+            let input = &mut data.clone();
+            let murmur_hash = murmur3_32(input, murmur_seed) as usize % self.filter.len();
             let index = (murmur_hash & !7usize) | ((murmur_hash & 7) ^ 7);
             if !self
                 .filter
@@ -177,8 +182,13 @@ impl BloomFilterData {
                 .0
                 .overflowing_add(self.tweak)
                 .0;
-            let murmur_hash =
-                murmur3_32(&mut data.as_ref(), murmur_seed) as usize % self.filter.len();
+            // This API is terrible and doesn't accept a byte slice,
+            // but only a &mut R where R: Read.  This means that we
+            // need to create a mutable copy of the slice object (not
+            // a copy of the data it points to), then allow the Murmur
+            // API to consume the newly created slice to Read over it.
+            let input = &mut data.clone();
+            let murmur_hash = murmur3_32(input, murmur_seed) as usize % self.filter.len();
             let index = (murmur_hash & !7usize) | ((murmur_hash & 7) ^ 7);
             self.filter.set(index, true);
         }
