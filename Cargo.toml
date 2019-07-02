@@ -21,6 +21,7 @@ members = [
         "zebra-sync",
         "zebra-test-data",
         "zebra-verification",
+        "zebrad",
 ]
 
 [patch.crates-io]
