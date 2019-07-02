@@ -16,5 +16,7 @@ default-features = false
 features = ["application", "signals", "secrets", "time"]
 
 [dev-dependencies]
-abscissa = { version = "0.1.0", features = ["testing"] }
+version = "0.1.0"
+default-features = false
+features = ["testing"]
 
