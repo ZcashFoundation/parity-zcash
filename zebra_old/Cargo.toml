@@ -1,5 +1,5 @@
 [package]
-name = "zebra"
+name = "zebra_old"
 version = "0.1.0"
 license = "GPL-3.0"
 authors = ["Zcash Foundation <zebra@zfnd.org>"]
@@ -29,4 +29,4 @@ zebra-verification = { path = "../zebra-verification" }
 
 [[bin]]
 path = "main.rs"
-name = "zebra"
+name = "zebra_old"

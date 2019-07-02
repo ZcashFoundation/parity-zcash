@@ -1,6 +1,6 @@
 [workspace]
 members = [
-        "zebra",
+        "zebra_old",
         "zebra-bencher",
         "zebra-crypto",
         "zebra-chain",
