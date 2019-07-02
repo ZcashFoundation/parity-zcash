@@ -1,8 +1,8 @@
 use chain::Transaction;
-use ser::Serializable;
+use crate::ser::Serializable;
 use storage::{DuplexTransactionOutputProvider, TransactionOutputProvider};
 use verification::checked_transaction_fee;
-use MemoryPool;
+use crate::MemoryPool;
 
 /// Transaction fee calculator for memory pool
 pub trait MemoryPoolFeeCalculator {

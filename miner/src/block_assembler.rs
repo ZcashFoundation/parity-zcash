@@ -3,7 +3,7 @@ use chain::{
     SAPLING_TX_VERSION, SAPLING_TX_VERSION_GROUP_ID,
 };
 use keys::Address;
-use memory_pool::{Entry, MemoryPool, OrderingStrategy};
+use crate::memory_pool::{Entry, MemoryPool, OrderingStrategy};
 use network::ConsensusParams;
 use primitives::compact::Compact;
 use primitives::hash::H256;
@@ -391,8 +391,8 @@ mod tests {
     use super::{BlockAssembler, BlockTemplate, NextStep, SizePolicy};
     use chain::IndexedTransaction;
     use db::BlockChainDatabase;
-    use fee::{FeeCalculator, NonZeroFeeCalculator};
-    use memory_pool::MemoryPool;
+    use crate::fee::{FeeCalculator, NonZeroFeeCalculator};
+    use crate::memory_pool::MemoryPool;
     use network::{ConsensusParams, Network};
     use primitives::hash::H256;
     use std::sync::Arc;

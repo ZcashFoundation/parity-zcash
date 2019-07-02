@@ -6,11 +6,11 @@
 //! It also guarantees that ancestor-descendant relation won't break during ordered removal (ancestors always removed
 //! before descendants). Removal using `remove_by_hash` can break this rule.
 use chain::{IndexedTransaction, OutPoint, Transaction, TransactionOutput};
-use fee::MemoryPoolFeeCalculator;
+use crate::fee::MemoryPoolFeeCalculator;
 use heapsize::HeapSizeOf;
 use primitives::bytes::Bytes;
 use primitives::hash::H256;
-use ser::{serialize, Serializable};
+use crate::ser::{serialize, Serializable};
 use std::cmp::Ordering;
 use std::collections::BTreeSet;
 use std::collections::HashMap;
@@ -1075,7 +1075,7 @@ pub mod tests {
     use self::test_data::{ChainBuilder, TransactionBuilder};
     use super::{DoubleSpendCheckResult, MemoryPool, OrderingStrategy};
     use chain::{OutPoint, Transaction};
-    use fee::NonZeroFeeCalculator;
+    use crate::fee::NonZeroFeeCalculator;
     use heapsize::HeapSizeOf;
 
     fn to_memory_pool(chain: &mut ChainBuilder) -> MemoryPool {

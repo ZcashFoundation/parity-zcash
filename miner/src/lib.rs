@@ -16,12 +16,12 @@ mod block_assembler;
 mod fee;
 mod memory_pool;
 
-pub use block_assembler::{BlockAssembler, BlockTemplate};
-pub use fee::{transaction_fee, transaction_fee_rate, FeeCalculator};
-pub use memory_pool::{
+pub use crate::block_assembler::{BlockAssembler, BlockTemplate};
+pub use crate::fee::{transaction_fee, transaction_fee_rate, FeeCalculator};
+pub use crate::memory_pool::{
     DoubleSpendCheckResult, HashedOutPoint, Information as MemoryPoolInformation, MemoryPool,
     NonFinalDoubleSpendSet, OrderingStrategy as MemoryPoolOrderingStrategy,
 };
 
 #[cfg(feature = "test-helpers")]
-pub use fee::NonZeroFeeCalculator;
+pub use crate::fee::NonZeroFeeCalculator;
