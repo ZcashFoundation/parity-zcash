@@ -1828,32 +1828,6 @@ version = "0.3.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
-name = "zebra"
-version = "0.1.0"
-dependencies = [
- "app_dirs 1.2.1 (git+https://github.com/paritytech/app-dirs-rs)",
- "clap 2.33.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "env_logger 0.5.13 (registry+https://github.com/rust-lang/crates.io-index)",
- "libc 0.2.58 (registry+https://github.com/rust-lang/crates.io-index)",
- "log 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",
- "zebra-chain 0.1.0",
- "zebra-db 0.1.0",
- "zebra-import 0.1.0",
- "zebra-keys 0.1.0",
- "zebra-logs 0.1.0",
- "zebra-message 0.1.0",
- "zebra-miner 0.1.0",
- "zebra-network 0.1.0",
- "zebra-p2p 0.1.0",
- "zebra-primitives 0.1.0",
- "zebra-rpc 0.1.0",
- "zebra-script 0.1.0",
- "zebra-storage 0.1.0",
- "zebra-sync 0.1.0",
- "zebra-verification 0.1.0",
-]
-
-[[package]]
 name = "zebra-bencher"
 version = "0.1.0"
 dependencies = [
@@ -2174,6 +2148,32 @@ dependencies = [
  "zebra-serialization 0.1.0",
  "zebra-storage 0.1.0",
  "zebra-test-data 0.1.0",
+]
+
+[[package]]
+name = "zebra_old"
+version = "0.1.0"
+dependencies = [
+ "app_dirs 1.2.1 (git+https://github.com/paritytech/app-dirs-rs)",
+ "clap 2.33.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "env_logger 0.5.13 (registry+https://github.com/rust-lang/crates.io-index)",
+ "libc 0.2.58 (registry+https://github.com/rust-lang/crates.io-index)",
+ "log 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "zebra-chain 0.1.0",
+ "zebra-db 0.1.0",
+ "zebra-import 0.1.0",
+ "zebra-keys 0.1.0",
+ "zebra-logs 0.1.0",
+ "zebra-message 0.1.0",
+ "zebra-miner 0.1.0",
+ "zebra-network 0.1.0",
+ "zebra-p2p 0.1.0",
+ "zebra-primitives 0.1.0",
+ "zebra-rpc 0.1.0",
+ "zebra-script 0.1.0",
+ "zebra-storage 0.1.0",
+ "zebra-sync 0.1.0",
+ "zebra-verification 0.1.0",
 ]
 
 [metadata]
