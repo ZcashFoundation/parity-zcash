@@ -183,6 +183,11 @@ version = "0.4.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
+name = "bit-vec"
+version = "0.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
 name = "bitflags"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2202,7 +2207,7 @@ dependencies = [
 name = "zebra-db"
 version = "0.1.0"
 dependencies = [
- "bit-vec 0.4.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "bit-vec 0.6.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "elastic-array 0.10.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "log 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "lru-cache 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -2393,7 +2398,7 @@ dependencies = [
 name = "zebra-storage"
 version = "0.1.0"
 dependencies = [
- "bit-vec 0.4.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "bit-vec 0.6.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "display_derive 0.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "elastic-array 0.10.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "lazy_static 1.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -2410,7 +2415,7 @@ dependencies = [
 name = "zebra-sync"
 version = "0.1.0"
 dependencies = [
- "bit-vec 0.4.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "bit-vec 0.6.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "byteorder 1.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "futures 0.1.28 (registry+https://github.com/rust-lang/crates.io-index)",
  "linked-hash-map 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -2535,6 +2540,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum bellman 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "eae372472c7ea8f7c8fc6a62f7d5535db8302de7f1aafda2e13a97c4830d3bcf"
 "checksum bigint 4.4.1 (registry+https://github.com/rust-lang/crates.io-index)" = "ebecac13b3c745150d7b6c3ea7572d372f09d627c2077e893bf26c5c7f70d282"
 "checksum bit-vec 0.4.4 (registry+https://github.com/rust-lang/crates.io-index)" = "02b4ff8b16e6076c3e14220b39fbc1fabb6737522281a388998046859400895f"
+"checksum bit-vec 0.6.1 (registry+https://github.com/rust-lang/crates.io-index)" = "a4523a10839ffae575fb08aa3423026c8cb4687eef43952afb956229d4f246f7"
 "checksum bitflags 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "3d155346769a6855b86399e9bc3814ab343cd3d62c7e985113d46a0ec3c281fd"
 "checksum bitvec 0.10.2 (registry+https://github.com/rust-lang/crates.io-index)" = "284495959f63520b015b41f8e2a0627af935345ea558ae779b354e8f98c966fa"
 "checksum blake2-rfc 0.2.18 (git+https://github.com/gtank/blake2-rfc.git?rev=7a5b5fc99ae483a0043db7547fb79a6fa44b88a9)" = "<none>"
