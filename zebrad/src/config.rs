@@ -17,11 +17,11 @@ pub struct ZebradConfig {
     /// Which Zcash network to connect to.
     pub zcash_network: zebra_network::Network,
     /// Server resource configuration.
-    pub server_section: ServerSection,
+    pub server: ServerSection,
     /// Network connection configuration.
-    pub network_section: NetworkSection,
+    pub network: NetworkSection,
     /// RPC configuration.
-    pub rpc_section: RPCSection,
+    pub rpc: RPCSection,
 }
 
 /// Network Configuration
