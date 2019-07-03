@@ -5,6 +5,7 @@ version = "0.1.0"
 edition = "2018"
 
 [dependencies]
+toml = "0.5"
 num_cpus = "1"
 app_dirs = "1.2"
 failure = "0.1"

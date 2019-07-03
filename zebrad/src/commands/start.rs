@@ -34,5 +34,7 @@ impl Runnable for StartCommand {
         let conf = ZebradConfig::default();
 
         println!("config: {:?}", conf);
+
+        println!("toml\n{}", toml::to_string(&conf).unwrap());
     }
 }
