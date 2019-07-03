@@ -9,7 +9,7 @@ parity-rocksdb = { git = "https://github.com/paritytech/rust-rocksdb" }
 elastic-array = "0.10"
 parking_lot = "0.8"
 log = "0.4"
-bit-vec = "0.4"
+bit-vec = "0.6"
 lru-cache = "0.1"
 zebra-primitives = { path = "../zebra-primitives" }
 zebra-serialization = { path = "../zebra-serialization" }
