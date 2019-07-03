@@ -5,6 +5,7 @@ license = "GPL-3.0"
 authors = ["Zcash Foundation <zebra@zfnd.org>"]
 
 [dependencies]
+serde = { version = "1", features = ["derive"] }
 tokio-core = "0.1.6"
 tokio-io = "0.1.12"
 parking_lot = "0.8"

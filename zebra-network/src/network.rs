@@ -1,6 +1,9 @@
 //! Bitcoin network
 //! https://www.anintegratedworld.com/unravelling-the-mysterious-block-chain-magic-number/
 
+use serde::{Deserialize, Serialize};
+use std::default::Default;
+
 use compact::Compact;
 use zebra_chain::IndexedBlock;
 use zebra_primitives::bigint::U256;
@@ -23,7 +26,7 @@ lazy_static! {
 pub type Magic = u32;
 
 /// Bitcoin [network](https://bitcoin.org/en/glossary/mainnet)
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Serialize, Deserialize)]
 pub enum Network {
     /// The original and main network for Bitcoin transactions, where satoshis have real economic value.
     Mainnet,
@@ -35,6 +38,12 @@ pub enum Network {
     Unitest,
     /// Any other network. By default behaves like bitcoin mainnet.
     Other(u32),
+}
+
+impl Default for Network {
+    fn default() -> Self {
+        Network::Mainnet
+    }
 }
 
 impl Network {

@@ -1,6 +1,8 @@
 #[macro_use]
 extern crate lazy_static;
 
+extern crate serde;
+
 extern crate rustc_hex as hex;
 extern crate zebra_chain;
 extern crate zebra_crypto;

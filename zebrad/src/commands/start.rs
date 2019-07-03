@@ -29,5 +29,10 @@ impl Runnable for StartCommand {
         } else {
             println!("Hello, {}!", self.recipient.join(" "));
         }
+
+        use crate::config::ZebradConfig;
+        let conf = ZebradConfig::default();
+
+        println!("config: {:?}", conf);
     }
 }

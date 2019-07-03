@@ -5,10 +5,15 @@ version = "0.1.0"
 edition = "2018"
 
 [dependencies]
+num_cpus = "1"
+app_dirs = "1.2"
 failure = "0.1"
 gumdrop = "0.6"
 lazy_static = "1"
 serde = { version = "1", features = ["serde_derive"] }
+zebra-p2p = { path = "../zebra-p2p" }
+zebra-network = { path = "../zebra-network" }
+
 
 [dependencies.abscissa]
 version = "0.1.0"

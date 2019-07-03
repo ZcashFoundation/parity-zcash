@@ -11,6 +11,7 @@ extern crate log;
 extern crate abstract_ns;
 extern crate csv;
 extern crate ns_dns_tokio;
+extern crate serde;
 
 extern crate zebra_crypto;
 extern crate zebra_message;
