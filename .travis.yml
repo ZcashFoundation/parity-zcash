@@ -1,6 +1,4 @@
-language: rust
-
-rust: stable
+language: rust # 'stable' is the default
 
 branches:
   only:
