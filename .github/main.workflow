@@ -24,7 +24,7 @@ action "if branch = master:" {
 }
 
 action "Setup Google Cloud" {
-  needs = ["if branch = master:"]
+
   uses = "actions/gcloud/auth@master"
   secrets = ["GCLOUD_AUTH"]
 }
