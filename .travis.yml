@@ -1,35 +1,32 @@
 language: rust
 
-dist: xenial
+rust: stable
 
 branches:
   only:
   - master
-
-rust:
-  - stable
-  - nightly
-
-matrix:
-  allow_failures:
-    - rust: nightly
-
-  fast_finish: true
-
-  include:
-
-  - rust: nightly
-    before_script:
-    - rustup component add rustfmt-preview
-    script:
-    - cargo fmt --all -- --check
 
 cache:
   directories:
   - "$HOME/.rustup"
   - "$HOME/.cargo"
 
-script:
-- cargo check --all
-- cargo test --all
-- cargo build --all
+matrix:
+  fast_finish: true
+
+  allow_failures:
+    - rust: nightly-2019-06-30
+
+  include:
+    - rust: nightly-2019-06-30
+      before_script: rustup component add rustfmt-preview
+      script: cargo fmt --all -- --check
+
+jobs:
+  include:
+    - stage: cargo fetch
+      script: cargo fetch --verbose
+    - stage: test and build
+      script: cargo test --all
+    - stage: test and build
+      script: cargo build --release --all
