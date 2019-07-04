@@ -1,5 +1,5 @@
 workflow "On Push" {
-  resolves = ["Build Fuzzers"]
+  resolves = ["Google Cloud Build", "Build Fuzzers"]
   on = "push"
 }
 
@@ -7,6 +7,13 @@ action "Build and Test Image" {
   uses = "actions/docker/cli@master"
   args = ["build -t zebrad ."]
   secrets = ["GCLOUD_AUTH"]
+}
+
+action "Google Cloud Build" {
+  needs = ["Setup Google Cloud"]
+  uses = "actions/gcloud/cli@master"
+
+  args = "builds submit --config cloudbuild.yaml ."
 }
 
 # Filter for master branch
