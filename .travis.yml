@@ -24,8 +24,11 @@ cache:
 jobs:
   include:
     - stage: cargo fetch
+      name: "cargo fetch --verbose"
       script: cargo fetch --verbose
     - stage: test and build
+      name: "cargo test --all"
       script: cargo test --all
     - stage: test and build
+      name: "cargo build --release --all"
       script: cargo build --release --all
