@@ -8,17 +8,18 @@ cache:
   directories:
   - "$HOME/.rustup"
   - "$HOME/.cargo"
+  - "$TRAVIS_BUILD_DIR/target"
 
-matrix:
-  fast_finish: true
+# matrix:
+#   fast_finish: true
 
-  allow_failures:
-    - rust: nightly-2019-06-30
+#   allow_failures:
+#     - rust: nightly-2019-06-30
 
-  include:
-    - rust: nightly-2019-06-30
-      before_script: rustup component add rustfmt-preview
-      script: cargo fmt --all -- --check
+#   include:
+#     - rust: nightly-2019-06-30
+#       before_script: rustup component add rustfmt-preview
+#       script: cargo fmt --all -- --check
 
 jobs:
   include:
