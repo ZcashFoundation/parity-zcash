@@ -1,0 +1,5 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'zebrad', '.']
+options:
+    machineType: 'N1_HIGHCPU_32'
