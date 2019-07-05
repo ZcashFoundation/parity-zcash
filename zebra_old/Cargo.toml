@@ -8,7 +8,7 @@ description = "A consensus-compatible Zcash node client written in Rust."
 [dependencies]
 app_dirs = { git = "https://github.com/paritytech/app-dirs-rs" }
 clap = { version = "2", features = ["yaml"] }
-env_logger = "0.5"
+env_logger = "0.6"
 libc = "0.2"
 log = "0.4"
 zebra-db = { path = "../zebra-db" }
