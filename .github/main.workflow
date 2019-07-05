@@ -18,7 +18,7 @@ action "Google Cloud Build" {
   needs = ["Setup Google Cloud"]
   uses = "actions/gcloud/cli@master"
   runs = "sh -l -c"
-  args = "SHORT_SHA=$(echo ${GITHUB_SHA} | head -c7) && BRANCH_NAME=$(git name-rev --name-only HEAD) && gcloud builds submit . --config cloudbuild.yaml --project zebrad --substitutions BRANCH_NAME=$BRANCH_NAME,SHORT_SHA=$SHORT_SHA"
+  args = ["SHORT_SHA=$(echo $GITHUB_SHA | head -c7) && BRANCH_NAME=$(git name-rev --name-only HEAD) && gcloud builds submit . --config cloudbuild.yaml --project zebrad --substitutions BRANCH_NAME=$BRANCH_NAME,SHORT_SHA=$SHORT_SHA"]
 }
 
 # Filter for master branch
