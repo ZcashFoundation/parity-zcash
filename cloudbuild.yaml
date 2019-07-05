@@ -4,7 +4,7 @@ steps:
   - --destination=gcr.io/$PROJECT_ID/$BRANCH_NAME:$SHORT_SHA
   - --cache=true
   - --cache-ttl=6h
-  timeout: 1800s # A half hour max for this step alone.
+  # timeout: 1800s # A half hour max for this step alone.
 
 options:
     machineType: 'N1_HIGHCPU_32'
