@@ -3,6 +3,11 @@ workflow "On Push" {
   on = "push"
 }
 
+action "Setup Google Cloud" {
+  uses = "actions/gcloud/auth@master"
+  secrets = ["GCLOUD_AUTH"]
+}
+
 action "Build and Test Image" {
   uses = "actions/docker/cli@master"
   args = ["build -t zebrad ."]
@@ -12,8 +17,8 @@ action "Build and Test Image" {
 action "Google Cloud Build" {
   needs = ["Setup Google Cloud"]
   uses = "actions/gcloud/cli@master"
-
-  args = "builds submit --config cloudbuild.yaml ."
+  runs = "sh -l -c"
+  args = "SHORT_SHA=$(echo ${GITHUB_SHA} | head -c7) && BRANCH_NAME=$(git name-rev --name-only HEAD) && gcloud builds submit . --config cloudbuild.yaml --project zebrad --substitutions BRANCH_NAME=$BRANCH_NAME,SHORT_SHA=$SHORT_SHA"
 }
 
 # Filter for master branch
@@ -23,12 +28,6 @@ action "if branch = master:" {
   args = "branch master"
 }
 
-action "Setup Google Cloud" {
-
-  uses = "actions/gcloud/auth@master"
-  secrets = ["GCLOUD_AUTH"]
-}
-
 action "Tag image for GCR" {
   needs = ["if branch = master:"]
   uses = "actions/docker/tag@master"
@@ -36,7 +35,7 @@ action "Tag image for GCR" {
 }
 
 action "Set Credential Helper for Docker" {
-  needs = ["Setup Google Cloud"]
+  needs = ["if branch = master:", "Setup Google Cloud"]
   uses = "actions/gcloud/cli@master"
   args = ["auth", "configure-docker", "--quiet"]
 }

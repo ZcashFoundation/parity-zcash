@@ -1,6 +1,9 @@
 steps:
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'zebrad', '.']
+- name: 'gcr.io/kaniko-project/executor:latest'
+  args:
+  - --destination=gcr.io/$PROJECT_ID/$BRANCH_NAME:$SHORT_SHA
+  - --cache=true
+  - --cache-ttl=6h
   timeout: 1800s # A half hour max for this step alone.
 
 options:
