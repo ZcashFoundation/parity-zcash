@@ -8,13 +8,7 @@ action "Setup Google Cloud" {
   secrets = ["GCLOUD_AUTH"]
 }
 
-action "Build and Test Image" {
-  uses = "actions/docker/cli@master"
-  args = ["build -t zebrad ."]
-  secrets = ["GCLOUD_AUTH"]
-}
-
-action "Google Cloud Build" {
+action "Build, Test, Tag, and Push to GCR" {
   needs = ["Setup Google Cloud"]
   uses = "actions/gcloud/cli@master"
   runs = "sh -l -c"
@@ -28,27 +22,8 @@ action "if branch = master:" {
   args = "branch master"
 }
 
-action "Tag image for GCR" {
-  needs = ["if branch = master:"]
-  uses = "actions/docker/tag@master"
-  args = ["zebrad", "gcr.io/zebrad/master"]
-}
-
-action "Set Credential Helper for Docker" {
-  needs = ["if branch = master:", "Setup Google Cloud"]
-  uses = "actions/gcloud/cli@master"
-  args = ["auth", "configure-docker", "--quiet"]
-}
-
-action "Push image to GCR" {
-  needs = ["Tag image for GCR", "Set Credential Helper for Docker"]
-  uses = "actions/gcloud/cli@master"
-  runs = "sh -c"
-  args = ["docker push gcr.io/zebrad/master"]
-}
-
 action "Build Fuzzers" {
-  needs = ["Push image to GCR"]
+  needs = ["if branch = master:"]
   uses = "docker://gcr.io/zebrad/master:latest"
   runs = ["sh", "-c", "cd fuzz/; cargo install --force afl honggfuzz; cargo hfuzz build; cargo afl build; exit 0"]
 }
