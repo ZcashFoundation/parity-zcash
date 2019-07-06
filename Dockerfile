@@ -10,10 +10,6 @@ WORKDIR /zebra
 ENV RUST_BACKTRACE 1
 ENV CARGO_HOME /zebra/.cargo/
 
-COPY Cargo.lock .
-
-RUN cargo fetch --verbose
-
 # Copy cached target/ from master
 # COPY --from=gcr.io/zebrad/master:latest /zebra/target /zebra/target
 
@@ -22,6 +18,11 @@ RUN cargo fetch --verbose
 
 # Copy local code to the container image.
 # Assumes that we are in the git repo.
+
+COPY . .
+
+RUN cargo fetch --verbose
+
 COPY . .
 
 RUN cargo test --all && cargo build --release
