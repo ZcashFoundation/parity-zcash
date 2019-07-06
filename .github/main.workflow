@@ -17,7 +17,7 @@ action "Build, Test, Tag, and Push to GCR" {
 
 # Filter for master branch
 action "if branch = master:" {
-  needs = ["Build and Test Image"]
+  needs = ["Build, Test, Tag, and Push to GCR"]
   uses = "actions/bin/filter@master"
   args = "branch master"
 }
