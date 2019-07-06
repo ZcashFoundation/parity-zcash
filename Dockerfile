@@ -10,7 +10,7 @@ WORKDIR /zebra
 ENV RUST_BACKTRACE 1
 ENV CARGO_HOME /zebra/.cargo/
 
-COPY Cargo.lock Cargo.lock
+COPY Cargo.lock .
 
 RUN cargo fetch --verbose
 
