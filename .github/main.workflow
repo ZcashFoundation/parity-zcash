@@ -1,5 +1,5 @@
 workflow "On Push" {
-  resolves = ["Google Cloud Build", "Build Fuzzers"]
+  resolves = ["Build Fuzzers"]
   on = "push"
 }
 
