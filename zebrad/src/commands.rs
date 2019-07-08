@@ -37,8 +37,10 @@ pub enum ZebradCommand {
 /// This trait allows you to define how application configuration is loaded.
 impl Configurable<ZebradConfig> for ZebradCommand {
     fn config_path(&self) -> Option<PathBuf> {
-        // Have `config_path` return `Some(path)` in order to trigger the
-        // application configuration being loaded.
-        None
+        use app_dirs::{app_root, AppDataType};
+
+        app_root(AppDataType::UserConfig, &crate::APP_INFO)
+            .map(|dir| dir.join("zebrad.toml"))
+            .ok()
     }
 }
