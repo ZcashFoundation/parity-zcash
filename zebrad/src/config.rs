@@ -15,12 +15,16 @@ use serde::{Deserialize, Serialize};
 #[serde(deny_unknown_fields)]
 pub struct ZebradConfig {
     /// Which Zcash network to connect to.
+    #[serde(default)]
     pub zcash_network: zebra_network::Network,
     /// Server resource configuration.
+    #[serde(default)]
     pub server: ServerSection,
     /// Network connection configuration.
+    #[serde(default)]
     pub network: NetworkSection,
     /// RPC configuration.
+    #[serde(default)]
     pub rpc: RPCSection,
 }
 
@@ -28,6 +32,7 @@ pub struct ZebradConfig {
 ///
 /// Contains settings related to (internet) networking.
 #[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(default)]
 pub struct NetworkSection {
     /// Whether to use IPv4 or IPv6 or both.
     pub network_type: zebra_p2p::InternetProtocol,
@@ -60,6 +65,7 @@ impl Default for NetworkSection {
 ///
 /// Contains settings determining server resources.
 #[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(default)]
 pub struct ServerSection {
     /// The size of the database cache, in MB.
     pub db_cache_size: usize,
@@ -101,6 +107,7 @@ impl Default for ServerSection {
 ///
 /// Contains settings relating to the RPC interface.
 #[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(default)]
 pub struct RPCSection {
     /// Whether or not the RPC is enabled
     pub enabled: bool,
