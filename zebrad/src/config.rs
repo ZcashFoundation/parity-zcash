@@ -14,9 +14,6 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Config, Debug, Default, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct ZebradConfig {
-    /// Which Zcash network to connect to.
-    #[serde(default)]
-    pub zcash_network: zebra_network::Network,
     /// Server resource configuration.
     #[serde(default)]
     pub server: ServerSection,
@@ -34,8 +31,10 @@ pub struct ZebradConfig {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(default)]
 pub struct NetworkSection {
+    /// Which Zcash network to connect to.
+    pub zcash_network: zebra_network::Network,
     /// Whether to use IPv4 or IPv6 or both.
-    pub network_type: zebra_p2p::InternetProtocol,
+    pub ip_version: zebra_p2p::InternetProtocol,
     /// If specified, the host address for the node including a port.
     pub host_addr: Option<SocketAddr>,
     /// A list of peers to connect to.
@@ -47,7 +46,8 @@ pub struct NetworkSection {
 impl Default for NetworkSection {
     fn default() -> Self {
         NetworkSection {
-            network_type: zebra_p2p::InternetProtocol::default(),
+            zcash_network: zebra_network::Network::default(),
+            ip_version: zebra_p2p::InternetProtocol::default(),
             // The default port depends on the zcash_network parameter
             // in the global config, which we don't know here.
             // The host addr depends on the IP version.  If we set a
