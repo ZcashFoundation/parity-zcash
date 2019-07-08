@@ -81,19 +81,12 @@ pub struct ServerSection {
 
 impl Default for ServerSection {
     fn default() -> Self {
-        use app_dirs::{app_dir, AppDataType, AppInfo};
+        use app_dirs::{app_dir, AppDataType};
 
         ServerSection {
             db_cache_size: 512,
-            data_dir: app_dir(
-                AppDataType::UserData,
-                &AppInfo {
-                    name: "zebra",
-                    author: "Zcash Foundation <zebra@zfnd.org>",
-                },
-                "db",
-            )
-            .expect("Could not construct default data dir"),
+            data_dir: app_dir(AppDataType::UserData, &crate::APP_INFO, "db")
+                .expect("Could not construct default data dir"),
             max_inbound_connections: 10,
             max_outbound_connections: 10,
             p2p_thread_count: num_cpus::get(),

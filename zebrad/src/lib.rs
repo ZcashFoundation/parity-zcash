@@ -12,6 +12,13 @@
 )]
 #![forbid(unsafe_code)]
 
+use app_dirs::AppInfo;
+
+const APP_INFO: AppInfo = AppInfo {
+    name: "zebrad",
+    author: "Zcash Foundation <zebra@zfnd.org>",
+};
+
 pub mod application;
 pub mod commands;
 pub mod config;
