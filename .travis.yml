@@ -1,4 +1,4 @@
-language: rust # 'stable' is the default
+language: rust
 
 branches:
   only:
@@ -10,27 +10,29 @@ cache:
   - "$HOME/.cargo"
   - "$TRAVIS_BUILD_DIR/target"
 
-# matrix:
-#   fast_finish: true
-
 stages:
   - "fetch"
   - "test and build"
 
 jobs:
+  fast_finish: true
   allow_failures:
     - rust: nightly-2019-06-30
   include:
-    - stage: fetch
-      name: "cargo fetch --verbose"
+    - name: "cargo fetch --verbose"
+      rust: stable
+      stage: fetch
       script: cargo fetch --verbose
-    - stage: test and build
-      name: "cargo test --all"
+    - name: "cargo test --all"
+      rust: stable
+      stage: test and build
       script: cargo test --all
-    - stage: test and build
-      name: "cargo build --release --all"
+    - name: "cargo build --release --all"
+      rust: stable
+      stage: test and build
       script: cargo build --release --all
-    - stage: test and build
+    - name: "cargo +nightly-2019-06-30 fmt --all -- --check"
       rust: nightly-2019-06-30
+      stage: test and build
       before_script: rustup component add rustfmt-preview
       script: cargo fmt --all -- --check
