@@ -10,29 +10,18 @@ cache:
   - "$HOME/.cargo"
   - "$TRAVIS_BUILD_DIR/target"
 
-stages:
-  - "fetch"
-  - "test and build"
-
 jobs:
   fast_finish: true
   allow_failures:
     - rust: nightly-2019-06-30
   include:
-    - name: "cargo fetch --verbose"
-      rust: stable
-      stage: fetch
-      script: cargo fetch --verbose
     - name: "cargo test --all"
       rust: stable
-      stage: test and build
       script: cargo test --all
     - name: "cargo build --release --all"
       rust: stable
-      stage: test and build
       script: cargo build --release --all
     - name: "cargo +nightly-2019-06-30 fmt --all -- --check"
       rust: nightly-2019-06-30
-      stage: test and build
       before_script: rustup component add rustfmt-preview
       script: cargo fmt --all -- --check
