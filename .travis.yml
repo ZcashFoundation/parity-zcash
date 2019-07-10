@@ -13,17 +13,15 @@ cache:
 # matrix:
 #   fast_finish: true
 
-#   allow_failures:
-#     - rust: nightly-2019-06-30
-
-#   include:
-#     - rust: nightly-2019-06-30
-#       before_script: rustup component add rustfmt-preview
-#       script: cargo fmt --all -- --check
+stages:
+  - "fetch"
+  - "test and build"
 
 jobs:
+  allow_failures:
+    - rust: nightly-2019-06-30
   include:
-    - stage: cargo fetch
+    - stage: fetch
       name: "cargo fetch --verbose"
       script: cargo fetch --verbose
     - stage: test and build
@@ -32,3 +30,7 @@ jobs:
     - stage: test and build
       name: "cargo build --release --all"
       script: cargo build --release --all
+    - stage: test and build
+      rust: nightly-2019-06-30
+      before_script: rustup component add rustfmt-preview
+      script: cargo fmt --all -- --check
