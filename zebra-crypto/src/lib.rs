@@ -238,11 +238,20 @@ pub fn siphash24(key0: u64, key1: u64, input: &[u8]) -> u64 {
 }
 
 /// Blake2b with personalization.
-#[inline]
+// #[inline]
+// pub fn blake2b_personal(personalization: &[u8], input: &[u8]) -> H256 {
+//     let mut hasher = Blake2::with_params(32, &[], &[], personalization);
+//     hasher.update(input);
+//     hasher.finalize().as_bytes().into()
+// }
+
 pub fn blake2b_personal(personalization: &[u8], input: &[u8]) -> H256 {
-    let mut hasher = Blake2b::with_params(32, &[], &[], personalization);
-    hasher.update(input);
-    hasher.finalize().as_bytes().into()
+    blake2::Params::new()
+		.hash_length(32 as usize)
+		.personal(personalization)
+		.to_state()
+		.update(input)
+		.finalize().as_bytes().into()
 }
 
 /// "Uncommitted" note value.
