@@ -5,7 +5,7 @@ license = "GPL-3.0"
 authors = ["Zcash Foundation <zebra@zfnd.org>"]
 
 [dependencies]
-parking_lot = "0.8"
+parking_lot = "0.9"
 log = "0.4"
 time = "0.1"
 futures = "0.1"
