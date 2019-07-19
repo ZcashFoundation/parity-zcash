@@ -16,6 +16,9 @@ steps:
   - --destination=gcr.io/$PROJECT_ID/$BRANCH_NAME #:$SHORT_SHA
   - --cache=true
   - --cache-ttl=6h
+  # Deploy container image to Cloud Run
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['beta', 'run', 'deploy', 'zebrad-$BRANCH_NAME-testnet', '--image', 'gcr.io/$PROJECT_ID/$BRANCH_NAME', '--region', 'us-central1', '--platform', 'managed']
 
 options:
     machineType: 'N1_HIGHCPU_32'
