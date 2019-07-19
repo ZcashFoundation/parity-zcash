@@ -29,6 +29,7 @@ RUN cargo test --all && cargo build --release
 
 FROM debian:latest
 
-COPY --from=builder /zebra/target/release/zebrad /zebrad
+# TODO: s/zebra_old/zebrad/ when repointed
+COPY --from=builder /zebra/target/release/zebra_old /zebrad
 
-CMD ["/zebrad", "--data-dir=./.zebra-testnet", " --testnet"]
+CMD ["/zebrad", "--jsonrpc-port $PORT", "--data-dir=./.zebra-testnet", " --testnet"]
