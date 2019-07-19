@@ -1,0 +1,22 @@
+[package]
+name = "zebrad2"
+authors = ["Zcash Foundation <zebra@zfnd.org>"]
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+failure = "0.1"
+gumdrop = "0.6"
+lazy_static = "1"
+serde = { version = "1", features = ["serde_derive"] }
+
+[dependencies.abscissa]
+version = "0.1.0"
+default-features = false
+features = ["application", "signals", "secrets", "time"]
+
+[dev-dependencies.abscissa]
+version = "0.1.0"
+default-features = false
+features = ["testing"]
+
