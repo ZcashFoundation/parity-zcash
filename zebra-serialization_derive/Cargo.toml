@@ -9,7 +9,7 @@ name = "zebra_serialization_derive"
 proc-macro = true
 
 [dependencies]
-syn = "0.11.11"
+syn = "0.15.39"
 quote = "0.3.15"
 
 [dev-dependencies]
