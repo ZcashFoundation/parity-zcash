@@ -1,4 +1,4 @@
-FROM rust:stretch as base
+FROM rust:stretch as builder
 
 RUN apt-get update && \
 	apt-get install -y --no-install-recommends \
@@ -26,3 +26,9 @@ RUN cargo fetch --verbose
 COPY . .
 
 RUN cargo test --all && cargo build --release
+
+FROM debian:latest
+
+COPY --from=builder /zebra/target/release/zebrad /zebrad
+
+CMD ["/zebrad", "--data-dir=./.zebra-testnet", " --testnet"]
