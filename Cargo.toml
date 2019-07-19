@@ -1,6 +1,5 @@
 [workspace]
 members = [
-        "zebra_old",
         "zebra-bencher",
         "zebra-crypto",
         "zebra-chain",
@@ -22,6 +21,7 @@ members = [
         "zebra-test-data",
         "zebra-verification",
         "zebrad",
+        "zebrad2",
 ]
 
 [patch.crates-io]
