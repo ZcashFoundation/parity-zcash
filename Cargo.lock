@@ -2259,7 +2259,7 @@ dependencies = [
 name = "zebra-rpc"
 version = "0.1.0"
 dependencies = [
- "jsonrpc-core 10.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "jsonrpc-core 12.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "jsonrpc-derive 10.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "jsonrpc-http-server 10.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "jsonrpc-pubsub 12.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
