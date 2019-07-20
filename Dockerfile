@@ -31,4 +31,4 @@ FROM debian:latest
 
 COPY --from=builder /zebra/target/release/zebrad /zebrad
 
-CMD ["sh", "-c", "/zebrad --jsonrpc-port 8080 --testnet --data-dir=./.zebra-testnet"]
+CMD /zebrad --jsonrpc-port 8080 --testnet --data-dir=./.zebra-testnet
