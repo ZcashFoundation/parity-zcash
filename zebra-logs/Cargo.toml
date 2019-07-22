@@ -5,7 +5,7 @@ license = "GPL-3.0"
 authors = ["Zcash Foundation <zebra@zfnd.org>"]
 
 [dependencies]
-ansi_term = "0.11"
+ansi_term = "0.12"
 log = "0.4"
 env_logger = "0.6"
 time = "0.1"
