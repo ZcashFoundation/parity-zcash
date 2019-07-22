@@ -30,5 +30,6 @@ RUN cargo test --all && cargo build --release
 FROM debian:latest
 
 COPY --from=builder /zebra/target/release/zebrad /zebrad
+COPY --from=builder /zebra/entrypoint.sh /entrypoint.sh
 
-CMD /zebrad --jsonrpc-port 8080 --testnet --data-dir=./.zebra-testnet
+ENTRYPOINT ["/entrypoint.sh"]
