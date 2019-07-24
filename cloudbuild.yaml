@@ -18,7 +18,7 @@ steps:
   - --cache-ttl=6h
   # Deploy container image to Cloud Run
 - name: 'gcr.io/cloud-builders/gcloud'
-  args: ['beta', 'run', 'deploy', 'zebrad-$BRANCH_NAME-testnet', '--image', 'gcr.io/$PROJECT_ID/$BRANCH_NAME', '--region', 'us-central1', '--platform', 'managed']
+  args: ['beta', 'run', 'deploy', 'zebrad-$BRANCH_NAME-testnet', '--image', 'gcr.io/$PROJECT_ID/$BRANCH_NAME', '--region', 'us-central1', '--platform', 'managed', '--allow-unauthenticated']
 
 options:
     machineType: 'N1_HIGHCPU_32'
