@@ -4,34 +4,6 @@ on: push
 
 jobs:
 
-  context:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
-      - name: Dump strategy context
-        env:
-          STRATEGY_CONTEXT: ${{ toJson(strategy) }}
-        run: echo "$STRATEGY_CONTEXT"
-      - name: Dump matrix context
-        env:
-          MATRIX_CONTEXT: ${{ toJson(matrix) }}
-        run: echo "$MATRIX_CONTEXT"
-      - name: Dump job context
-        env:
-          JOB_CONTEXT: ${{ toJson(job) }}
-        run: echo "$JOB_CONTEXT"
-      - name: Dump runner context
-        env:
-          RUNNER_CONTEXT: ${{ toJson(runner) }}
-        run: echo "$RUNNER_CONTEXT"
-      - name: Dump steps context
-        env:
-          STEPS_CONTEXT: ${{ toJson(steps) }}
-        run: echo "$STEPS_CONTEXT"
-
   build:
     runs-on: ubuntu-latest
     steps:
@@ -47,10 +19,9 @@ jobs:
         args: -l -c "SHORT_SHA=$(echo ${{ github.sha }} | head -c7) && BRANCH_NAME=$(git
           name-rev --name-only HEAD) && gcloud builds submit . --config cloudbuild.yaml
           --project zebrad --substitutions BRANCH_NAME=$BRANCH_NAME"
-    # - name: Build Fuzzers
-    #   uses: docker://gcr.io/zebrad/master:latest
-    #   if:
-    #   with:
-    #     entrypoint: sh
-    #     args: -c "cd fuzz/; cargo install --force afl honggfuzz; cargo hfuzz build;
-    #       cargo afl build; exit 0"
+    - name: Build Fuzzers
+      uses: docker://gcr.io/zebrad/master:latest
+      if: github.ref == "ref/heads/master"
+      with:
+        entrypoint: sh
+        args: -c "cd fuzz/; cargo install --force afl honggfuzz; cargo hfuzz build; cargo afl build; exit 0"
