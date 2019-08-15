@@ -21,7 +21,7 @@ jobs:
           --project zebrad --substitutions BRANCH_NAME=$BRANCH_NAME"
     - name: Build Fuzzers
       uses: docker://gcr.io/zebrad/master:latest
-      if: github.ref == "ref/heads/master"
+      if: github.ref == 'ref/heads/master'
       with:
         entrypoint: sh
         args: -c "cd fuzz/; cargo install --force afl honggfuzz; cargo hfuzz build; cargo afl build; exit 0"
