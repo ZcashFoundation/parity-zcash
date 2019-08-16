@@ -20,8 +20,8 @@ jobs:
           name-rev --name-only HEAD) && gcloud builds submit . --config cloudbuild.yaml
           --project zebrad --substitutions BRANCH_NAME=$BRANCH_NAME"
     - name: Build Fuzzers
-      uses: docker://gcr.io/zebrad/master:latest
       if: startsWith(github.ref, 'ref/heads/master') && endsWith(github.ref, 'ref/heads/master')
+      uses: docker://gcr.io/zebrad/master:latest
       with:
         entrypoint: sh
         args: -c "cd fuzz/; cargo install --force afl honggfuzz; cargo hfuzz build; cargo afl build; exit 0"
