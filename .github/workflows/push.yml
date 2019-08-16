@@ -19,9 +19,12 @@ jobs:
         args: -l -c "SHORT_SHA=$(echo ${{ github.sha }} | head -c7) && BRANCH_NAME=$(git
           name-rev --name-only HEAD) && gcloud builds submit . --config cloudbuild.yaml
           --project zebrad --substitutions BRANCH_NAME=$BRANCH_NAME"
-    - name: Build Fuzzers
-      if: startsWith(github.ref, 'ref/heads/master') && endsWith(github.ref, 'ref/heads/master')
-      uses: docker://gcr.io/zebrad/master:latest
-      with:
-        entrypoint: sh
-        args: -c "cd fuzz/; cargo install --force afl honggfuzz; cargo hfuzz build; cargo afl build; exit 0"
+    # If this is uncommented, it will pull the image it `uses` even if the
+    # conditional expression evaluates to 'false'.
+    #
+    # - name: Build Fuzzers
+    #   if: startsWith(github.ref, 'ref/heads/master') && endsWith(github.ref, 'ref/heads/master')
+    #   uses: docker://gcr.io/zebrad/master:latest
+    #   with:
+    #     entrypoint: sh
+    #     args: -c "cd fuzz/; cargo install --force afl honggfuzz; cargo hfuzz build; cargo afl build; exit 0"
