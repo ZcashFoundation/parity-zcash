@@ -25,4 +25,4 @@ RUN cargo fetch --verbose
 
 COPY . .
 
-RUN cargo test --all && cargo build --release
+RUN rustc -V; cargo -V; rustup -V; cargo test --all && cargo build --release
