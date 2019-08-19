@@ -18,7 +18,7 @@ jobs:
       with:
         entrypoint: sh
         args: -l -c "SHORT_SHA=$(echo ${{ github.sha }} | head -c7) && BRANCH_NAME=$(git
-          name-rev --name-only HEAD) && gcloud builds submit . --config cloudbuild.yaml
+          name-rev --name-only HEAD) && gcloud builds submit . --async --config cloudbuild.yaml
           --project zealous-zebra --substitutions BRANCH_NAME=$BRANCH_NAME"
     # If this is uncommented, it will pull the image it `uses` even if the
     # conditional expression evaluates to 'false'.
