@@ -24,26 +24,10 @@ jobs:
   fuzz-regression-tests:
     runs-on: ubuntu-latest
     steps:
-      continue-on-error: true
 
       - uses: actions/checkout@master
 
       - run: cargo install cargo-fuzz --version 0.5.3
 
       - run: ./fuzz/fuzzit.sh regression
-
-on: push
-  branches:
-    - master
-
-jobs:
-
-  fuzz-generation:
-    runs-on: ubuntu-latest
-    steps:
-      continue-on-error: true
-      - uses: actions/checkout@master
-
-      - run: cargo install cargo-fuzz --version 0.5.3
-
-      - run: ./fuzz/fuzzit.sh fuzzing
+        continue-on-error: true
