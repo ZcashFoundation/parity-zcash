@@ -27,7 +27,7 @@ jobs:
 
       - uses: actions/checkout@master
 
-      - run: cargo install cargo-fuzz --version 0.5.3
+      - run: cargo install cargo-fuzz
 
       - run: ./fuzz/fuzzit.sh regression
         continue-on-error: true
