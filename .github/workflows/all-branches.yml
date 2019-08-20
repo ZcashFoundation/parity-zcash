@@ -26,6 +26,9 @@ jobs:
     steps:
 
       - uses: actions/checkout@master
+      - run: |
+          rustup install nightly
+          rustup default nightly
 
       - run: cargo install cargo-fuzz
 
