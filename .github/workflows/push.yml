@@ -1,5 +1,3 @@
-name: On Push
-
 on: push
 
 jobs:
@@ -9,10 +7,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
+
     - name: Authenticate w/ Google Cloud
       uses: actions/gcloud/auth@master
       env:
         GCLOUD_AUTH: ${{ secrets.GCLOUD_AUTH }}
+
     - name: Build, Test, Push to GCR
       uses: actions/gcloud/cli@master
       with:
@@ -20,12 +20,30 @@ jobs:
         args: -l -c "SHORT_SHA=$(echo ${{ github.sha }} | head -c7) && BRANCH_NAME=$(git
           name-rev --name-only HEAD) && gcloud builds submit . --config cloudbuild.yaml
           --project zealous-zebra --substitutions BRANCH_NAME=$BRANCH_NAME"
-    # If this is uncommented, it will pull the image it `uses` even if the
-    # conditional expression evaluates to 'false'.
-    #
-    # - name: Build Fuzzers
-    #   if: startsWith(github.ref, 'ref/heads/master') && endsWith(github.ref, 'ref/heads/master')
-    #   uses: docker://gcr.io/zebrad/master:latest
-    #   with:
-    #     entrypoint: sh
-    #     args: -c "cd fuzz/; cargo install --force afl honggfuzz; cargo hfuzz build; cargo afl build; exit 0"
+
+  fuzz-regression-tests:
+    runs-on: ubuntu-latest
+    steps:
+      continue-on-error: true
+
+      - uses: actions/checkout@master
+
+      - run: cargo install cargo-fuzz --version 0.5.3
+
+      - run: ./fuzz/fuzzit.sh regression
+
+on: push
+  branches:
+    - master
+
+jobs:
+
+  fuzz-generation:
+    runs-on: ubuntu-latest
+    steps:
+      continue-on-error: true
+      - uses: actions/checkout@master
+
+      - run: cargo install cargo-fuzz --version 0.5.3
+
+      - run: ./fuzz/fuzzit.sh fuzzing

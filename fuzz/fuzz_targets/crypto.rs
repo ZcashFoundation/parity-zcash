@@ -1,13 +1,21 @@
-extern crate zebra_crypto;
+extern crate zebra-crypto;
 
 fn target(data: &[u8]) {
-    crypto::ripemd160(data);
-    crypto::sha1(data);
-    crypto::sha256(data);
-    crypto::dhash160(data);
-    crypto::dhash256(data);
-    crypto::checksum(data);
+    zebra-crypto::ripemd160(data);
+    zebra-crypto::sha1(data);
+    zebra-crypto::sha256(data);
+    zebra-crypto::dhash160(data);
+    zebra-crypto::dhash256(data);
+    zebra-crypto::checksum(data);
 };
+
+
+#[cfg(feature = "libfuzzer")]
+#[macro_use] extern crate libfuzzer_sys;
+#[cfg(feature = "libfuzzer")]
+fuzz_target!(|data: &[u8]| {
+    target(&data);
+});
 
 #[cfg(feature = "afl")]
 #[macro_use] extern crate afl;
