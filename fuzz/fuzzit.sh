@@ -16,11 +16,11 @@ wget -q -O fuzzit https://github.com/fuzzitdev/fuzzit/releases/download/v2.4.29/
 chmod a+x fuzzit
 
 # Build fuzzers
-cargo +nightly fuzz run fuzz_parse_complex -- -runs=0
+cargo +nightly fuzz run crypto -- -runs=0
 
 if [ $1 == "fuzzing" ]; then
     ./fuzzit auth ${FUZZIT_API_KEY}
-    ./fuzzit create job --branch $(git branch --show-current) --revision $GITHUB_SHA fuzzitdev/rust-parse-complex ./fuzz/target/x86_64-unknown-linux-gnu/debug/fuzz_parse_complex
+    ./fuzzit create job --branch $(git branch --show-current) --revision $GITHUB_SHA zebra/crypto ./fuzz/target/x86_64-unknown-linux-gnu/debug/crypto
 else
-    ./fuzzit create job --local fuzzitdev/rust-parse-complex ./fuzz/target/x86_64-unknown-linux-gnu/debug/fuzz_parse_complex
+    ./fuzzit create job --local zebra/crypto ./fuzz/target/x86_64-unknown-linux-gnu/debug/crypto
 fi
