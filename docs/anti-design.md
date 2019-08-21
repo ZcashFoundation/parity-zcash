@@ -3,6 +3,35 @@
 This document describes current features of the Zebra codebase (as received from
 Parity) which we don't want to keep in future versions of Zebra.
 
+## Anti-features
+
+We will not support the following features in the initial release of Zebra:
+
+### Block creation
+
+As discussed in [#142](https://github.com/ZcashFoundation/zebra/issues/142), we
+will not include mining code or block creation code in the initial Zebra 2
+release.
+
+However, Zebra 3 *will* provide:
+  1.  block templating functionality that can prepare block templates for
+      external block producers;
+  2.  the ability to accept externally-produced blocks and broadcast them to the
+      network;
+  3.  a testing-oriented implementation of an external block producer for use in
+      testnets.
+
+### Sprout verification
+
+As discussed in [#73](https://github.com/ZcashFoundation/zebra/issues/73),
+Zebra 2 will checkpoint on Sapling activation, skipping verification of
+pre-Sapling blocks, and will not implement BCTV14 proving or verification.
+
+However, after Sapling activation, Sprout transactions are performed using
+Sprout-on-Groth16, and Zebra 2 *will* support these, so it will still be
+possible for Zebra users to move value from the Sprout pool into the Sapling
+pool.
+
 ## Dependencies
 
 Dependencies we should not use:
