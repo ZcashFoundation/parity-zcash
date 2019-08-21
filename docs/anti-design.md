@@ -39,6 +39,12 @@ Dependencies we should not use:
 * `bigint`: using a general-purpose bigint library in cryptography is a big code
   smell.
 
+## `zebra-logs`
+
+This module provides a bespoke implementation of logging code with custom ANSI
+coloring.  Removing it and using `tracing` instead gives us async logging,
+dynamic log level filtering, and structured log output for free.
+
 ## `zebra-primitives`
 
 This module contains three main pieces of functionality, all of which should
