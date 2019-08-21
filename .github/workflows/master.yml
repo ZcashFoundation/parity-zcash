@@ -13,4 +13,3 @@ jobs:
       - run: cargo install cargo-fuzz
 
       - run: ./fuzz/fuzzit.sh fuzzing
-        continue-on-error: true
