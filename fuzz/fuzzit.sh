@@ -12,7 +12,7 @@ fi
 
 # Install Rust dependencies
 rustup install nightly
-carog install --force cargo-fuzz afl honggfuzz
+cargo install --force cargo-fuzz afl honggfuzz
 
 #Install Fuzzit dependencies
 wget -q -O fuzzit https://github.com/fuzzitdev/fuzzit/releases/download/v2.4.29/fuzzit_Linux_x86_64
