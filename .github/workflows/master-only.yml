@@ -10,6 +10,5 @@ jobs:
     steps:
       - uses: actions/checkout@master
 
-      - run: cargo install cargo-fuzz
-
       - run: ./fuzz/fuzzit.sh fuzzing
+        continue-on-error: true
