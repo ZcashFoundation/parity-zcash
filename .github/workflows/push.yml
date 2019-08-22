@@ -20,6 +20,13 @@ jobs:
         args: -l -c "SHORT_SHA=$(echo ${{ github.sha }} | head -c7) && BRANCH_NAME=$(git
           name-rev --name-only HEAD) && gcloud builds submit . --config cloudbuild.yaml
           --project zealous-zebra --substitutions BRANCH_NAME=$BRANCH_NAME"
+
+  coverage:
+    #needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+
     - run: |
         cargo install cargo-tarpaulin
         cargo tarpaulin -v
