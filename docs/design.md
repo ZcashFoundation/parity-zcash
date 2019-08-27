@@ -26,7 +26,7 @@ The following are general desiderata for Zebra:
 
 * As much as reasonably possible, Zebra should minimize trust in
   required dependencies.  Note that "minimize number of dependencies"
-  is usually a proxy for this desiderata, but is not exactly the same:
+  is usually a proxy for this desideratum, but is not exactly the same:
   for instance, a collection of crates like the tokio crates are all
   developed together and have one trust boundary.
   
