@@ -225,6 +225,14 @@ delta-work.
 
 Abscissa-based application which loads configs, starts the reactor.
 
+### Internal Dependencies
+
+- `zebra2-reactor`
+
+### Questions
+
+Would it be useful to use the Abscissa component structures in `zebra2-reactor`?
+
 Unassigned functionality
 ------------------------
 
