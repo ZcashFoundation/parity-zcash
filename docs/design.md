@@ -1,4 +1,5 @@
-# Zebra Design Document
+Zebra Design Document
+=====================
 
 This document sketches the future design for Zebra.  It is written independently
 of the current design (as instantiated in the Parity code): some parts may make
@@ -10,7 +11,8 @@ Having an indepenent design means that there are two paths available: we could
 either implement it from scratch, or we could incrementally refactor the current
 Zebra design towards the one in this document.
 
-## Desiderata
+Desiderata
+==========
 
 The following are general desiderata for Zebra:
 
@@ -24,7 +26,7 @@ The following are general desiderata for Zebra:
 
 * As much as reasonably possible, Zebra should minimize trust in
   required dependencies.  Note that "minimize number of dependencies"
-  is usually a proxy for this desiderata, but is not exactly the same:
+  is usually a proxy for this desideratum, but is not exactly the same:
   for instance, a collection of crates like the tokio crates are all
   developed together and have one trust boundary.
   
@@ -37,7 +39,8 @@ The following are general desiderata for Zebra:
 * Zebra should checkpoint on Sapling activation and drop all
   Sprout-related functionality not required post-Sapling.
   
-## Internal Structure
+Internal Structure
+==================
 
 The following is a list of internal component libraries (crates), and
 a description of functional responsibility.  In this document, they
@@ -45,101 +48,193 @@ are currently named `zebra2-foo` to avoid naming collisions or false
 cognates with existing zebra crates, and (as noted at the beginning)
 their design is independent and specified only by this document.
 
-### zebra2-primitives
+`zebra2-chain`
+--------------
 
-Responsible for:
+### Internal Dependencies
 
-- definitions of commonly used data structures (e.g., `CompactSize`,
-  `Address`, `KeyPair`) and their serialization implementations.
+None: this the core data structure definitions.
 
-Exported types:
+### Responsible for
 
-- [...]
-
-### zebra2-chain
-
-Responsible for:
-
+- definitions of commonly used data structures, e.g.,
+  - `CompactSize`,
+  - `Address`,
+  - `KeyPair`...
 - blockchain data structures: blocks, transactions, etc.
 
-Exported types:
+### Exported types
 
 - [...]
 
-### zebra2-storage
+`zebra2-network`
+----------------
 
-Responsible for:
+### Internal Dependencies
 
-- block storage
+- `zebra2-chain`
 
-Exported types:
+### Responsible for
+
+- p2p networking code
+- giant enum with definitions of all network messages
+- turns bytes into validated internal reprs and vice versa
+
+### Exported types
+
+- Some kind of `Message` enum ???
+- [...]
+
+`zebra2-storage`
+----------------
+
+### Internal Dependencies
+
+- `zebra2-chain` for data structure definitions.
+
+### Responsible for
+
+- block storage API
+  - operates on raw bytes for blocks
+  - primarily aimed at network replication
+  - can be used to rebuild the database below
+- maintaining a database of tx, address, etc data
+  - this database can be blown away and rebuilt from the blocks, which are
+    otherwise unused.
+  - threadsafe, typed lookup API that completely encapsulates the database logic
+  - handles stuff like "transactions are reference counted by outputs" etc.
+- maintaining a database for wallet state
+  - ??? what does this entail exactly
+
+### Exported types
 
 - [...]
 
-Questions:
+`zebra2-script`
+---------------
 
-- what's the right abstraction layer for block storage? a filesystem
-  or something more cloud-friendly?
-  
-### zebra2-database
+### Internal Dependencies
 
-Responsible for:
+- ??? depends on how it's implemented internally
 
-- indexing blocks whose storage is managed by `zebra2-storage`.
-
-Exported types:
-
-- [...]
-
-### zebra2-script
-
-Responsible for:
+### Responsible for
 
 - the minimal Bitcoin script implementation required for Zcash
 
-Exported types:
+### Notes
+
+This can wrap an existing script implementation at the beginning.
+
+If this existed in a "good" way, we could use it to implement tooling
+for Zcash script inspection, debugging, etc.
+
+### Questions
+
+- How does this interact with NU4 script changes?
+
+### Exported types
 
 - [...]
 
-### zebra2-consensus
+`zebra2-consensus`
+------------------
 
-Responsible for:
+### Internal Dependencies
+
+- `zebra2-chain`
+- `zebra2-storage`
+- `zebra2-script`
+
+### Responsible for
 
 - consensus-specific parameters (network magics, genesis block, pow
   parameters, etc) that determine the network consensus
 - validation logic to decide whether blocks are acceptable 
 - consensus logic to decide which block is the current block
 
-Exported types:
+### Exported types
 
 - [...]
 
-### zebra2-network
+`zebra2-rpc`
+------------
 
-Responsible for:
+### Internal Dependencies
 
-- p2p networking code
-- definitions of all network messages
+- `zebra2-chain` for data structure definitions
+- `zebra2-network` possibly? for definitions of network messages?
 
-Exported types:
-
-- [...]
-
-### zebra2-rpc
-
-Responsible for:
+### Responsible for
 
 - rpc interface
 
-Exported types:
+### Exported types
 
 - [...]
 
-### zebrad2
+`zebra2-client`
+-----------------
 
-Abscissa-based application combining the previous components.
+### Internal Dependencies
 
-### Unassigned functionality
+- `zebra2-chain` for structure definitions
+- `zebra2-storage` for transaction queries and client/wallet state storage
+- `zebra2-script` possibly? for constructing transactions
+
+### Responsible for
+
+- implementation of some event a user might trigger
+- would be used to implement a wallet
+- create transactions, monitors shielded wallet state, etc.
+
+### Notes 
+
+Hopefully this can be backed by @str4d's light wallet code.
+
+Hopefully the interface could be designed to make it easy to implement
+as a process-separated softHSM either now or later, depending on
+delta-work.
+
+### Exported types
+
+- [...]
+
+`zebra2-reactor`
+----------------
+
+### Internal Dependencies
+
+- `zebra2-chain`
+- `zebra2-network`
+- `zebra2-storage`
+- `zebra2-consensus`
+- `zebra2-client`
+- `zebra2-rpc`
+
+### Responsible for
+
+- actually running the server
+- connecting functionality in dependencies
+
+### Exported types
+
+- [...]
+
+`zebrad2`
+---------
+
+Abscissa-based application which loads configs, starts the reactor.
+
+### Internal Dependencies
+
+- `zebra2-reactor`
+
+### Questions
+
+Would it be useful to use the Abscissa component structures in `zebra2-reactor`?
+
+Unassigned functionality
+------------------------
 
 Responsibility for this functionality needs to be assigned to one of
 the modules above (subject to discussion):
