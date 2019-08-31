@@ -4,7 +4,7 @@ extern crate zebra_crypto;
 extern crate zebra_db;
 extern crate zebra_storage;
 #[macro_use]
-extern crate log;
+extern crate tracing;
 extern crate bit_vec;
 extern crate futures;
 extern crate linked_hash_map;

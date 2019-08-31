@@ -1,5 +1,4 @@
 extern crate byteorder;
-extern crate log;
 extern crate zebra_chain;
 extern crate zebra_crypto;
 extern crate zebra_keys;

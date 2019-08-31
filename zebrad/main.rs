@@ -1,16 +1,15 @@
 #[macro_use]
 extern crate clap;
 #[macro_use]
-extern crate log;
+extern crate tracing;
+extern crate tracing_fmt;
 extern crate app_dirs;
-extern crate env_logger;
 extern crate libc;
 
 extern crate zebra_chain;
 extern crate zebra_db;
 extern crate zebra_import;
 extern crate zebra_keys;
-extern crate zebra_logs;
 extern crate zebra_message;
 extern crate zebra_network;
 extern crate zebra_p2p;
@@ -40,7 +39,6 @@ pub const ZCASH_PROTOCOL_VERSION: u32 = 170_007;
 pub const ZCASH_PROTOCOL_MINIMUM: u32 = 170_007;
 pub const USER_AGENT: &'static str = "zebra";
 pub const REGTEST_USER_AGENT: &'static str = "/Satoshi:0.12.1/";
-pub const LOG_INFO: &'static str = "sync=info";
 
 fn main() {
     // Always print backtrace on panic.
@@ -56,15 +54,13 @@ fn run() -> Result<(), String> {
     let matches = clap::App::from_yaml(yaml).get_matches();
     let cfg = try!(config::parse(&matches));
 
-    if !cfg.quiet {
-        if cfg!(windows) {
-            zebra_logs::init(LOG_INFO, zebra_logs::DateLogFormatter);
-        } else {
-            zebra_logs::init(LOG_INFO, zebra_logs::DateAndColorLogFormatter);
-        }
-    } else {
-        env_logger::init();
-    }
+    // Initialize a tracing subscriber to print tracing events
+    let subscriber = tracing_fmt::FmtSubscriber::builder()
+        .with_ansi(true)
+        .with_filter(tracing_fmt::filter::EnvFilter::from_default_env())
+        .finish();
+    tracing::subscriber::set_global_default(subscriber)
+        .map_err(|_| "Could not initialize tracing subscriber")?;
 
     match matches.subcommand() {
         ("import", Some(import_matches)) => commands::import(cfg, import_matches),

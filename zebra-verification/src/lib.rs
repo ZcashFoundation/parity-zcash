@@ -53,7 +53,7 @@
 
 extern crate time;
 #[macro_use]
-extern crate log;
+extern crate tracing;
 extern crate byteorder;
 extern crate parking_lot;
 #[cfg(test)]

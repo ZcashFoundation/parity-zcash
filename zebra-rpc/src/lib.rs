@@ -1,4 +1,3 @@
-extern crate log;
 extern crate rustc_hex as hex;
 extern crate serde;
 extern crate serde_json;

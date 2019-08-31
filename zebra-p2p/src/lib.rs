@@ -7,7 +7,7 @@ extern crate time;
 extern crate tokio_core;
 extern crate tokio_io;
 #[macro_use]
-extern crate log;
+extern crate tracing;
 extern crate abstract_ns;
 extern crate csv;
 extern crate ns_dns_tokio;

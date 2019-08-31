@@ -6,7 +6,7 @@ authors = ["Zcash Foundation <zebra@zfnd.org>"]
 
 [dependencies]
 parking_lot = "0.9"
-log = "0.4"
+tracing = "0.1"
 time = "0.1"
 futures = "0.1"
 linked-hash-map = "0.5"

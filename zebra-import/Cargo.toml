@@ -5,7 +5,7 @@ license = "GPL-3.0"
 authors = ["Zcash Foundation <zebra@zfnd.org>"]
 
 [dependencies]
-log = "0.4"
+tracing = "0.1"
 zebra-primitives = { path = "../zebra-primitives" }
 zebra-chain = { path = "../zebra-chain" }
 zebra-serialization = { path = "../zebra-serialization" }

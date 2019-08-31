@@ -6,7 +6,7 @@ authors = ["Zcash Foundation <zebra@zfnd.org>"]
 
 [dependencies]
 byteorder = "1.0"
-log = "0.4"
+tracing = "0.1"
 zebra-crypto = { path = "../zebra-crypto" }
 zebra-chain = { path = "../zebra-chain" }
 zebra-keys = { path = "../zebra-keys" }

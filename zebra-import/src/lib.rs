@@ -1,7 +1,7 @@
 //! Bitcoind blockchain database importer
 
 #[macro_use]
-extern crate log;
+extern crate tracing;
 extern crate zebra_chain;
 extern crate zebra_primitives;
 extern crate zebra_serialization as ser;

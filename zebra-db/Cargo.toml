@@ -8,7 +8,7 @@ authors = ["Zcash Foundation <zebra@zfnd.org>"]
 parity-rocksdb = { git = "https://github.com/paritytech/rust-rocksdb" }
 elastic-array = "0.10"
 parking_lot = "0.9"
-log = "0.4"
+tracing = "0.1"
 bit-vec = "0.6"
 lru-cache = "0.1"
 zebra-primitives = { path = "../zebra-primitives" }
