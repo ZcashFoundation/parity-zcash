@@ -28,7 +28,7 @@ pub fn import(cfg: Config, matches: &ArgMatches) -> Result<(), String> {
             Ok(_) => {
                 counter += 1;
                 if counter % 1000 == 0 {
-                    info!(target: "sync", "Imported {} blocks", counter);
+                    info!("Imported {} blocks", counter);
                 }
             }
             Err(Error::TooManyOrphanBlocks) => {

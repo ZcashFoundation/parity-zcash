@@ -52,14 +52,14 @@ impl BlockNotifier {
 
                         let err = system(c_command.as_ptr());
                         if err != 0 {
-                            error!(target: "zebra", "Block notification command {} exited with error code {}", command, err);
+                            error!("Block notification command {} exited with error code {}", command, err);
                         }
                     }
                 }
                 BlockNotifierTask::Stop => break,
             }
         }
-        trace!(target: "zebra", "Block notification thread stopped");
+        trace!("Block notification thread stopped");
     }
 }
 

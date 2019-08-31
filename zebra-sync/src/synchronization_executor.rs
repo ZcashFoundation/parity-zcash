@@ -54,14 +54,14 @@ impl LocalSynchronizationTaskExecutor {
 
     fn execute_ignore(&self, peer_index: PeerIndex, request_id: RequestId) {
         if let Some(connection) = self.peers.connection(peer_index) {
-            trace!(target: "sync", "Ignoring request {} from peer#{}", request_id, peer_index);
+            trace!("Ignoring request {} from peer#{}", request_id, peer_index);
             connection.ignored(request_id);
         }
     }
 
     fn execute_getdata(&self, peer_index: PeerIndex, getdata: types::GetData) {
         if let Some(connection) = self.peers.connection(peer_index) {
-            trace!(target: "sync", "Querying {} unknown items from peer#{}", getdata.inventory.len(), peer_index);
+            trace!("Querying {} unknown items from peer#{}", getdata.inventory.len(), peer_index);
             connection.send_getdata(&getdata);
         }
     }
@@ -69,7 +69,7 @@ impl LocalSynchronizationTaskExecutor {
     fn execute_getheaders(&self, peer_index: PeerIndex, getheaders: types::GetHeaders) {
         if let Some(connection) = self.peers.connection(peer_index) {
             if !getheaders.block_locator_hashes.is_empty() {
-                trace!(target: "sync", "Querying headers starting with {} unknown items from peer#{}", getheaders.block_locator_hashes[0].to_reversed_str(), peer_index);
+                trace!("Querying headers starting with {} unknown items from peer#{}", getheaders.block_locator_hashes[0].to_reversed_str(), peer_index);
             }
             connection.send_getheaders(&getheaders);
         }
@@ -77,7 +77,7 @@ impl LocalSynchronizationTaskExecutor {
 
     fn execute_memorypool(&self, peer_index: PeerIndex) {
         if let Some(connection) = self.peers.connection(peer_index) {
-            trace!(target: "sync", "Querying memory pool contents from peer#{}", peer_index);
+            trace!("Querying memory pool contents from peer#{}", peer_index);
             let mempool = types::MemPool;
             connection.send_mempool(&mempool);
         }
@@ -85,7 +85,7 @@ impl LocalSynchronizationTaskExecutor {
 
     fn execute_block(&self, peer_index: PeerIndex, block: IndexedBlock) {
         if let Some(connection) = self.peers.connection(peer_index) {
-            trace!(target: "sync", "Sending block {} to peer#{}", block.hash().to_reversed_str(), peer_index);
+            trace!("Sending block {} to peer#{}", block.hash().to_reversed_str(), peer_index);
             self.peers
                 .hash_known_as(peer_index, block.hash().clone(), KnownHashType::Block);
             let block = types::Block {
@@ -97,7 +97,7 @@ impl LocalSynchronizationTaskExecutor {
 
     fn execute_merkleblock(&self, peer_index: PeerIndex, hash: H256, block: types::MerkleBlock) {
         if let Some(connection) = self.peers.connection(peer_index) {
-            trace!(target: "sync", "Sending merkle block {} to peer#{}", hash.to_reversed_str(), peer_index);
+            trace!("Sending merkle block {} to peer#{}", hash.to_reversed_str(), peer_index);
             self.peers
                 .hash_known_as(peer_index, hash, KnownHashType::Block);
             connection.send_merkleblock(&block);
@@ -106,7 +106,7 @@ impl LocalSynchronizationTaskExecutor {
 
     fn execute_transaction(&self, peer_index: PeerIndex, transaction: IndexedTransaction) {
         if let Some(connection) = self.peers.connection(peer_index) {
-            trace!(target: "sync", "Sending transaction {} to peer#{}", transaction.hash.to_reversed_str(), peer_index);
+            trace!("Sending transaction {} to peer#{}", transaction.hash.to_reversed_str(), peer_index);
             self.peers
                 .hash_known_as(peer_index, transaction.hash, KnownHashType::Transaction);
             let transaction = types::Tx {
@@ -118,14 +118,14 @@ impl LocalSynchronizationTaskExecutor {
 
     fn execute_notfound(&self, peer_index: PeerIndex, notfound: types::NotFound) {
         if let Some(connection) = self.peers.connection(peer_index) {
-            trace!(target: "sync", "Sending notfound to peer#{} with {} items", peer_index, notfound.inventory.len());
+            trace!("Sending notfound to peer#{} with {} items", peer_index, notfound.inventory.len());
             connection.send_notfound(&notfound);
         }
     }
 
     fn execute_inventory(&self, peer_index: PeerIndex, inventory: types::Inv) {
         if let Some(connection) = self.peers.connection(peer_index) {
-            trace!(target: "sync", "Sending inventory to peer#{} with {} items", peer_index, inventory.inventory.len());
+            trace!("Sending inventory to peer#{} with {} items", peer_index, inventory.inventory.len());
             connection.send_inventory(&inventory);
         }
     }
@@ -137,7 +137,7 @@ impl LocalSynchronizationTaskExecutor {
         request_id: Option<RequestId>,
     ) {
         if let Some(connection) = self.peers.connection(peer_index) {
-            trace!(target: "sync", "Sending headers to peer#{} with {} items", peer_index, headers.headers.len());
+            trace!("Sending headers to peer#{} with {} items", peer_index, headers.headers.len());
             match request_id {
                 Some(request_id) => connection.respond_headers(&headers, request_id),
                 None => connection.send_headers(&headers),

@@ -40,7 +40,7 @@ impl LocalSyncNode for InboundConnectionFactory {
         outbound_connection: OutboundSyncConnectionRef,
     ) -> InboundSyncConnectionRef {
         let peer_index = self.counter.fetch_add(1, Ordering::SeqCst) + 1;
-        trace!(target: "sync", "Creating new sync session with peer#{}", peer_index);
+        trace!("Creating new sync session with peer#{}", peer_index);
         // remember outbound connection
         self.peers.insert(peer_index, services, outbound_connection);
         // create new inbound connection

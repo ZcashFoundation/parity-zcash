@@ -20,7 +20,7 @@ impl<'a> ChainVerifier<'a> {
         current_time: u32,
         verification_level: VerificationLevel,
     ) -> Self {
-        trace!(target: "verification", "Block pre-verification {}", block.hash().to_reversed_str());
+        trace!("Block pre-verification {}", block.hash().to_reversed_str());
         ChainVerifier {
             block: BlockVerifier::new(block, consensus),
             header: if !verification_level.intersects(VerificationLevel::HINT_HEADER_PRE_VERIFIED) {

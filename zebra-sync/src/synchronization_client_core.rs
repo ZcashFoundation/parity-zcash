@@ -291,7 +291,7 @@ where
 
         // if everything is known => ignore this message
         if unknown_inventory.is_empty() {
-            trace!(target: "sync", "Ignoring inventory message from peer#{} as all items are known", peer_index);
+            trace!("Ignoring inventory message from peer#{} as all items are known", peer_index);
             return;
         }
 
@@ -320,7 +320,6 @@ where
         let header0 = headers[0].clone();
         if self.chain.block_state(&header0.raw.previous_header_hash) == BlockState::Unknown {
             warn!(
-                target: "sync",
                 "Previous header of the first header from peer#{} `headers` message is unknown. First: {}. Previous: {}",
                 peer_index,
                 header0.hash.to_reversed_str(),
@@ -341,7 +340,7 @@ where
         let headers_in_message = headers.len();
         let headers = self.find_unknown_headers(headers);
         if headers.is_empty() {
-            trace!(target: "sync", "Ignoring {} known headers from peer#{}", headers_in_message, peer_index);
+            trace!("Ignoring {} known headers from peer#{}", headers_in_message, peer_index);
             // but this peer is still useful for synchronization
             self.peers_tasks.useful_peer(peer_index);
             return None;
@@ -394,7 +393,6 @@ where
                 }
                 block_state => {
                     trace!(
-						target: "sync",
 						"Ignoring {} headers from peer#{} - known ({:?}) header {} at the {}/{} ({}...{})",
 						headers.len(), peer_index, block_state, header.hash.to_reversed_str(), header_index,
 						headers.len(), headers[0].hash.to_reversed_str(),
@@ -408,7 +406,7 @@ where
         }
 
         // report progress
-        trace!(target: "sync", "New {} headers from peer#{}. First {:?}, last: {:?}",
+        trace!("New {} headers from peer#{}. First {:?}, last: {:?}",
             headers.len(),
             peer_index,
             headers[0].hash.to_reversed_str(),
@@ -460,7 +458,7 @@ where
                         );
                         return None;
                     }
-                    warn!(target: "sync", "Peer#{} has provided dead-end block {}", peer_index, block.header.hash.to_reversed_str());
+                    warn!("Peer#{} has provided dead-end block {}", peer_index, block.header.hash.to_reversed_str());
                 }
 
                 // check parent block state
@@ -480,13 +478,12 @@ where
                                 );
                                 return None;
                             }
-                            warn!(target: "sync", "Peer#{} has provided dead-end block {}", peer_index, block.header.hash.to_reversed_str());
+                            warn!("Peer#{} has provided dead-end block {}", peer_index, block.header.hash.to_reversed_str());
                         }
 
                         if self.state.is_synchronizing() {
                             // when synchronizing, we tend to receive all blocks in-order
                             trace!(
-                                target: "sync",
                                 "Ignoring block {} from peer#{}, because its parent is unknown and we are synchronizing",
                                 block.header.hash.to_reversed_str(),
                                 peer_index
@@ -511,7 +508,6 @@ where
                                 .contains_unknown_block(&block.header.hash)
                             {
                                 trace!(
-                                    target: "sync",
                                     "Inserting unknown orphan block: {}. Block state: {:?}, parent state: {:?}",
                                     block.header.hash.to_reversed_str(),
                                     block_state,
@@ -564,7 +560,6 @@ where
                         }
 
                         trace!(
-                            target: "sync",
                             "Scheduling verification of blocks: {}..{} First block state: {:?}, parent state: {:?}",
                             blocks_to_verify[0].hash().to_reversed_str(),
                             blocks_to_verify[blocks_to_verify.len() - 1].hash().to_reversed_str(),
@@ -576,7 +571,6 @@ where
                     }
                     BlockState::Requested | BlockState::Scheduled => {
                         trace!(
-                            target: "sync",
                             "Inserting known orphan block: {}. Block state: {:?}, parent state: {:?}",
                             block.header.hash.to_reversed_str(),
                             block_state,
@@ -721,7 +715,7 @@ where
             let useful_peers = self.peers_tasks.useful_peers();
             // if we have to request blocks && there are no useful peers at all => switch to saturated state
             if useful_peers.is_empty() {
-                warn!(target: "sync", "Last peer was marked as non-useful. Moving to saturated state.");
+                warn!("Last peer was marked as non-useful. Moving to saturated state.");
                 self.switch_to_saturated_state();
                 return;
             }
@@ -872,7 +866,7 @@ where
                             hashes_requests_to_duplicate_len as BlockHeight,
                         ));
 
-                        trace!(target: "sync", "Duplicating {} blocks requests. Sync speed: {} * {}, blocks speed: {} * {}.", hashes_requests_to_duplicate_len, synchronization_speed, requested_hashes_len, verification_speed, verifying_hashes_len);
+                        trace!("Duplicating {} blocks requests. Sync speed: {} * {}, blocks speed: {} * {}.", hashes_requests_to_duplicate_len, synchronization_speed, requested_hashes_len, verification_speed, verifying_hashes_len);
                     }
                 }
 
@@ -1105,7 +1099,7 @@ where
             if timestamp_diff >= 60.0 || blocks_diff >= 1000 {
                 self.state = State::Synchronizing(precise_time_s(), new_num_of_blocks);
                 let blocks_speed = blocks_diff as f64 / timestamp_diff;
-                info!(target: "sync", "Processed {} blocks in {:.2} seconds ({:.2} blk/s).\tPeers: {:?}.\tChain: {:?}"
+                info!("Processed {} blocks in {:.2} seconds ({:.2} blk/s).\tPeers: {:?}.\tChain: {:?}"
 					, blocks_diff
 					, timestamp_diff
 					, blocks_speed
@@ -1295,7 +1289,7 @@ where
             self.chain
                 .forget_all_blocks_with_state(BlockState::Scheduled);
 
-            info!(target: "sync", "Switched to saturated state.\tChain: {:?}",
+            info!("Switched to saturated state.\tChain: {:?}",
 				self.chain.information());
         }
 
@@ -1347,7 +1341,6 @@ where
         let headers = self.chain.headers_verified(headers);
         if !headers.is_empty() {
             trace!(
-                target: "sync",
                 "Scheduling retrieval of headers: {}..{}",
                 headers[0].hash.to_reversed_str(),
                 headers[headers.len() - 1].hash.to_reversed_str(),
@@ -1392,7 +1385,6 @@ where
             );
         } else {
             warn!(
-                target: "sync",
                 "Error verifying header {} from `headers` message: {:?}",
                 hash.to_reversed_str(),
                 error,
@@ -1485,7 +1477,7 @@ where
     }
 
     fn on_block_verification_error(&mut self, err: &str, hash: &H256) {
-        warn!(target: "sync", "Block {:?} verification failed with error {:?}", hash.to_reversed_str(), err);
+        warn!("Block {:?} verification failed with error {:?}", hash.to_reversed_str(), err);
 
         // remove flags
         self.do_not_relay.remove(hash);
@@ -1498,7 +1490,7 @@ where
                     &format!("Provided wrong block {}", hash.to_reversed_str()),
                 )
             } else {
-                warn!(target: "sync", "Peer#{} has provided wrong block {:?}", peer_index, hash.to_reversed_str());
+                warn!("Peer#{} has provided wrong block {:?}", peer_index, hash.to_reversed_str());
             }
         }
 
@@ -1548,7 +1540,7 @@ where
     }
 
     fn on_transaction_verification_error(&mut self, err: &str, hash: &H256) {
-        warn!(target: "sync", "Transaction {} verification failed with error {:?}", hash.to_reversed_str(), err);
+        warn!("Transaction {} verification failed with error {:?}", hash.to_reversed_str(), err);
 
         // remove flags
         self.do_not_relay.remove(hash);

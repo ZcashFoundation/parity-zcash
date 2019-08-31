@@ -81,7 +81,7 @@ where
 
     /// When new peer connects to the node
     pub fn on_connect(&self, peer_index: PeerIndex, peer_name: String, version: types::Version) {
-        trace!(target: "sync", "Starting new sync session with peer#{}: {}", peer_index, peer_name);
+        trace!("Starting new sync session with peer#{}: {}", peer_index, peer_name);
 
         // light clients may not want transactions broadcasting until filter for connection is set
         if !version.relay_transactions() {
@@ -97,7 +97,7 @@ where
 
     /// When peer disconnects
     pub fn on_disconnect(&self, peer_index: PeerIndex) {
-        trace!(target: "sync", "Stopping sync session with peer#{}", peer_index);
+        trace!("Stopping sync session with peer#{}", peer_index);
 
         // stop synchronization session with peer
         self.client.on_disconnect(peer_index);
@@ -105,51 +105,51 @@ where
 
     /// When inventory message is received
     pub fn on_inventory(&self, peer_index: PeerIndex, message: types::Inv) {
-        trace!(target: "sync", "Got `inventory` message from peer#{}. Inventory len: {}", peer_index, message.inventory.len());
+        trace!("Got `inventory` message from peer#{}. Inventory len: {}", peer_index, message.inventory.len());
         self.client.on_inventory(peer_index, message);
     }
 
     /// When headers message is received
     pub fn on_headers(&self, peer_index: PeerIndex, headers: Vec<IndexedBlockHeader>) {
-        trace!(target: "sync", "Got `headers` message from peer#{}. Headers len: {}", peer_index, headers.len());
+        trace!("Got `headers` message from peer#{}. Headers len: {}", peer_index, headers.len());
         self.client.on_headers(peer_index, headers);
     }
 
     /// When transaction is received
     pub fn on_transaction(&self, peer_index: PeerIndex, tx: IndexedTransaction) {
-        trace!(target: "sync", "Got `transaction` message from peer#{}. Tx hash: {}", peer_index, tx.hash.to_reversed_str());
+        trace!("Got `transaction` message from peer#{}. Tx hash: {}", peer_index, tx.hash.to_reversed_str());
         self.client.on_transaction(peer_index, tx);
     }
 
     /// When block is received
     pub fn on_block(&self, peer_index: PeerIndex, block: IndexedBlock) {
-        trace!(target: "sync", "Got `block` message from peer#{}. Block hash: {}", peer_index, block.header.hash.to_reversed_str());
+        trace!("Got `block` message from peer#{}. Block hash: {}", peer_index, block.header.hash.to_reversed_str());
         self.client.on_block(peer_index, block);
     }
 
     /// When notfound is received
     pub fn on_notfound(&self, peer_index: PeerIndex, message: types::NotFound) {
-        trace!(target: "sync", "Got `notfound` message from peer#{}", peer_index);
+        trace!("Got `notfound` message from peer#{}", peer_index);
         self.client.on_notfound(peer_index, message);
     }
 
     /// When peer is requesting for items
     pub fn on_getdata(&self, peer_index: PeerIndex, message: types::GetData) {
-        trace!(target: "sync", "Got `getdata` message from peer#{}. Inventory len: {}", peer_index, message.inventory.len());
+        trace!("Got `getdata` message from peer#{}. Inventory len: {}", peer_index, message.inventory.len());
         self.server
             .execute(ServerTask::GetData(peer_index, message));
     }
 
     /// When peer is requesting for known blocks hashes
     pub fn on_getblocks(&self, peer_index: PeerIndex, message: types::GetBlocks) {
-        trace!(target: "sync", "Got `getblocks` message from peer#{}", peer_index);
+        trace!("Got `getblocks` message from peer#{}", peer_index);
         self.server
             .execute(ServerTask::GetBlocks(peer_index, message));
     }
 
     /// When peer is requesting for known blocks headers
     pub fn on_getheaders(&self, peer_index: PeerIndex, message: types::GetHeaders, id: RequestId) {
-        trace!(target: "sync", "Got `getheaders` message from peer#{}", peer_index);
+        trace!("Got `getheaders` message from peer#{}", peer_index);
 
         // simulating bitcoind for passing tests: if we are in nearly-saturated state
         // and peer, which has just provided new blocks to us, is asking for headers
@@ -166,44 +166,44 @@ where
 
     /// When peer is requesting for memory pool contents
     pub fn on_mempool(&self, peer_index: PeerIndex, _message: types::MemPool) {
-        trace!(target: "sync", "Got `mempool` message from peer#{}", peer_index);
+        trace!("Got `mempool` message from peer#{}", peer_index);
         self.server.execute(ServerTask::Mempool(peer_index));
     }
 
     /// When peer sets bloom filter for connection
     pub fn on_filterload(&self, peer_index: PeerIndex, message: types::FilterLoad) {
-        trace!(target: "sync", "Got `filterload` message from peer#{}", peer_index);
+        trace!("Got `filterload` message from peer#{}", peer_index);
         self.peers.set_bloom_filter(peer_index, message);
     }
 
     /// When peer updates bloom filter for connection
     pub fn on_filteradd(&self, peer_index: PeerIndex, message: types::FilterAdd) {
-        trace!(target: "sync", "Got `filteradd` message from peer#{}", peer_index);
+        trace!("Got `filteradd` message from peer#{}", peer_index);
         self.peers.update_bloom_filter(peer_index, message);
     }
 
     /// When peer removes bloom filter from connection
     pub fn on_filterclear(&self, peer_index: PeerIndex, _message: types::FilterClear) {
-        trace!(target: "sync", "Got `filterclear` message from peer#{}", peer_index);
+        trace!("Got `filterclear` message from peer#{}", peer_index);
         self.peers.clear_bloom_filter(peer_index);
     }
 
     /// When peer sets up a minimum fee rate filter for connection
     pub fn on_feefilter(&self, peer_index: PeerIndex, message: types::FeeFilter) {
-        trace!(target: "sync", "Got `feefilter` message from peer#{}", peer_index);
+        trace!("Got `feefilter` message from peer#{}", peer_index);
         self.peers.set_fee_filter(peer_index, message);
     }
 
     /// When peer asks us to announce new blocks using headers message
     pub fn on_sendheaders(&self, peer_index: PeerIndex, _message: types::SendHeaders) {
-        trace!(target: "sync", "Got `sendheaders` message from peer#{}", peer_index);
+        trace!("Got `sendheaders` message from peer#{}", peer_index);
         self.peers
             .set_block_announcement_type(peer_index, BlockAnnouncementType::SendHeaders);
     }
 
     /// When peer sends us a merkle block
     pub fn on_merkleblock(&self, peer_index: PeerIndex, _message: types::MerkleBlock) {
-        trace!(target: "sync", "Got `merkleblock` message from peer#{}", peer_index);
+        trace!("Got `merkleblock` message from peer#{}", peer_index);
         // we never setup filter on connections => misbehaving
         self.peers
             .misbehaving(peer_index, "Got unrequested 'merkleblock' message");

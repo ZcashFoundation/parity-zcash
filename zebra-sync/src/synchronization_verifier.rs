@@ -240,7 +240,7 @@ impl AsyncVerifier {
             }
         }
 
-        trace!(target: "sync", "Stopping sync verification thread");
+        trace!("Stopping sync verification thread");
     }
 
     /// Execute single verification task

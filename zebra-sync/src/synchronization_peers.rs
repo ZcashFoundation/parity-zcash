@@ -167,7 +167,7 @@ impl PeersContainer for PeersImpl {
         services: Services,
         connection: OutboundSyncConnectionRef,
     ) {
-        trace!(target: "sync", "Connected to peer#{}", peer_index);
+        trace!("Connected to peer#{}", peer_index);
         assert!(self
             .peers
             .write()
@@ -177,20 +177,20 @@ impl PeersContainer for PeersImpl {
 
     fn remove(&self, peer_index: PeerIndex) {
         if self.peers.write().remove(&peer_index).is_some() {
-            trace!(target: "sync", "Disconnected from peer#{}", peer_index);
+            trace!("Disconnected from peer#{}", peer_index);
         }
     }
 
     fn misbehaving(&self, peer_index: PeerIndex, reason: &str) {
         if let Some(peer) = self.peers.write().remove(&peer_index) {
-            warn!(target: "sync", "Disconnecting from peer#{} due to misbehavior: {}", peer_index, reason);
+            warn!("Disconnecting from peer#{} due to misbehavior: {}", peer_index, reason);
             peer.connection.close();
         }
     }
 
     fn dos(&self, peer_index: PeerIndex, reason: &str) {
         if let Some(peer) = self.peers.write().remove(&peer_index) {
-            warn!(target: "sync", "Disconnecting from peer#{} due to DoS: {}", peer_index, reason);
+            warn!("Disconnecting from peer#{} due to DoS: {}", peer_index, reason);
             peer.connection.close();
         }
     }

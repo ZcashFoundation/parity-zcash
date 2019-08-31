@@ -287,7 +287,7 @@ where
         let next_item = match message.inventory.pop() {
             None => {
                 if !notfound.inventory.is_empty() {
-                    trace!(target: "sync", "'getdata' from peer#{} container contains {} unknown items", peer_index, notfound.inventory.len());
+                    trace!("'getdata' from peer#{} container contains {} unknown items", peer_index, notfound.inventory.len());
                     self.executor.execute(Task::NotFound(peer_index, notfound));
                 }
                 return None;
@@ -299,7 +299,7 @@ where
             common::InventoryType::MessageTx => {
                 // only transaction from memory pool can be requested
                 if let Some(transaction) = self.memory_pool.read().read_by_hash(&next_item.hash) {
-                    trace!(target: "sync", "'getblocks' response to peer#{} is ready with tx {}", peer_index, next_item.hash.to_reversed_str());
+                    trace!("'getblocks' response to peer#{} is ready with tx {}", peer_index, next_item.hash.to_reversed_str());
                     let transaction = IndexedTransaction::new(next_item.hash, transaction.clone());
                     self.executor
                         .execute(Task::Transaction(peer_index, transaction));
@@ -309,7 +309,7 @@ where
             }
             common::InventoryType::MessageBlock => {
                 if let Some(block) = self.storage.block(next_item.hash.clone().into()) {
-                    trace!(target: "sync", "'getblocks' response to peer#{} is ready with block {}", peer_index, next_item.hash.to_reversed_str());
+                    trace!("'getblocks' response to peer#{} is ready with block {}", peer_index, next_item.hash.to_reversed_str());
                     self.executor.execute(Task::Block(peer_index, block));
                 } else {
                     notfound.inventory.push(next_item);
@@ -320,7 +320,7 @@ where
                     let message_artefacts = self.peers.build_merkle_block(peer_index, &block);
                     if let Some(message_artefacts) = message_artefacts {
                         // send merkleblock first
-                        trace!(target: "sync", "'getblocks' response to peer#{} is ready with merkleblock {}", peer_index, next_item.hash.to_reversed_str());
+                        trace!("'getblocks' response to peer#{} is ready with merkleblock {}", peer_index, next_item.hash.to_reversed_str());
                         self.executor.execute(Task::MerkleBlock(
                             peer_index,
                             *block.hash(),
@@ -329,7 +329,7 @@ where
 
                         // also send all matched transactions
                         for matched_transaction in message_artefacts.matching_transactions {
-                            trace!(target: "sync", "'getblocks' response to peer#{} is ready with merkletx {}", peer_index, matched_transaction.hash.to_reversed_str());
+                            trace!("'getblocks' response to peer#{} is ready with merkletx {}", peer_index, matched_transaction.hash.to_reversed_str());
                             self.executor
                                 .execute(Task::Transaction(peer_index, matched_transaction));
                         }
@@ -360,13 +360,13 @@ where
                 .collect();
             // empty inventory messages are invalid according to regtests, while empty headers messages are valid
             if !inventory.is_empty() {
-                trace!(target: "sync", "'getblocks' response to peer#{} is ready with {} hashes", peer_index, inventory.len());
+                trace!("'getblocks' response to peer#{} is ready with {} hashes", peer_index, inventory.len());
                 self.executor.execute(Task::Inventory(
                     peer_index,
                     types::Inv::with_inventory(inventory),
                 ));
             } else {
-                trace!(target: "sync", "'getblocks' request from peer#{} is ignored as there are no new blocks for peer", peer_index);
+                trace!("'getblocks' request from peer#{} is ignored as there are no new blocks for peer", peer_index);
             }
         } else {
             self.peers
@@ -396,7 +396,7 @@ where
                 .map(|h| h.raw)
                 .collect();
             // empty inventory messages are invalid according to regtests, while empty headers messages are valid
-            trace!(target: "sync", "'getheaders' response to peer#{} is ready with {} headers", peer_index, headers.len());
+            trace!("'getheaders' response to peer#{} is ready with {} headers", peer_index, headers.len());
             self.executor.execute(Task::Headers(
                 peer_index,
                 types::Headers::with_headers(headers),
@@ -419,13 +419,13 @@ where
             .collect();
         // empty inventory messages are invalid according to regtests, while empty headers messages are valid
         if !inventory.is_empty() {
-            trace!(target: "sync", "'mempool' response to peer#{} is ready with {} transactions", peer_index, inventory.len());
+            trace!("'mempool' response to peer#{} is ready with {} transactions", peer_index, inventory.len());
             self.executor.execute(Task::Inventory(
                 peer_index,
                 types::Inv::with_inventory(inventory),
             ));
         } else {
-            trace!(target: "sync", "'mempool' request from peer#{} is ignored as pool is empty", peer_index);
+            trace!("'mempool' request from peer#{} is ignored as pool is empty", peer_index);
         }
     }
 

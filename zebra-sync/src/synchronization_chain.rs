@@ -408,7 +408,7 @@ impl Chain {
             self.storage.block_hash(self.storage.best_block().number)
         );
         let block_origin = self.storage.block_origin(&block.header)?;
-        trace!(target: "sync", "insert_best_block {:?} origin: {:?}", block.hash().reversed(), block_origin);
+        trace!("insert_best_block {:?} origin: {:?}", block.hash().reversed(), block_origin);
         match block_origin {
             zebra_storage::BlockOrigin::KnownBlock => {
                 // there should be no known blocks at this point
@@ -497,7 +497,7 @@ impl Chain {
                     .flat_map(|block_hash| self.storage.block_transactions(block_hash.into()))
                     .collect::<Vec<_>>();
 
-                trace!(target: "sync", "insert_best_block, old_main_blocks_transactions: {:?}",
+                trace!("insert_best_block, old_main_blocks_transactions: {:?}",
 					   old_main_blocks_transactions.iter().map(|tx| tx.hash.reversed()).collect::<Vec<H256>>());
 
                 // reverify memory pool transactions, sorted by timestamp
@@ -531,7 +531,7 @@ impl Chain {
                         .collect(),
                 };
 
-                trace!(target: "sync", "result: {:?}", result);
+                trace!("result: {:?}", result);
 
                 Ok(result)
             }

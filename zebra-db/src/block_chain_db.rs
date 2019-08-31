@@ -442,14 +442,13 @@ where
         let block = match self.block(hash.clone().into()) {
             Some(block) => block,
             None => {
-                error!(target: "db", "Block is not found during canonization: {}", hash.reversed());
+                error!("Block is not found during canonization: {}", hash.reversed());
                 return Err(Error::CannotCanonize);
             }
         };
 
         if best_block.hash != block.header.raw.previous_header_hash {
             error!(
-                target: "db",
                 "Wrong best block during canonization. Best {}, parent: {}",
                 best_block.hash.reversed(),
                 block.header.raw.previous_header_hash.reversed(),
@@ -467,7 +466,7 @@ where
             },
         };
 
-        trace!(target: "db", "canonize {:?}", new_best_block);
+        trace!("canonize {:?}", new_best_block);
 
         let mut update = DBTransaction::new();
         update.insert(KeyValue::BlockHash(
@@ -505,7 +504,7 @@ where
                         let nullifier_key =
                             EpochRef::new(EpochTag::Sprout, H256::from(&nullifier[..]));
                         if self.contains_nullifier(nullifier_key) {
-                            error!(target: "db", "Duplicate sprout nullifer during canonization: {:?}", nullifier_key);
+                            error!("Duplicate sprout nullifer during canonization: {:?}", nullifier_key);
                             return Err(Error::CannotCanonize);
                         }
                         update.insert(KeyValue::Nullifier(nullifier_key));
@@ -518,7 +517,7 @@ where
                     let nullifier_key =
                         EpochRef::new(EpochTag::Sapling, H256::from(&spend.nullifier[..]));
                     if self.contains_nullifier(nullifier_key) {
-                        error!(target: "db", "Duplicate sapling nullifer during canonization: {:?}", nullifier_key);
+                        error!("Duplicate sapling nullifer during canonization: {:?}", nullifier_key);
                         return Err(Error::CannotCanonize);
                     }
                     update.insert(KeyValue::Nullifier(nullifier_key));
@@ -538,7 +537,6 @@ where
                             .transaction_meta(&input.previous_output.hash)
                             .ok_or_else(|| {
                                 error!(
-                                    target: "db",
                                     "Cannot find tx meta during canonization of tx {}: {}/{}",
                                     tx.hash.reversed(),
                                     input.previous_output.hash.reversed(),
@@ -567,7 +565,7 @@ where
         let block = match self.block(best_block.hash.clone().into()) {
             Some(block) => block,
             None => {
-                error!(target: "db", "Block is not found during decanonization: {}", best_block.hash.reversed());
+                error!("Block is not found during decanonization: {}", best_block.hash.reversed());
                 return Err(Error::CannotDecanonize);
             }
         };
@@ -584,7 +582,7 @@ where
             },
         };
 
-        trace!(target: "db", "decanonize, new best: {:?}", new_best_block);
+        trace!("decanonize, new best: {:?}", new_best_block);
 
         let mut update = DBTransaction::new();
         update.delete(Key::BlockHash(block_number));
@@ -606,7 +604,7 @@ where
                         let nullifier_key =
                             EpochRef::new(EpochTag::Sprout, H256::from(&nullifier[..]));
                         if !self.contains_nullifier(nullifier_key) {
-                            error!(target: "db", "cannot decanonize, no sprout nullifier: {:?}", nullifier_key);
+                            error!("cannot decanonize, no sprout nullifier: {:?}", nullifier_key);
                             return Err(Error::CannotDecanonize);
                         }
                         update.delete(Key::Nullifier(nullifier_key));
@@ -619,7 +617,7 @@ where
                     let nullifier_key =
                         EpochRef::new(EpochTag::Sapling, H256::from(&spend.nullifier[..]));
                     if !self.contains_nullifier(nullifier_key) {
-                        error!(target: "db", "cannot decanonize, no sapling nullifier: {:?}", nullifier_key);
+                        error!("cannot decanonize, no sapling nullifier: {:?}", nullifier_key);
                         return Err(Error::CannotDecanonize);
                     }
                     update.delete(Key::Nullifier(nullifier_key));
@@ -639,7 +637,6 @@ where
                             .transaction_meta(&input.previous_output.hash)
                             .ok_or_else(|| {
                                 error!(
-                                    target: "db",
                                     "Cannot find tx meta during decanonization of tx {}: {}/{}",
                                     tx.hash.reversed(),
                                     input.previous_output.hash.reversed(),

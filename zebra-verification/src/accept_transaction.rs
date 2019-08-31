@@ -53,7 +53,7 @@ impl<'a> TransactionAcceptor<'a> {
         deployments: &'a BlockDeployments<'a>,
         tree_state_provider: &'a TreeStateProvider,
     ) -> Self {
-        trace!(target: "verification", "Tx verification {}", transaction.hash.to_reversed_str());
+        trace!("Tx verification {}", transaction.hash.to_reversed_str());
         TransactionAcceptor {
             version: TransactionVersion::new(transaction, consensus, height),
             size: TransactionSize::new(transaction, consensus, height),
@@ -137,7 +137,7 @@ impl<'a> MemoryPoolTransactionAcceptor<'a> {
         deployments: &'a BlockDeployments<'a>,
         tree_state_provider: &'a TreeStateProvider,
     ) -> Self {
-        trace!(target: "verification", "Mempool-Tx verification {}", transaction.hash.to_reversed_str());
+        trace!("Mempool-Tx verification {}", transaction.hash.to_reversed_str());
         let transaction_index = 0;
         let max_block_sigops = consensus.max_block_sigops();
         MemoryPoolTransactionAcceptor {

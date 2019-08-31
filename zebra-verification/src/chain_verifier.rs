@@ -52,7 +52,6 @@ impl BackwardsCompatibleChainVerifier {
         );
         let block_origin = self.store.block_origin(&block.header)?;
         trace!(
-            target: "verification",
             "verify_block: {:?} best_block: {:?} block_origin: {:?}",
             block.hash().reversed(),
             self.store.best_block(),
@@ -218,7 +217,7 @@ impl Verify for BackwardsCompatibleChainVerifier {
     fn verify(&self, level: VerificationLevel, block: &IndexedBlock) -> Result<(), Error> {
         let result = self.verify_block(level, block);
         trace!(
-            target: "verification", "Block {} (transactions: {}) verification finished. Result {:?}",
+            "Block {} (transactions: {}) verification finished. Result {:?}",
             block.hash().to_reversed_str(),
             block.transactions.len(),
             result,

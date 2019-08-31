@@ -32,7 +32,7 @@ impl<'a> ChainAcceptor<'a> {
         time: u32,
         deployments: &'a BlockDeployments,
     ) -> Self {
-        trace!(target: "verification", "Block verification {}", block.hash().to_reversed_str());
+        trace!("Block verification {}", block.hash().to_reversed_str());
         let output_store = DuplexTransactionOutputProvider::new(tx_out_provider, block.raw());
 
         ChainAcceptor {

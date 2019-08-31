@@ -29,7 +29,7 @@ pub struct TransactionVerifier<'a> {
 
 impl<'a> TransactionVerifier<'a> {
     pub fn new(transaction: &'a IndexedTransaction, consensus: &'a ConsensusParams) -> Self {
-        trace!(target: "verification", "Tx pre-verification {}", transaction.hash.to_reversed_str());
+        trace!("Tx pre-verification {}", transaction.hash.to_reversed_str());
         TransactionVerifier {
             version: TransactionVersion::new(transaction),
             expiry: TransactionExpiry::new(transaction, consensus),
@@ -91,7 +91,7 @@ pub struct MemoryPoolTransactionVerifier<'a> {
 
 impl<'a> MemoryPoolTransactionVerifier<'a> {
     pub fn new(transaction: &'a IndexedTransaction, consensus: &'a ConsensusParams) -> Self {
-        trace!(target: "verification", "Mempool-Tx pre-verification {}", transaction.hash.to_reversed_str());
+        trace!("Mempool-Tx pre-verification {}", transaction.hash.to_reversed_str());
         MemoryPoolTransactionVerifier {
             version: TransactionVersion::new(transaction),
             expiry: TransactionExpiry::new(transaction, consensus),
