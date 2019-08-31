@@ -2496,9 +2496,13 @@ version = "0.1.0"
 dependencies = [
  "app_dirs 1.2.1 (git+https://github.com/paritytech/app-dirs-rs)",
  "clap 2.33.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "futures 0.1.28 (registry+https://github.com/rust-lang/crates.io-index)",
+ "hyper 0.12.31 (registry+https://github.com/rust-lang/crates.io-index)",
  "libc 0.2.59 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tokio-core 0.1.17 (registry+https://github.com/rust-lang/crates.io-index)",
  "tracing 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)",
  "tracing-fmt 0.0.1-alpha.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tracing-subscriber 0.0.1-alpha.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "zebra-chain 0.1.0",
  "zebra-db 0.1.0",
  "zebra-import 0.1.0",

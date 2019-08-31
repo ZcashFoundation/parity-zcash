@@ -87,8 +87,8 @@ impl Drop for BlockNotifier {
     }
 }
 
-pub fn start(cfg: config::Config) -> Result<(), String> {
-    let mut el = zebra_p2p::event_loop();
+pub fn start(cfg: config::Config, el: &mut tokio_core::reactor::Core) -> Result<(), String> {
+    info!("Begin start");
 
     init_db(&cfg)?;
 
@@ -143,6 +143,5 @@ pub fn start(cfg: config::Config) -> Result<(), String> {
     let _rpc_server = try!(rpc::new_http(cfg.rpc_config, rpc_deps));
 
     try!(p2p.run().map_err(|_| "Failed to start p2p module"));
-    el.run(zebra_p2p::forever()).unwrap();
     Ok(())
 }

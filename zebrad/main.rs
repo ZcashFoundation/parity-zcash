@@ -2,9 +2,13 @@
 extern crate clap;
 #[macro_use]
 extern crate tracing;
-extern crate tracing_fmt;
 extern crate app_dirs;
+extern crate futures;
+extern crate hyper;
 extern crate libc;
+extern crate tokio_core;
+extern crate tracing_fmt;
+extern crate tracing_subscriber;
 
 extern crate zebra_chain;
 extern crate zebra_db;
@@ -25,6 +29,7 @@ mod config;
 mod rpc;
 mod rpc_apis;
 mod seednodes;
+mod tracing_endpoint;
 mod util;
 
 use app_dirs::AppInfo;
@@ -54,17 +59,33 @@ fn run() -> Result<(), String> {
     let matches = clap::App::from_yaml(yaml).get_matches();
     let cfg = try!(config::parse(&matches));
 
+    use tracing_subscriber::{filter::Filter, layer::SubscriberExt, reload::Layer};
+    // Initialize a tracing filter and retain a reload handle
+    let filter = Filter::new("info");
+    let (filter, handle) = Layer::new(filter);
+
     // Initialize a tracing subscriber to print tracing events
     let subscriber = tracing_fmt::FmtSubscriber::builder()
         .with_ansi(true)
-        .with_filter(tracing_fmt::filter::EnvFilter::from_default_env())
-        .finish();
+        .with_filter(tracing_fmt::filter::none())
+        .finish()
+        .with(filter); // from SubscriberExt
+
     tracing::subscriber::set_global_default(subscriber)
         .map_err(|_| "Could not initialize tracing subscriber")?;
 
+    // Previously the event loop was created inside of the start
+    // command.  Because we want to hack some extra stuff (the tracing
+    // endpoint) into the event loop, pull it out to here, pass it
+    // back down into the start command, and finally pass it into a
+    // tracing endpoint setup function.
+    let mut el = zebra_p2p::event_loop();
     match matches.subcommand() {
         ("import", Some(import_matches)) => commands::import(cfg, import_matches),
         ("rollback", Some(rollback_matches)) => commands::rollback(cfg, rollback_matches),
-        _ => commands::start(cfg),
+        _ => {
+            commands::start(cfg, &mut el)?;
+            tracing_endpoint::run(handle, &mut el)
+        }
     }
 }
