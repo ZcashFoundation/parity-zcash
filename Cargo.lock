@@ -811,12 +811,13 @@ dependencies = [
 
 [[package]]
 name = "jsonrpc-derive"
-version = "10.1.0"
+version = "14.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
- "proc-macro2 0.4.30 (registry+https://github.com/rust-lang/crates.io-index)",
- "quote 0.6.12 (registry+https://github.com/rust-lang/crates.io-index)",
- "syn 0.15.39 (registry+https://github.com/rust-lang/crates.io-index)",
+ "proc-macro-crate 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "proc-macro2 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "quote 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "syn 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -1178,6 +1179,14 @@ dependencies = [
  "rustc_version 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "smallvec 0.6.10 (registry+https://github.com/rust-lang/crates.io-index)",
  "winapi 0.3.7 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "proc-macro-crate"
+version = "0.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "toml 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -2299,7 +2308,7 @@ name = "zebra-rpc"
 version = "0.1.0"
 dependencies = [
  "jsonrpc-core 10.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "jsonrpc-derive 10.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "jsonrpc-derive 14.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "jsonrpc-http-server 10.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "jsonrpc-pubsub 12.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "log 0.4.7 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -2576,7 +2585,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum jemallocator 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)" = "9f0cd42ac65f758063fea55126b0148b1ce0a6354ff78e07a4d6806bc65c4ab3"
 "checksum jsonrpc-core 10.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "dc15eef5f8b6bef5ac5f7440a957ff95d036e2f98706947741bfc93d1976db4c"
 "checksum jsonrpc-core 12.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "0216cf4c95fb373d89c63572672097b8aa74cfcdd77054accbf545d840be5bd7"
-"checksum jsonrpc-derive 10.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "c2dae61ca8a3b047fb11309b00661bc56837085bd07e46f907b9c562c0b03e68"
+"checksum jsonrpc-derive 14.0.1 (registry+https://github.com/rust-lang/crates.io-index)" = "f79f30bf70049564c507b968162b8fd4bf114514bdacc1e90f9d891f8a66fce3"
 "checksum jsonrpc-http-server 10.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "11d2a00824306155b8ef57fe957f31b8cd8ad24262f15cf911d84dcf9a3f206d"
 "checksum jsonrpc-pubsub 12.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "e3c45f7cdb1bb28a3bfb3a0a5184bf99669c9ffe8cf8d7b8a582f2a52bf9944a"
 "checksum jsonrpc-server-utils 10.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "c9527f01ef25f251d64082cbefc0c6d6f367349afe6848ef908a674e06b2bdd3"
@@ -2616,6 +2625,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum parking_lot_core 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "94c8c7923936b28d546dfd14d4472eaf34c99b14e1c973a32b3e6d4eb04298c9"
 "checksum parking_lot_core 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)" = "cb88cb1cb3790baa6776844f968fea3be44956cf184fa1be5a03341f5491278c"
 "checksum parking_lot_core 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)" = "67812d70a819b886655846594086c00ac1f3e8b77c36ef494aa730c620b19d57"
+"checksum proc-macro-crate 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)" = "e10d4b51f154c8a7fb96fd6dad097cb74b863943ec010ac94b9fd1be8861fe1e"
 "checksum proc-macro2 0.4.30 (registry+https://github.com/rust-lang/crates.io-index)" = "cf3d2011ab5c909338f7887f4fc896d35932e29146c12c8d01da6b22a80ba759"
 "checksum proc-macro2 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)" = "4c5c2380ae88876faae57698be9e9775e3544decad214599c3a6266cca6ac802"
 "checksum pulldown-cmark 0.0.3 (registry+https://github.com/rust-lang/crates.io-index)" = "8361e81576d2e02643b04950e487ec172b687180da65c731c03cf336784e6c07"
