@@ -23,7 +23,7 @@ zebra-storage = { path = "../zebra-storage" }
 zebra-crypto = { path = "../zebra-crypto" }
 
 [dev-dependencies]
-rand = "0.4"
+rand = "0.6"
 assert_matches = "1.3.0"
 zebra-chain = { path = "../zebra-chain", features = ["test-helpers"] }
 zebra-db = { path = "../zebra-db" }
